@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "next-themes"
+import { AnimatePresence, motion } from 'framer-motion'
 
 export interface Drink {
   id: string
@@ -85,6 +86,32 @@ const drinks: Drink[] = [
     { id: "12", name: "Suco Natural", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
 ]
 
+const completePlans: CompletePlan[] = [
+  {
+    id: "plano-festa",
+    name: "Plano Festa",
+    price: 60,
+    description: "Ideal para festas animadas com amigos. Inclui drinks clássicos e opções refrescantes.",
+    drinks: ["Caipirinha Tradicional", "Caipiroska", "Gin Tônica"],
+    popular: true,
+  },
+  {
+    id: "plano-aniversario",
+    name: "Plano Aniversário",
+    price: 80,
+    description: "Perfeito para comemorar aniversários. Seleção especial de drinks para todos os gostos.",
+    drinks: ["Caipirinha Premium", "Mojito", "Aperol Spritz"],
+    popular: true,
+  },
+  {
+    id: "plano-confraternizacao",
+    name: "Plano Confraternização",
+    price: 100,
+    description: "Para eventos corporativos ou encontros de equipe. Drinks sofisticados e exclusivos.",
+    drinks: ["Gin Tônica", "Daiquiri", "Cuba Libre", "Caipiroska Premium"],
+  },
+]
+
 export default function TenderesPage() {
   const { theme, setTheme } = useTheme()
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
@@ -130,6 +157,8 @@ export default function TenderesPage() {
   const [people, setPeople] = useState<number>(0)
   const [hours, setHours] = useState<number>(0)
   const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
+  const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
+  const [drinkeiraTab, setDrinkeiraTab] = useState<'caipirinhas' | 'caipiroskas' | 'classicos'>('caipirinhas')
 
   const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -174,11 +203,7 @@ export default function TenderesPage() {
     Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
       const drink = drinks.find((d) => d.id === drinkId)
       if (drink) {
-        if (drink.priceType === "per_unit") {
-          subtotal += drink.price * quantity
-        } else { // per_person
-          subtotal += drink.price * quantity * people
-        }
+        subtotal += drink.price * quantity * people
       }
     })
 
@@ -330,7 +355,10 @@ export default function TenderesPage() {
                         <p className="text-sm text-green-400">Bartender vende drinks na hora</p>
                      </div>
                      <Button 
-                        onClick={() => setIsDrinkeiraMode(!isDrinkeiraMode)}
+                        onClick={() => {
+                          setIsDrinkeiraMode(!isDrinkeiraMode);
+                          setMode(isDrinkeiraMode ? 'planos' : 'drinkeira');
+                        }}
                         variant={isDrinkeiraMode ? "default" : "outline"}
                         className={isDrinkeiraMode ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-400 text-green-300 hover:bg-green-900"}
                       >
@@ -405,11 +433,11 @@ export default function TenderesPage() {
                 <CardContent className="p-4">
                    <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-8 border border-purple-500/30 shadow-2xl mb-8">
                      <h3 className="text-3xl font-bold text-center text-white mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
-                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                        <Button 
-                         onClick={() => setIsDrinkeiraMode(false)}
+                         onClick={() => setMode('planos')}
                          className={`h-24 text-xl font-bold transition-all duration-300 ${
-                           !isDrinkeiraMode 
+                           mode === 'planos' 
                              ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-xl shadow-purple-500/40 scale-105 border-2 border-purple-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20'
                          }`}
@@ -421,9 +449,9 @@ export default function TenderesPage() {
                          </div>
                        </Button>
                        <Button 
-                         onClick={() => setIsDrinkeiraMode(true)}
+                         onClick={() => setMode('detalhado')}
                          className={`h-24 text-xl font-bold transition-all duration-300 ${
-                           isDrinkeiraMode 
+                           mode === 'detalhado' 
                              ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 shadow-xl shadow-blue-500/40 scale-105 border-2 border-blue-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20'
                          }`}
@@ -434,32 +462,80 @@ export default function TenderesPage() {
                            <p className="text-sm text-cyan-200">Monte seu plano</p>
                          </div>
                        </Button>
+                       <Button 
+                         onClick={() => setMode('drinkeira')}
+                         className={`h-24 text-xl font-bold transition-all duration-300 ${
+                           mode === 'drinkeira' 
+                             ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-lime-500 shadow-xl shadow-green-500/40 scale-105 border-2 border-green-300' 
+                             : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/20'
+                         }`}
+                       >
+                         <div className="flex flex-col items-center gap-2">
+                           <Wine className="h-8 w-8 text-green-300" />
+                           <span className="text-white">Modo Drinkeira</span>
+                           <p className="text-sm text-green-200">Bartender vende drinks na hora</p>
+                         </div>
+                       </Button>
                      </div>
                    </div>
                 </CardContent>
              </Card>
 
             {/* Conteúdo dinâmico baseado no modo */}
-            {!isDrinkeiraMode && (
+            {mode === 'planos' && (
+              <div className="space-y-8">
+                <h2 className="text-3xl font-bold text-center text-white mb-8">Planos Completos</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {completePlans.map((plan) => (
+                    <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
+                      <CardHeader>
+                        <CardTitle className="text-2xl text-white flex items-center gap-2">
+                          {plan.popular && <Star className="h-5 w-5 text-yellow-400" />} {plan.name}
+                        </CardTitle>
+                        <CardDescription className="text-lg text-purple-200 font-bold mb-2">
+                          {plan.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} por pessoa
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 mb-4">{plan.description}</p>
+                        <div>
+                          <span className="font-semibold text-white">Drinks inclusos:</span>
+                          <ul className="list-disc list-inside text-gray-200 mt-2">
+                            {plan.drinks.map((drink, idx) => (
+                              <li key={idx}>{drink}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </div>
+            )}
+            {mode === 'detalhado' && (
               categories.map((category) => (
                 <div key={category}>
                   <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
                   <div className="grid md:grid-cols-2 gap-6">
                     {drinks.filter((drink) => drink.category === category).map((drink) => (
-                      <Card key={drink.id} className={`bg-gray-800 border border-gray-700 transition-all ${selectedDrinks[drink.id] ? "border-purple-500" : ""}`}>
-                        <CardContent className="p-4 flex items-center gap-4">
-                          <img src={drink.image} alt={drink.name} className="w-24 h-24 rounded-lg object-cover" />
-                          <div className="flex-1 space-y-2">
-                            <h4 className="font-bold text-lg text-white">{drink.name}</h4>
-                            <p className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                              {drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                              <span className="text-xs text-gray-400"> / {drink.priceType === 'per_unit' ? 'unidade' : 'pessoa'}</span>
-                            </p>
-                            <div className="flex items-center justify-end gap-3 bg-gray-900/50 p-2 rounded-lg">
-                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)} disabled={!selectedDrinks[drink.id]}>-</Button>
-                              <span className="text-xl font-bold text-white w-8 text-center">{selectedDrinks[drink.id] || 0}</span>
-                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}>+</Button>
-                            </div>
+                      <Card key={drink.id} className={`bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/60 border border-purple-700 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
+                        <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                          <Wine className="h-7 w-7 text-purple-300 drop-shadow" />
+                          <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                            {drink.name}
+                          </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="inline-block px-3 py-1 rounded-full bg-purple-700/60 text-white text-lg font-bold shadow">
+                              {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                              <span className="text-xs text-gray-400"> / unidade</span>
+                            </span>
+                          </div>
+                          <div className="flex items-center justify-end gap-3 bg-gray-900/50 p-2 rounded-lg">
+                            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)} disabled={!selectedDrinks[drink.id]}>-</Button>
+                            <span className="text-xl font-bold text-white w-8 text-center">{selectedDrinks[drink.id] || 0}</span>
+                            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}>+</Button>
                           </div>
                         </CardContent>
                       </Card>
@@ -468,77 +544,18 @@ export default function TenderesPage() {
                 </div>
               ))
             )}
-
-            {isDrinkeiraMode && (
+            {mode === 'drinkeira' && (
               <div className="space-y-8 bg-gray-900 p-8 rounded-xl border border-gray-700">
                 {/* Abas de Navegação */}
                 <div className="flex justify-center gap-4 mb-8">
-                  <Button variant="ghost" onClick={() => document.getElementById('caipirinhas-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-lg font-semibold text-green-400 hover:bg-green-500/10 hover:text-green-300">Caipirinhas</Button>
-                  <Button variant="ghost" onClick={() => document.getElementById('caipiroskas-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-lg font-semibold text-blue-400 hover:bg-blue-500/10 hover:text-blue-300">Caipiroskas</Button>
-                  <Button variant="ghost" onClick={() => document.getElementById('classicos-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-lg font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300">Clássicos</Button>
+                  <Button variant={drinkeiraTab === 'caipirinhas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipirinhas')} className="text-lg font-semibold text-green-400 hover:bg-green-500/10 hover:text-green-300">Caipirinhas</Button>
+                  <Button variant={drinkeiraTab === 'caipiroskas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipiroskas')} className="text-lg font-semibold text-blue-400 hover:bg-blue-500/10 hover:text-blue-300">Caipiroskas</Button>
+                  <Button variant={drinkeiraTab === 'classicos' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('classicos')} className="text-lg font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300">Clássicos</Button>
                 </div>
-
-                {/* Caipirinhas */}
-                <div id="caipirinhas-section" className="p-6 rounded-lg bg-gray-800/50 border border-green-500/20">
-                  <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {caipirinhas.map((drink) => (
-                      <div key={drink.id} className="bg-gray-800 rounded-lg p-4 shadow-lg border border-gray-700">
-                        <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-lg text-white">{drink.name}</h4><span className="font-bold text-lg text-green-400">{drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
-                        <p className="text-sm text-gray-400">{drink.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Caipiroskas */}
-                <div id="caipiroskas-section" className="p-6 rounded-lg bg-gray-800/50 border border-blue-500/20">
-                  <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {caipiroskas.map((drink) => (
-                      <div key={drink.id} className="bg-gray-800 rounded-lg p-4 shadow-lg border border-gray-700">
-                        <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-lg text-white">{drink.name}</h4><span className="font-bold text-lg text-blue-400">{drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
-                        <p className="text-sm text-gray-400">{drink.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Outros Clássicos */}
-                <div id="classicos-section" className="p-6 rounded-lg bg-gray-800/50 border border-red-500/20">
-                  <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {outrosClassicos.map((drink) => (
-                      <div key={drink.id} className="bg-gray-800 rounded-lg p-4 shadow-lg border border-gray-700">
-                        <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-lg text-white">{drink.name}</h4><span className="font-bold text-lg text-red-400">{drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
-                        <p className="text-sm text-gray-400">{drink.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Como funciona Section */}
-                <section className="container mx-auto px-4 my-20">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                    <div className="bg-gray-800 p-8 rounded-lg text-center border border-gray-700">
-                      <div className="inline-block bg-green-500 text-white p-4 rounded-full mb-4">
-                        <Users className="h-8 w-8" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-100 mb-2">Bartenders Profissionais</h3>
-                      <p className="text-lg text-green-400 font-semibold mb-2">R$ 100 por bartender</p>
-                      <p className="text-gray-400">Calculamos automaticamente quantos bartenders são necessários baseado no número de convidados</p>
-                    </div>
-                    <div className="bg-gray-800 p-8 rounded-lg text-center border border-gray-700">
-                      <div className="inline-block bg-purple-500 text-white p-4 rounded-full mb-4">
-                        <Wine className="h-8 w-8" />
-                      </div>
-                      <h3 className="text-2xl font-bold text-gray-100 mb-2">Variedade de Sabores</h3>
-                      <p className="text-lg text-purple-400 font-semibold mb-2">12 opções diferentes</p>
-                      <p className="text-gray-400">Desde sabores tradicionais até opções premium com ingredientes especiais</p>
-                    </div>
-                  </div>
+                {/* Bloco informativo do modelo Drinkeira */}
+                <section className="container mx-auto px-4 my-8">
                   <div className="bg-gray-800 p-8 rounded-lg border border-gray-700">
-                    <h2 className="text-3xl font-bold text-yellow-400 text-center mb-8">Como Funciona</h2>
+                    <h2 className="text-3xl font-bold text-yellow-400 text-center mb-8">Como Funciona o Modo Drinkeira</h2>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
                       <div>
                         <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">1</div>
@@ -558,6 +575,114 @@ export default function TenderesPage() {
                     </div>
                   </div>
                 </section>
+                {/* Lista dinâmica de drinks animada */}
+                <AnimatePresence mode="wait">
+                  {drinkeiraTab === 'caipirinhas' && (
+                    <motion.div
+                      key="caipirinhas"
+                      initial={{ x: 100, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -100, opacity: 0 }}
+                      transition={{ duration: 0.7, ease: 'easeOut' }}
+                      className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl"
+                    >
+                      <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {caipirinhas.map((drink) => (
+                          <Card
+                            key={drink.id}
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                          >
+                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                              <Wine className="h-7 w-7 text-purple-300 drop-shadow" />
+                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                                {drink.name}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="inline-block px-3 py-1 rounded-full bg-purple-700/60 text-white text-lg font-bold shadow">
+                                  {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </span>
+                              </div>
+                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                  {drinkeiraTab === 'caipiroskas' && (
+                    <motion.div
+                      key="caipiroskas"
+                      initial={{ x: 100, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -100, opacity: 0 }}
+                      transition={{ duration: 0.7, ease: 'easeOut' }}
+                      className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl"
+                    >
+                      <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {caipiroskas.map((drink) => (
+                          <Card
+                            key={drink.id}
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                          >
+                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                              <Wine className="h-7 w-7 text-cyan-300 drop-shadow" />
+                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                                {drink.name}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="inline-block px-3 py-1 rounded-full bg-blue-700/60 text-white text-lg font-bold shadow">
+                                  {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </span>
+                              </div>
+                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                  {drinkeiraTab === 'classicos' && (
+                    <motion.div
+                      key="classicos"
+                      initial={{ x: 100, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      exit={{ x: -100, opacity: 0 }}
+                      transition={{ duration: 0.7, ease: 'easeOut' }}
+                      className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl"
+                    >
+                      <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {outrosClassicos.map((drink) => (
+                          <Card
+                            key={drink.id}
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                          >
+                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                              <Wine className="h-7 w-7 text-red-300 drop-shadow" />
+                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                                {drink.name}
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className="inline-block px-3 py-1 rounded-full bg-red-700/60 text-white text-lg font-bold shadow">
+                                  {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                </span>
+                              </div>
+                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
             )}
 
