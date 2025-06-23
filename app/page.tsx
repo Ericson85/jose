@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import { Wine, Users, Clock, Calculator, Star, CheckCircle, Sparkles, Heart, Award, Moon, Sun, MapPin, Phone, Mail, MessageCircle, User, Calendar, Home } from "lucide-react"
+import { useState, useEffect, useMemo } from "react"
+import { Wine, Users, Clock, Calculator, Star, CheckCircle, Sparkles, Heart, Award, Moon, Sun, MapPin, Phone, Mail, MessageCircle, User } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -36,6 +36,54 @@ export interface CompletePlan {
   drinks: string[]
   popular?: boolean
 }
+
+interface DrinkeiraDrink {
+  id: string
+  name: string
+  category: "Caipirinha" | "Caipiroska" | "Clássico"
+  price: number
+  description: string
+  popular?: boolean
+  premium?: boolean
+}
+
+const drinkeiraMenu: DrinkeiraDrink[] = [
+  { id: "caip-1", name: "Caipirinha Tradicional", category: "Caipirinha", price: 12, description: "Cachaça, limão, açúcar e gelo", popular: true },
+  { id: "caip-2", name: "Caipirinha de Morango", category: "Caipirinha", price: 14, description: "Cachaça, morango fresco, açúcar e gelo", popular: true },
+  { id: "caip-3", name: "Caipirinha de Kiwi", category: "Caipirinha", price: 15, description: "Cachaça, kiwi, açúcar e gelo" },
+  { id: "caip-4", name: "Caipirinha de Maracujá", category: "Caipirinha", price: 14, description: "Cachaça, polpa de maracujá, açúcar e gelo" },
+  { id: "caip-5", name: "Caipirinha de Abacaxi", category: "Caipirinha", price: 13, description: "Cachaça, abacaxi fresco, açúcar e gelo" },
+  { id: "caip-6", name: "Caipirinha Premium", category: "Caipirinha", price: 18, description: "Cachaça premium, limão tahiti, açúcar demerara", premium: true },
+  { id: "caipiroska-1", name: "Caipiroska Tradicional", category: "Caipiroska", price: 13, description: "Vodka, limão, açúcar e gelo", popular: true },
+  { id: "caipiroska-2", name: "Caipiroska de Morango", category: "Caipiroska", price: 15, description: "Vodka, morango fresco, açúcar e gelo", popular: true },
+  { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", category: "Caipiroska", price: 16, description: "Vodka, mix de frutas vermelhas, açúcar e gelo", premium: true },
+  { id: "caipiroska-4", name: "Caipiroska de Maracujá", category: "Caipiroska", price: 15, description: "Vodka, polpa de maracujá, açúcar e gelo" },
+  { id: "caipiroska-5", name: "Caipiroska de Pêssego", category: "Caipiroska", price: 15, description: "Vodka, pêssego em calda, açúcar e gelo" },
+  { id: "caipiroska-6", name: "Caipiroska Premium", category: "Caipiroska", price: 20, description: "Vodka premium, limão siciliano, açúcar cristal", premium: true },
+  { id: "classic-1", name: "Gin Tônica", category: "Clássico", price: 20, description: "Gin, água tônica, limão e especiarias" },
+  { id: "classic-2", name: "Mojito", category: "Clássico", price: 18, description: "Rum, hortelã, limão, açúcar e água com gás" },
+  { id: "classic-3", name: "Daiquiri", category: "Clássico", price: 22, description: "Rum, suco de limão e açúcar" },
+]
+
+const drinks: Drink[] = [
+    { id: "1", name: "Caipirinha Premium", price: 12, category: "Coquetéis", image: "/caipirinha-premium.jpg", priceType: "per_person", popular: true },
+    { id: "caipirinha", name: "Caipirinha", price: 12, category: "Coquetéis", image: "/caipirinha.jpg", priceType: "per_unit", },
+    { id: "caipiroska", name: "Caipiroska", price: 12, category: "Coquetéis", image: "/caipiroska.jpg", priceType: "per_unit", },
+    { id: "1a", name: "Open Bar Caipirinha", price: 60, category: "Open Bar", image: "/open-bar-caipirinha.jpg", priceType: "per_person", popular: true, },
+    { id: "1b", name: "Open Bar Caipirinha + Caipiroska", price: 95, category: "Open Bar", image: "/open-bar-caipirinha-caipiroska.jpg", priceType: "per_person", popular: true, },
+    { id: "2", name: "Mojito", price: 12, category: "Coquetéis", image: "/mojito.jpg", priceType: "per_person", },
+    { id: "3", name: "Cuba Libre", price: 12, category: "Coquetéis", image: "/cupa-livre.jpg", priceType: "per_person", },
+    { id: "aperol-spritz", name: "Aperol Spritz", price: 12, category: "Coquetéis", image: "/aperol-spritz.jpg", priceType: "per_person", },
+    { id: "4", name: "Gin Tônica", price: 12, category: "Coquetéis", image: "/gin-tonica.jpg", priceType: "per_person", },
+    { id: "5", name: "Cerveja Artesanal", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+    { id: "6", name: "Cerveja Premium", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+    { id: "7", name: "Vinho Tinto", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+    { id: "8", name: "Vinho Branco", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1514361892635-cebb9b6c7ca7?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+    { id: "9", name: "Espumante", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=200&h=200&fit=crop&crop=center", priceType: "per_person", popular: true, },
+    { id: "10", name: "Água", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+    { id: "11", name: "Refrigerante", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+    { id: "12", name: "Suco Natural", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+]
 
 export default function TenderesPage() {
   const { theme, setTheme } = useTheme()
@@ -78,185 +126,102 @@ export default function TenderesPage() {
     }
   }
 
-  const [drinks, setDrinks] = useState<Drink[]>([
-    {
-      id: "1",
-      name: "Caipirinha Premium",
-      price: 12,
-      category: "Coquetéis",
-      image: "/caipirinha-premium.jpg",
-      priceType: "per_unit",
-      popular: true,
-    },
-    {
-      id: "caipirinha",
-      name: "Caipirinha",
-      price: 12,
-      category: "Coquetéis",
-      image: "/caipirinha.jpg",
-      priceType: "per_unit",
-    },
-    {
-      id: "caipiroska",
-      name: "Caipiroska",
-      price: 12,
-      category: "Coquetéis",
-      image: "/caipiroska.jpg",
-      priceType: "per_unit",
-    },
-    {
-      id: "1a",
-      name: "Open Bar Caipirinha",
-      price: 60,
-      category: "Open Bar",
-      image: "/open-bar-caipirinha.jpg",
-      priceType: "per_person",
-      popular: true,
-    },
-    {
-      id: "1b",
-      name: "Open Bar Caipirinha + Caipiroska",
-      price: 95,
-      category: "Open Bar",
-      image: "/open-bar-caipirinha-caipiroska.jpg",
-      priceType: "per_person",
-      popular: true,
-    },
-    {
-      id: "2",
-      name: "Mojito",
-      price: 12,
-      category: "Coquetéis",
-      image: "/mojito.jpg",
-      priceType: "per_person",
-    },
-    {
-      id: "3",
-      name: "Cuba Libre",
-      price: 12,
-      category: "Coquetéis",
-      image: "/cupa-livre.jpg",
-      priceType: "per_person",
-    },
-    {
-      id: "aperol-spritz",
-      name: "Aperol Spritz",
-      price: 12,
-      category: "Coquetéis",
-      image: "/aperol-spritz.jpg",
-      priceType: "per_person",
-    },
-    {
-      id: "4",
-      name: "Gin Tônica",
-      price: 12,
-      category: "Coquetéis",
-      image: "/gin-tonica.jpg",
-      priceType: "per_person",
-    },
-    {
-      id: "5",
-      name: "Cerveja Artesanal",
-      price: 12,
-      category: "Cervejas",
-      image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-    {
-      id: "6",
-      name: "Cerveja Premium",
-      price: 12,
-      category: "Cervejas",
-      image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-    {
-      id: "7",
-      name: "Vinho Tinto",
-      price: 12,
-      category: "Vinhos",
-      image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-    {
-      id: "8",
-      name: "Vinho Branco",
-      price: 12,
-      category: "Vinhos",
-      image: "https://images.unsplash.com/photo-1514361892635-cebb9b6c7ca7?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-    {
-      id: "9",
-      name: "Espumante",
-      price: 12,
-      category: "Vinhos",
-      image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-      popular: true,
-    },
-    {
-      id: "10",
-      name: "Água",
-      price: 12,
-      category: "Não Alcoólicos",
-      image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-    {
-      id: "11",
-      name: "Refrigerante",
-      price: 12,
-      category: "Não Alcoólicos",
-      image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-    {
-      id: "12",
-      name: "Suco Natural",
-      price: 12,
-      category: "Não Alcoólicos",
-      image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center",
-      priceType: "per_person",
-    },
-  ])
+  const [selectedDrinks, setSelectedDrinks] = useState<{ [key: string]: number }>({})
+  const [people, setPeople] = useState<number>(0)
+  const [hours, setHours] = useState<number>(0)
+  const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
 
-  // Planos Completos
-  const completePlans: CompletePlan[] = [
-    {
-      id: "plan-festa",
-      name: "Plano Festa",
-      price: 1500,
-      description: "Ideal para pequenas comemorações, com os drinks mais populares.",
-      drinks: ["Caipirinha Premium", "Mojito", "Gin Tônica", "Cuba Libre"],
-      popular: true,
-    },
-    {
-      id: "plan-casamento",
-      name: "Plano Casamento",
-      price: 3500,
-      description: "Uma seleção sofisticada para um dia inesquecível.",
-      drinks: ["Aperol Spritz", "Gin Tônica", "Espumante", "Vinho Tinto", "Vinho Branco"],
-      popular: true,
-    },
-    {
-      id: "plan-corporativo",
-      name: "Plano Corporativo",
-      price: 2500,
-      description: "Opções clássicas e não alcoólicas para eventos de negócios.",
-      drinks: ["Gin Tônica", "Cuba Libre", "Suco Natural", "Água", "Refrigerante"],
-      popular: false,
-    },
-  ]
-  
-  const [selectedDrinks, setSelectedDrinks] = useState<Record<string, number>>({})
-  const [numberOfPeople, setNumberOfPeople] = useState<number>(0)
-  const [eventDuration, setEventDuration] = useState<number>(0)
-  const [budget, setBudget] = useState<number>(0)
-  const [bartenders, setBartenders] = useState<number>(0)
-  const [budgetMode, setBudgetMode] = useState<"complete-plan" | "custom" | "drinker-mode">("complete-plan")
-  const [selectedPlan, setSelectedPlan] = useState<CompletePlan | null>(null)
-  
+  const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
+    if (quantity <= 0) {
+      const newSelected = { ...selectedDrinks }
+      delete newSelected[drinkId]
+      setSelectedDrinks(newSelected)
+    } else {
+      setSelectedDrinks((prev) => ({
+        ...prev,
+        [drinkId]: quantity,
+      }))
+    }
+  }
+
+  const calculateBartenders = () => {
+    if (people <= 0) return 0
+    if (people <= 50) return 1
+    if (people <= 100) return 2
+    if (people <= 150) return 3
+    return Math.ceil(people / 50)
+  }
+
+  const budgetResult = useMemo(() => {
+    const TRANSPORTATION_FEE = 150
+    const bartenders = calculateBartenders()
+
+    if (isDrinkeiraMode) {
+      let bartenderCost = bartenders * 100
+      let extraHours = 0
+      
+      if (hours > 4) {
+        extraHours = hours - 4
+        const extraCost = bartenders * extraHours * 15
+        bartenderCost += extraCost
+      }
+      
+      const total = bartenderCost + TRANSPORTATION_FEE
+      return { total, transportFee: TRANSPORTATION_FEE, bartenderCost, bartenders, extraHours, subtotal: bartenderCost }
+    }
+
+    let subtotal = 0
+    Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
+      const drink = drinks.find((d) => d.id === drinkId)
+      if (drink) {
+        if (drink.priceType === "per_unit") {
+          subtotal += drink.price * quantity
+        } else { // per_person
+          subtotal += drink.price * quantity * people
+        }
+      }
+    })
+
+    const total = subtotal + TRANSPORTATION_FEE
+    return { total, transportFee: TRANSPORTATION_FEE, subtotal, bartenders }
+  }, [isDrinkeiraMode, selectedDrinks, people, hours])
+
+  const sendToWhatsApp = () => {
+    let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
+    message += `*Cliente:* ${userData.name || "Não informado"}\n`
+    message += `*Contato:* ${userData.phone || "Não informado"}\n\n`
+    message += `--- DETALHES DO EVENTO ---\n`
+    message += `👥 Convidados: ${people}\n`
+    message += `⏰ Duração: ${hours} horas\n`
+    message += `👨‍🍳 Bartenders: ${budgetResult.bartenders}\n\n`
+
+    if (isDrinkeiraMode) {
+        message += `--- MODO DRINKEIRA ---\n`
+        message += `Custo dos Bartenders: ${budgetResult.bartenderCost?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+    } else {
+        message += `--- MODO PRÉ-COMPRA ---\n`
+        message += `Custo dos Drinks: ${budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n\n`
+        message += `Drinks Selecionados:\n`
+        Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
+            const drink = drinks.find(d => d.id === drinkId)
+            if(drink) message += `- ${quantity}x ${drink.name}\n`
+        })
+    }
+
+    message += `\n---------------------------------\n`
+    message += `*VALOR TOTAL: ${(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}*`
+
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=5585994330680&text=${encodeURIComponent(message)}`
+    window.open(whatsappUrl, "_blank")
+  }
+
+  const categories = [...new Set(drinks.map((drink) => drink.category))]
+  const caipirinhas = drinkeiraMenu.filter((drink) => drink.category === "Caipirinha")
+  const caipiroskas = drinkeiraMenu.filter((drink) => drink.category === "Caipiroska")
+  const outrosClassicos = drinkeiraMenu.filter((drink) => drink.category === "Clássico")
+
   // Efeito para o toast
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null)
   useEffect(() => {
@@ -270,112 +235,6 @@ export default function TenderesPage() {
     setToast({ message, type })
   }
 
-  const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
-    setSelectedDrinks((prev) => {
-      const newSelectedDrinks = { ...prev }
-      if (quantity > 0) {
-        newSelectedDrinks[drinkId] = quantity
-      } else {
-        delete newSelectedDrinks[drinkId]
-      }
-      return newSelectedDrinks
-    })
-  }
-
-  const handleSelectPlan = (plan: CompletePlan) => {
-    setSelectedPlan(plan);
-    const newSelectedDrinks: Record<string, number> = {};
-    drinks.forEach(drink => {
-      if (plan.drinks.includes(drink.name)) {
-        newSelectedDrinks[drink.id] = 0; // Defaulting to 0, assuming user will specify quantity
-      }
-    });
-    setSelectedDrinks(newSelectedDrinks);
-    setBudgetMode('complete-plan');
-  };
-
-  const calculateBartenders = () => {
-    if (numberOfPeople > 0) {
-      const calculatedBartenders = Math.ceil(numberOfPeople / 50)
-      setBartenders(calculatedBartenders)
-    } else {
-      setBartenders(0)
-    }
-  }
-
-  const calculateBudget = () => {
-    let total = 0
-    if (budgetMode === "custom") {
-      for (const drinkId in selectedDrinks) {
-        const drink = drinks.find((d) => d.id === drinkId)
-        const quantity = selectedDrinks[drinkId]
-        if (drink && quantity > 0) {
-          if (drink.priceType === "per_person") {
-            total += drink.price * numberOfPeople
-          } else {
-            total += drink.price * quantity
-          }
-        }
-      }
-    } else if (budgetMode === "complete-plan" && selectedPlan) {
-      total = selectedPlan.price
-    }
-    setBudget(total)
-  }
-
-  useEffect(() => {
-    calculateBudget()
-    calculateBartenders()
-  }, [selectedDrinks, numberOfPeople, eventDuration, budgetMode, selectedPlan])
-
-  const sendToWhatsApp = () => {
-    const formatCurrency = (value: number) => {
-      return value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })
-    }
-
-    let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
-    message += `*Cliente:* ${userData.name}\n`
-    message += `*Cidade:* ${userData.city} - ${userData.state}\n`
-    message += `--------------------------------------\n`
-    message += `*Detalhes do Evento*\n`
-    message += `*Número de Pessoas:* ${numberOfPeople}\n`
-    message += `*Duração do Evento:* ${eventDuration} horas\n`
-    message += `*Bartenders Sugeridos:* ${bartenders}\n`
-    message += `--------------------------------------\n`
-
-    if (budgetMode === "complete-plan" && selectedPlan) {
-      message += `*Plano Selecionado: ${selectedPlan.name}*\n\n`
-      message += `*Drinks Inclusos:*\n`
-      selectedPlan.drinks.forEach((drinkName) => {
-        message += `- ${drinkName}\n`
-      })
-    } else {
-      message += `*Drinks Selecionados (Plano Personalizado):*\n`
-      if (Object.keys(selectedDrinks).length > 0) {
-        for (const drinkId in selectedDrinks) {
-          const drink = drinks.find((d) => d.id === drinkId)
-          if (drink) {
-            if (drink.priceType === "per_person") {
-              message += `- ${drink.name} (para ${numberOfPeople} pessoas)\n`
-            } else {
-              message += `- ${selectedDrinks[drinkId]}x ${drink.name}\n`
-            }
-          }
-        }
-      } else {
-        message += `- Nenhum drink selecionado\n`
-      }
-    }
-
-    message += `--------------------------------------\n`
-    message += `*Orçamento Total Estimado:*\n`
-    message += `*${formatCurrency(budget)}*\n\n`
-    message += `_Este é um orçamento preliminar. Aguarde nosso contato para confirmação e detalhes adicionais._`
-
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=5585994330680&text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, "_blank")
-  }
-  
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
       {/* Header */}
@@ -428,23 +287,23 @@ export default function TenderesPage() {
       
       {/* Hero Section */}
       <section className="py-12 md:py-20 text-center relative overflow-hidden">
-         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 animate-pulse"></div>
-         <div className="container mx-auto px-4 relative z-10">
-           <div className="max-w-4xl mx-auto">
-             <h2 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
-               Drinks <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Perfeitos</span>
-               <br className="hidden md:block"/>para Seu Evento
-             </h2>
-             <p className="text-lg md:text-2xl text-gray-300 mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed">
-                Monte seu pacote personalizado de drinks premium e receba um orçamento instantâneo. Transforme seu evento em uma experiência inesquecível.
-             </p>
-             <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 md:gap-8 text-sm text-gray-300">
-                <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-5 w-5 text-green-400" /> <span className="font-medium">Drinks Premium</span></div>
-                <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-5 w-5 text-blue-400" /> <span className="font-medium">Serviço Profissional</span></div>
-                <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-5 w-5 text-purple-400" /> <span className="font-medium">Orçamento Instantâneo</span></div>
-             </div>
-           </div>
-         </div>
+        <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 animate-pulse"></div>
+        <div className="container mx-auto px-4 relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
+              Drinks <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Perfeitos</span>
+              <br className="hidden md:block"/>para Seu Evento
+            </h2>
+            <p className="text-lg md:text-2xl text-gray-300 mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed">
+               Monte seu pacote personalizado de drinks premium e receba um orçamento instantâneo. Transforme seu evento em uma experiência inesquecível.
+            </p>
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 md:gap-8 text-sm text-gray-300">
+               <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-5 w-5 text-green-400" /> <span className="font-medium">Drinks Premium</span></div>
+               <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-5 w-5 text-blue-400" /> <span className="font-medium">Serviço Profissional</span></div>
+               <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-5 w-5 text-purple-400" /> <span className="font-medium">Orçamento Instantâneo</span></div>
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Main Content */}
@@ -470,39 +329,71 @@ export default function TenderesPage() {
                         <h4 className="font-semibold text-green-300">Modo Drinkeira</h4>
                         <p className="text-sm text-green-400">Bartender vende drinks na hora</p>
                      </div>
-                     <Button variant="outline" size="sm" className="border-green-600 hover:bg-green-900/50 text-green-300">Ativar</Button>
+                     <Button 
+                        onClick={() => setIsDrinkeiraMode(!isDrinkeiraMode)}
+                        variant={isDrinkeiraMode ? "default" : "outline"}
+                        className={isDrinkeiraMode ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-400 text-green-300 hover:bg-green-900"}
+                      >
+                        {isDrinkeiraMode ? "Ativado" : "Ativar"}
+                     </Button>
                   </div>
                  <div className="space-y-3">
-                   <Label htmlFor="people" className="flex items-center space-x-2 text-sm font-medium text-gray-200">
-                     <Users className="h-4 w-4 text-purple-400" />
-                     <span>Número de Pessoas</span>
-                   </Label>
-                   <Input 
-                     type="number" 
-                     id="people" 
-                     placeholder="Ex: 50" 
-                     value={numberOfPeople || ''} 
-                     onChange={(e) => setNumberOfPeople(parseInt(e.target.value))}
-                     className="rounded-xl h-12 placeholder-gray-400"
-                     min="1"
+                   <Label htmlFor="people" className="text-gray-300">Número de Convidados</Label>
+                   <Input
+                     id="people"
+                     type="number"
+                     value={people}
+                     onChange={(e) => setPeople(Number(e.target.value))}
+                     className="bg-gray-700 border-gray-600 text-white"
+                     placeholder="Ex: 50"
                    />
                  </div>
                  <div className="space-y-3">
-                   <Label htmlFor="hours" className="flex items-center space-x-2 text-sm font-medium text-gray-200">
-                     <Clock className="h-4 w-4 text-purple-400" />
-                     <span>Duração (horas)</span>
-                   </Label>
-                   <Input 
-                     type="number" 
-                     id="hours" 
-                     placeholder="Ex: 4" 
-                     value={eventDuration || ''} 
-                     onChange={(e) => setEventDuration(parseInt(e.target.value))}
-                     className="rounded-xl h-12 placeholder-gray-400"
-                     min="1"
-                     max="12"
+                   <Label htmlFor="hours" className="text-gray-300">Duração do Evento (horas)</Label>
+                   <Input
+                     id="hours"
+                     type="number"
+                     value={hours}
+                     onChange={(e) => setHours(Number(e.target.value))}
+                     className="bg-gray-700 border-gray-600 text-white"
+                     placeholder="Ex: 4"
                    />
                  </div>
+                 
+                 {/* Resumo do Orçamento */}
+                 {(people > 0 || hours > 0) && (
+                   <div className="mt-6 space-y-4">
+                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
+                       <Sparkles className="h-6 w-6 text-yellow-300" />
+                       Resumo do Orçamento
+                     </h3>
+                     <div className="space-y-2 text-gray-200 text-lg">
+                       <div className="flex justify-between items-center">
+                         <span>
+                            {isDrinkeiraMode ? "Custo Bartenders" : "Custo Drinks"}
+                         </span>
+                         <span className="font-semibold">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                       </div>
+                       <div className="flex justify-between items-center bg-purple-500/10 p-3 rounded-lg">
+                         <span>Taxa de Locomoção</span>
+                         <span className="font-semibold">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                       </div>
+                     </div>
+                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4 flex justify-between items-center mt-4">
+                       <span className="text-2xl font-bold text-white">Total</span>
+                       <span className="text-3xl font-bold text-white">
+                         {(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                       </span>
+                     </div>
+                     <Button 
+                       onClick={sendToWhatsApp}
+                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg h-14 rounded-xl shadow-lg mt-4"
+                     >
+                       <MessageCircle className="mr-2 h-5 w-5" />
+                       Solicitar Orçamento
+                     </Button>
+                   </div>
+                 )}
                </CardContent>
              </Card>
           </div>
@@ -512,144 +403,164 @@ export default function TenderesPage() {
             
              <Card className="rounded-lg text-card-foreground bg-gray-800/80 backdrop-blur-md shadow-xl border-0 border-gray-700">
                 <CardContent className="p-4">
-                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                     <Button onClick={() => setBudgetMode('complete-plan')} className={`h-10 px-4 py-6 text-base ${budgetMode === 'complete-plan' ? 'bg-gradient-to-r from-purple-600 to-pink-600' : ''}`}><Sparkles className="h-5 w-5 mr-2" />Planos Prontos</Button>
-                     <Button onClick={() => setBudgetMode('custom')} variant="outline" className={`h-10 px-4 py-6 text-base border-gray-600 text-gray-300 hover:bg-gray-700 ${budgetMode === 'custom' ? 'bg-gray-700' : ''}`}><Calculator className="h-5 w-5 mr-2" />Monte seu Plano</Button>
-                     <Button onClick={() => setBudgetMode('drinker-mode')} variant="outline" className={`h-10 px-4 py-6 text-base border-gray-600 text-gray-300 hover:bg-gray-700 ${budgetMode === 'drinker-mode' ? 'bg-gray-700' : ''}`}><Wine className="h-5 w-5 mr-2" />Modo Drinkeira</Button>
+                   <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-8 border border-purple-500/30 shadow-2xl mb-8">
+                     <h3 className="text-3xl font-bold text-center text-white mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                       <Button 
+                         onClick={() => setIsDrinkeiraMode(false)}
+                         className={`h-24 text-xl font-bold transition-all duration-300 ${
+                           !isDrinkeiraMode 
+                             ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-xl shadow-purple-500/40 scale-105 border-2 border-purple-300' 
+                             : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20'
+                         }`}
+                       >
+                         <div className="flex flex-col items-center gap-2">
+                           <Sparkles className="h-8 w-8 text-yellow-300" />
+                           <span className="text-white">Planos Completos</span>
+                           <p className="text-sm text-purple-200">Pacotes prontos</p>
+                         </div>
+                       </Button>
+                       <Button 
+                         onClick={() => setIsDrinkeiraMode(true)}
+                         className={`h-24 text-xl font-bold transition-all duration-300 ${
+                           isDrinkeiraMode 
+                             ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 shadow-xl shadow-blue-500/40 scale-105 border-2 border-blue-300' 
+                             : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20'
+                         }`}
+                       >
+                         <div className="flex flex-col items-center gap-2">
+                           <Calculator className="h-8 w-8 text-cyan-300" />
+                           <span className="text-white">Orçamento Detalhado</span>
+                           <p className="text-sm text-cyan-200">Monte seu plano</p>
+                         </div>
+                       </Button>
+                     </div>
                    </div>
                 </CardContent>
              </Card>
 
             {/* Conteúdo dinâmico baseado no modo */}
-            {budgetMode === 'complete-plan' && (
-              <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0 overflow-hidden border border-gray-700">
-                  <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 to-emerald-500/5"></div>
-                  <CardHeader className="relative z-10">
-                    <CardTitle className="flex items-center space-x-3 text-2xl text-white">
-                      <div className="p-2 bg-gradient-to-r from-green-500 to-emerald-500 rounded-lg">
-                        <Sparkles className="h-6 w-6 text-white" />
-                      </div>
-                      <span>Planos Completos</span>
-                    </CardTitle>
-                    <CardDescription className="text-gray-300">
-                      Pacotes prontos para facilitar sua escolha e garantir o sucesso do seu evento.
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="relative z-10">
-                    <div className="grid md:grid-cols-1 lg:grid-cols-2 gap-6">
-                      {completePlans.map((plan) => (
-                        <div
-                          key={plan.id}
-                          onClick={() => handleSelectPlan(plan)}
-                          className={`group relative bg-gradient-to-br from-gray-700 to-gray-800 rounded-xl border-2 p-6 hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer ${
-                            selectedPlan?.id === plan.id
-                              ? "border-green-500 shadow-green-500/20"
-                              : "border-gray-600 hover:border-green-500/50"
-                          }`}
-                        >
-                          {plan.popular && (
-                            <Badge className="absolute -top-2 -right-2 bg-gradient-to-r from-yellow-500 to-orange-500 text-white border-0 z-10">
-                              <Star className="h-3 w-3 mr-1" />
-                              Popular
-                            </Badge>
-                          )}
-                          {selectedPlan?.id === plan.id && (
-                            <Badge className="absolute -top-2 -left-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white border-0 z-10">
-                              <CheckCircle className="h-3 w-3 mr-1" />
-                              Selecionado
-                            </Badge>
-                          )}
-                          <h3 className="text-xl font-bold text-green-300 mb-2">{plan.name}</h3>
-                          <p className="text-sm text-gray-300 mb-4 h-10">{plan.description}</p>
-                          <div className="mb-4">
-                            <p className="text-xs text-gray-400 mb-1">Incluso:</p>
-                            <div className="flex flex-wrap gap-2">
-                              {plan.drinks.map(drink => (
-                                <Badge key={drink} variant="outline" className="text-xs border-green-700 text-green-300">{drink}</Badge>
-                              ))}
+            {!isDrinkeiraMode && (
+              categories.map((category) => (
+                <div key={category}>
+                  <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
+                  <div className="grid md:grid-cols-2 gap-6">
+                    {drinks.filter((drink) => drink.category === category).map((drink) => (
+                      <Card key={drink.id} className={`bg-gray-800 border border-gray-700 transition-all ${selectedDrinks[drink.id] ? "border-purple-500" : ""}`}>
+                        <CardContent className="p-4 flex items-center gap-4">
+                          <img src={drink.image} alt={drink.name} className="w-24 h-24 rounded-lg object-cover" />
+                          <div className="flex-1 space-y-2">
+                            <h4 className="font-bold text-lg text-white">{drink.name}</h4>
+                            <p className="text-xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                              {drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                              <span className="text-xs text-gray-400"> / {drink.priceType === 'per_unit' ? 'unidade' : 'pessoa'}</span>
+                            </p>
+                            <div className="flex items-center justify-end gap-3 bg-gray-900/50 p-2 rounded-lg">
+                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)} disabled={!selectedDrinks[drink.id]}>-</Button>
+                              <span className="text-xl font-bold text-white w-8 text-center">{selectedDrinks[drink.id] || 0}</span>
+                              <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}>+</Button>
                             </div>
                           </div>
-                          <div className="text-3xl font-bold text-white text-right">R$ {plan.price}</div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </div>
+              ))
             )}
 
-            {budgetMode === 'custom' && (
-              <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0 overflow-hidden border border-gray-700">
-                 <CardHeader>
-                   <CardTitle className="flex items-center space-x-3 text-2xl text-white">
-                      <div className="p-2 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg">
-                         <Wine className="h-6 w-6 text-white" />
+            {isDrinkeiraMode && (
+              <div className="space-y-8 bg-gray-900 p-8 rounded-xl border border-gray-700">
+                {/* Abas de Navegação */}
+                <div className="flex justify-center gap-4 mb-8">
+                  <Button variant="ghost" onClick={() => document.getElementById('caipirinhas-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-lg font-semibold text-green-400 hover:bg-green-500/10 hover:text-green-300">Caipirinhas</Button>
+                  <Button variant="ghost" onClick={() => document.getElementById('caipiroskas-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-lg font-semibold text-blue-400 hover:bg-blue-500/10 hover:text-blue-300">Caipiroskas</Button>
+                  <Button variant="ghost" onClick={() => document.getElementById('classicos-section')?.scrollIntoView({ behavior: 'smooth' })} className="text-lg font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300">Clássicos</Button>
+                </div>
+
+                {/* Caipirinhas */}
+                <div id="caipirinhas-section" className="p-6 rounded-lg bg-gray-800/50 border border-green-500/20">
+                  <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {caipirinhas.map((drink) => (
+                      <div key={drink.id} className="bg-gray-800 rounded-lg p-4 shadow-lg border border-gray-700">
+                        <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-lg text-white">{drink.name}</h4><span className="font-bold text-lg text-green-400">{drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
+                        <p className="text-sm text-gray-400">{drink.description}</p>
                       </div>
-                      <span>Monte Seu Plano - Escolha os Drinks</span>
-                   </CardTitle>
-                   <CardDescription className="text-gray-300">
-                      Selecione os drinks e as quantidades para criar um pacote sob medida.
-                   </CardDescription>
-                 </CardHeader>
-                 <CardContent>
-                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                      {drinks.map((drink) => (
-                        <DrinkCard 
-                           key={drink.id} 
-                           drink={drink} 
-                           quantity={selectedDrinks[drink.id] || 0}
-                           onQuantityChange={handleDrinkQuantityChange}
-                        />
-                      ))}
-                   </div>
-                 </CardContent>
-              </Card>
-            )}
+                    ))}
+                  </div>
+                </div>
 
-            {budgetMode === 'drinker-mode' && (
-               <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0 overflow-hidden border border-gray-700 text-center">
-                  <CardHeader>
-                     <CardTitle className="flex items-center justify-center space-x-3 text-2xl text-white">
-                        <div className="p-2 bg-gradient-to-r from-red-500 to-orange-500 rounded-lg">
-                           <Heart className="h-6 w-6 text-white" />
-                        </div>
-                        <span>Modo Drinkeira</span>
-                     </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                     <p className="text-gray-300 mb-4">Neste modo, o bartender vai até o seu evento e vende os drinks diretamente aos convidados. Você não tem custo fixo, apenas fornece o espaço!</p>
-                     <p className="text-lg font-bold text-green-400">Entre em contato para mais detalhes!</p>
-                  </CardContent>
-               </Card>
-            )}
+                {/* Caipiroskas */}
+                <div id="caipiroskas-section" className="p-6 rounded-lg bg-gray-800/50 border border-blue-500/20">
+                  <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {caipiroskas.map((drink) => (
+                      <div key={drink.id} className="bg-gray-800 rounded-lg p-4 shadow-lg border border-gray-700">
+                        <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-lg text-white">{drink.name}</h4><span className="font-bold text-lg text-blue-400">{drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
+                        <p className="text-sm text-gray-400">{drink.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
 
-          </div>
-        </div>
-      </div>
-      
-      {/* Budget Summary & CTA */}
-      <div className="sticky bottom-0 z-50">
-        <div className="container mx-auto px-4 pb-4">
-          <div className="bg-gray-900/80 backdrop-blur-lg border-2 border-purple-500/50 rounded-2xl shadow-2xl p-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div className="flex-grow text-center md:text-left">
-              <p className="text-sm text-gray-300 font-medium">Orçamento Estimado</p>
-              <p className="text-4xl font-bold text-white tracking-tight">{
-                budget.toLocaleString("pt-BR", {
-                  style: "currency",
-                  currency: "BRL",
-                })
-              }</p>
-            </div>
-            <div className="flex flex-col md:flex-row items-center gap-4">
-              <div className="text-center">
-                <p className="text-sm text-gray-300">Bartenders</p>
-                <p className="text-2xl font-bold text-white">{bartenders}</p>
+                {/* Outros Clássicos */}
+                <div id="classicos-section" className="p-6 rounded-lg bg-gray-800/50 border border-red-500/20">
+                  <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {outrosClassicos.map((drink) => (
+                      <div key={drink.id} className="bg-gray-800 rounded-lg p-4 shadow-lg border border-gray-700">
+                        <div className="flex justify-between items-start mb-2"><h4 className="font-bold text-lg text-white">{drink.name}</h4><span className="font-bold text-lg text-red-400">{drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span></div>
+                        <p className="text-sm text-gray-400">{drink.description}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Como funciona Section */}
+                <section className="container mx-auto px-4 my-20">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div className="bg-gray-800 p-8 rounded-lg text-center border border-gray-700">
+                      <div className="inline-block bg-green-500 text-white p-4 rounded-full mb-4">
+                        <Users className="h-8 w-8" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-100 mb-2">Bartenders Profissionais</h3>
+                      <p className="text-lg text-green-400 font-semibold mb-2">R$ 100 por bartender</p>
+                      <p className="text-gray-400">Calculamos automaticamente quantos bartenders são necessários baseado no número de convidados</p>
+                    </div>
+                    <div className="bg-gray-800 p-8 rounded-lg text-center border border-gray-700">
+                      <div className="inline-block bg-purple-500 text-white p-4 rounded-full mb-4">
+                        <Wine className="h-8 w-8" />
+                      </div>
+                      <h3 className="text-2xl font-bold text-gray-100 mb-2">Variedade de Sabores</h3>
+                      <p className="text-lg text-purple-400 font-semibold mb-2">12 opções diferentes</p>
+                      <p className="text-gray-400">Desde sabores tradicionais até opções premium com ingredientes especiais</p>
+                    </div>
+                  </div>
+                  <div className="bg-gray-800 p-8 rounded-lg border border-gray-700">
+                    <h2 className="text-3xl font-bold text-yellow-400 text-center mb-8">Como Funciona</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                      <div>
+                        <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">1</div>
+                        <h4 className="text-xl font-bold text-gray-100 mb-2">Contratação</h4>
+                        <p className="text-gray-400">Você paga apenas pelos bartenders e taxa de locomoção</p>
+                      </div>
+                      <div>
+                        <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">2</div>
+                        <h4 className="text-xl font-bold text-gray-100 mb-2">No Evento</h4>
+                        <p className="text-gray-400">Bartender monta a drinkeira com todos os sabores disponíveis</p>
+                      </div>
+                      <div>
+                        <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">3</div>
+                        <h4 className="text-xl font-bold text-gray-100 mb-2">Venda Direta</h4>
+                        <p className="text-gray-400">Convidados escolhem sabores e pagam preços diferenciados</p>
+                      </div>
+                    </div>
+                  </div>
+                </section>
               </div>
-              <Separator orientation="vertical" className="h-10 hidden md:block bg-gray-600"/>
-              <Button onClick={sendToWhatsApp} size="lg" className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg h-16 w-full md:w-auto px-10 rounded-xl shadow-lg">
-                <WhatsappIcon className="h-6 w-6 mr-3" />
-                Falar com Atendente
-              </Button>
-            </div>
+            )}
+
           </div>
         </div>
       </div>
@@ -752,32 +663,6 @@ export default function TenderesPage() {
         </div>
       </footer>
     </div>
-  )
-}
-
-function DrinkCard({ drink, quantity, onQuantityChange }: { drink: Drink, quantity: number, onQuantityChange: (id: string, q: number) => void }) {
-  return (
-    <Card className="overflow-hidden bg-gray-800/80 border-gray-700 transition-all hover:border-purple-500/50 hover:shadow-lg">
-      <CardHeader className="p-0">
-        <img src={drink.image} alt={drink.name} className="w-full h-40 object-cover" />
-        {drink.popular && <Badge className="absolute top-2 right-2">Popular</Badge>}
-      </CardHeader>
-      <CardContent className="p-4">
-        <CardTitle className="text-lg text-white mb-1">{drink.name}</CardTitle>
-        <CardDescription className="text-sm text-gray-400 mb-4">{drink.category}</CardDescription>
-        <div className="flex items-center justify-between">
-          <p className="text-xl font-bold text-purple-400">
-            {drink.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-            <span className="text-xs text-gray-500"> {drink.priceType === "per_person" ? "/ pessoa" : "/ un"}</span>
-          </p>
-          <div className="flex items-center gap-2">
-            <Button size="icon" variant="outline" onClick={() => onQuantityChange(drink.id, Math.max(0, quantity - 1))}>-</Button>
-            <span className="w-10 text-center font-bold text-lg">{quantity}</span>
-            <Button size="icon" variant="outline" onClick={() => onQuantityChange(drink.id, quantity + 1)}>+</Button>
-          </div>
-        </div>
-      </CardContent>
-    </Card>
   )
 }
 
