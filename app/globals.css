@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
 }
 
 @layer utilities {
@@ -90,5 +95,52 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+  
+  /* Melhorar legibilidade dos inputs */
+  input, textarea, select {
+    font-family: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  
+  /* Melhorar contraste dos textos */
+  h1, h2, h3, h4, h5, h6 {
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.025em;
+  }
+  
+  /* Melhorar espaçamento dos parágrafos */
+  p {
+    line-height: 1.7;
+  }
+  
+  /* Estilos para o admin */
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  
+  /* Melhorar aparência dos textareas */
+  textarea {
+    font-family: inherit;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+  
+  /* Estilos para os badges de status */
+  .status-active {
+    @apply bg-green-900/50 text-green-200 border-green-700/50;
+  }
+  
+  .status-inactive {
+    @apply bg-red-900/50 text-red-200 border-red-700/50;
+  }
+  
+  .status-completed {
+    @apply bg-gray-900/50 text-gray-200 border-gray-700/50;
   }
 }

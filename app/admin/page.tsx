@@ -9,20 +9,37 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
+import { toast } from "@/components/ui/use-toast"
 
 export interface Drink {
   id: string
   name: string
+  description: string
   price: number
   category: string
   image: string
   priceType: "per_person" | "per_unit"
   popular?: boolean
+  premium?: boolean
+}
+
+export interface Event {
+  id: string
+  name: string
+  description: string
+  date: string
+  location: string
+  maxGuests: number
+  drinks: string[]
+  status: "active" | "inactive" | "completed"
+  createdAt: string
 }
 
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [drinks, setDrinks] = useState<Drink[]>([])
+  const [events, setEvents] = useState<Event[]>([])
+  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard'>('dashboard')
   
   // Login states
   const [password, setPassword] = useState("")
@@ -31,12 +48,14 @@ export default function AdminPage() {
   
   // Panel states
   const [editingDrink, setEditingDrink] = useState<Drink | null>(null)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const [isAddingNew, setIsAddingNew] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success")
 
-  const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar"]
+  const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar", "Caipirinha", "Caipiroska", "Clássico"]
+  const eventStatuses = ["active", "inactive", "completed"]
 
   // Check authentication on load
   useEffect(() => {
@@ -46,14 +65,68 @@ export default function AdminPage() {
     }
   }, [])
 
-  // Load drinks
+  // Load drinks and events
   useEffect(() => {
-    const saved = localStorage.getItem("tenderes_drinks")
-    if (saved) {
+    const savedDrinks = localStorage.getItem("tenderes_drinks")
+    const savedEvents = localStorage.getItem("tenderes_events")
+    
+    // Drinks padrão do menu principal
+    const defaultDrinks: Drink[] = [
+      { id: "1", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 12, category: "Coquetéis", image: "/caipirinha-premium.jpg", priceType: "per_person", popular: true, premium: true },
+      { id: "caipirinha", name: "Caipirinha", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Coquetéis", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caipiroska", name: "Caipiroska", description: "Vodka, limão, açúcar e gelo", price: 12, category: "Coquetéis", image: "/caipiroska.jpg", priceType: "per_unit" },
+      { id: "1a", name: "Open Bar Caipirinha", description: "Open bar completo com caipirinhas ilimitadas", price: 60, category: "Open Bar", image: "/open-bar-caipirinha.jpg", priceType: "per_person", popular: true },
+      { id: "1b", name: "Open Bar Caipirinha + Caipiroska", description: "Open bar com caipirinhas e caipiroskas ilimitadas", price: 95, category: "Open Bar", image: "/open-bar-caipirinha-caipiroska.jpg", priceType: "per_person", popular: true },
+      { id: "2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 12, category: "Coquetéis", image: "/mojito.jpg", priceType: "per_person" },
+      { id: "3", name: "Cuba Libre", description: "Rum, cola, limão e gelo", price: 12, category: "Coquetéis", image: "/cupa-livre.jpg", priceType: "per_person" },
+      { id: "aperol-spritz", name: "Aperol Spritz", description: "Aperol, prosecco, água com gás e laranja", price: 12, category: "Coquetéis", image: "/aperol-spritz.jpg", priceType: "per_person" },
+      { id: "4", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 12, category: "Coquetéis", image: "/gin-tonica.jpg", priceType: "per_person" },
+      { id: "5", name: "Cerveja Artesanal", description: "Cerveja artesanal premium", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "6", name: "Cerveja Premium", description: "Cerveja premium importada", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "7", name: "Vinho Tinto", description: "Vinho tinto seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "8", name: "Vinho Branco", description: "Vinho branco seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1514361892635-cebb9b6c7ca7?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "9", name: "Espumante", description: "Espumante premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=200&h=200&fit=crop&crop=center", priceType: "per_person", popular: true },
+      { id: "10", name: "Água", description: "Água mineral", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "11", name: "Refrigerante", description: "Refrigerante variados", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "12", name: "Suco Natural", description: "Suco natural de frutas", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      // Drinks da drinkeira
+      { id: "caip-1", name: "Caipirinha Tradicional", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
+      { id: "caip-2", name: "Caipirinha de Morango", description: "Cachaça, morango fresco, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
+      { id: "caip-3", name: "Caipirinha de Kiwi", description: "Cachaça, kiwi, açúcar e gelo", price: 15, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caip-4", name: "Caipirinha de Maracujá", description: "Cachaça, polpa de maracujá, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caip-5", name: "Caipirinha de Abacaxi", description: "Cachaça, abacaxi fresco, açúcar e gelo", price: 13, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caip-6", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 18, category: "Caipirinha", image: "/caipirinha-premium.jpg", priceType: "per_unit", premium: true },
+      { id: "caipiroska-1", name: "Caipiroska Tradicional", description: "Vodka, limão, açúcar e gelo", price: 13, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
+      { id: "caipiroska-2", name: "Caipiroska de Morango", description: "Vodka, morango fresco, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
+      { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", description: "Vodka, mix de frutas vermelhas, açúcar e gelo", price: 16, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
+      { id: "caipiroska-4", name: "Caipiroska de Maracujá", description: "Vodka, polpa de maracujá, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
+      { id: "caipiroska-5", name: "Caipiroska de Pêssego", description: "Vodka, pêssego em calda, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
+      { id: "caipiroska-6", name: "Caipiroska Premium", description: "Vodka premium, limão siciliano, açúcar cristal", price: 20, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
+      { id: "classic-1", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 20, category: "Clássico", image: "/gin-tonica.jpg", priceType: "per_unit" },
+      { id: "classic-2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 18, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
+      { id: "classic-3", name: "Daiquiri", description: "Rum, suco de limão e açúcar", price: 22, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
+    ]
+    
+    if (savedDrinks) {
       try {
-        setDrinks(JSON.parse(saved))
+        setDrinks(JSON.parse(savedDrinks))
       } catch (error) {
         console.error("Error loading drinks:", error)
+        // Se houver erro, carrega os drinks padrão
+        setDrinks(defaultDrinks)
+        localStorage.setItem("tenderes_drinks", JSON.stringify(defaultDrinks))
+      }
+    } else {
+      // Se não há drinks salvos, carrega os padrão
+      setDrinks(defaultDrinks)
+      localStorage.setItem("tenderes_drinks", JSON.stringify(defaultDrinks))
+    }
+    
+    if (savedEvents) {
+      try {
+        setEvents(JSON.parse(savedEvents))
+      } catch (error) {
+        console.error("Error loading events:", error)
       }
     }
   }, [])
@@ -74,8 +147,8 @@ export default function AdminPage() {
     if (password === "18521852") {
       console.log("Login successful!")
       localStorage.setItem("tenderes_admin_token", "authenticated")
-      // Redirecionar para /proprietario
-      window.location.href = "/proprietario"
+      setIsLoggedIn(true)
+      showMessage("Login realizado com sucesso!", "success")
     } else {
       console.log("Login failed!")
       setLoginError("Palavra-chave incorreta. Tente novamente.")
@@ -90,62 +163,158 @@ export default function AdminPage() {
   }
 
   const handleAddNew = () => {
-    const newDrink: Drink = {
-      id: Date.now().toString(),
-      name: "",
-      price: 0,
-      category: "Coquetéis",
-      image: "/placeholder.svg?height=120&width=120",
-      priceType: "per_person",
-      popular: false
+    if (activeTab === 'drinks') {
+      const newDrink: Drink = {
+        id: Date.now().toString(),
+        name: "",
+        description: "",
+        price: 0,
+        category: "Coquetéis",
+        image: "/placeholder.svg?height=120&width=120",
+        priceType: "per_person",
+        popular: false,
+        premium: false
+      }
+      setEditingDrink(newDrink)
+      setEditingEvent(null)
+    } else if (activeTab === 'events') {
+      const newEvent: Event = {
+        id: Date.now().toString(),
+        name: "",
+        description: "",
+        date: "",
+        location: "",
+        maxGuests: 0,
+        drinks: [],
+        status: "active",
+        createdAt: new Date().toISOString()
+      }
+      setEditingEvent(newEvent)
+      setEditingDrink(null)
     }
-    setEditingDrink(newDrink)
     setIsAddingNew(true)
   }
 
-  const handleEdit = (drink: Drink) => {
-    setEditingDrink({ ...drink })
+  const handleEdit = (item: Drink | Event) => {
+    if (activeTab === 'drinks') {
+      setEditingDrink({ ...item as Drink })
+      setEditingEvent(null)
+    } else if (activeTab === 'events') {
+      setEditingEvent({ ...item as Event })
+      setEditingDrink(null)
+    }
     setIsAddingNew(false)
   }
 
-  const handleDelete = (drinkId: string) => {
-    const updatedDrinks = drinks.filter(drink => drink.id !== drinkId)
-    setDrinks(updatedDrinks)
-    localStorage.setItem("tenderes_drinks", JSON.stringify(updatedDrinks))
-    showMessage("Drink removido com sucesso!", "success")
+  const handleDelete = (id: string) => {
+    if (activeTab === 'drinks') {
+      const updatedDrinks = drinks.filter(drink => drink.id !== id)
+      saveDrinks(updatedDrinks)
+      showMessage("Drink removido com sucesso!", "success")
+    } else if (activeTab === 'events') {
+      const updatedEvents = events.filter(event => event.id !== id)
+      setEvents(updatedEvents)
+      localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents))
+      showMessage("Evento removido com sucesso!", "success")
+    }
   }
 
   const handleSave = () => {
-    if (!editingDrink) return
+    if (activeTab === 'drinks' && editingDrink) {
+      if (!editingDrink.name.trim() || editingDrink.price <= 0) {
+        showMessage("Preencha todos os campos obrigatórios!", "error")
+        return
+      }
 
-    if (!editingDrink.name.trim() || editingDrink.price <= 0) {
-      showMessage("Preencha todos os campos obrigatórios!", "error")
-      return
-    }
+      let updatedDrinks: Drink[]
 
-    let updatedDrinks: Drink[]
+      if (isAddingNew) {
+        updatedDrinks = [...drinks, editingDrink]
+      } else {
+        updatedDrinks = drinks.map(drink => 
+          drink.id === editingDrink.id ? editingDrink : drink
+        )
+      }
 
-    if (isAddingNew) {
-      updatedDrinks = [...drinks, editingDrink]
-    } else {
-      updatedDrinks = drinks.map(drink => 
-        drink.id === editingDrink.id ? editingDrink : drink
+      saveDrinks(updatedDrinks)
+      setEditingDrink(null)
+      setIsAddingNew(false)
+      showMessage(
+        isAddingNew ? "Drink adicionado com sucesso!" : "Drink atualizado com sucesso!", 
+        "success"
+      )
+    } else if (activeTab === 'events' && editingEvent) {
+      if (!editingEvent.name.trim() || !editingEvent.date || !editingEvent.location) {
+        showMessage("Preencha todos os campos obrigatórios!", "error")
+        return
+      }
+
+      let updatedEvents: Event[]
+
+      if (isAddingNew) {
+        updatedEvents = [...events, editingEvent]
+      } else {
+        updatedEvents = events.map(event => 
+          event.id === editingEvent.id ? editingEvent : event
+        )
+      }
+
+      setEvents(updatedEvents)
+      localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents))
+      setEditingEvent(null)
+      setIsAddingNew(false)
+      showMessage(
+        isAddingNew ? "Evento adicionado com sucesso!" : "Evento atualizado com sucesso!", 
+        "success"
       )
     }
-
-    setDrinks(updatedDrinks)
-    localStorage.setItem("tenderes_drinks", JSON.stringify(updatedDrinks))
-    setEditingDrink(null)
-    setIsAddingNew(false)
-    showMessage(
-      isAddingNew ? "Drink adicionado com sucesso!" : "Drink atualizado com sucesso!", 
-      "success"
-    )
   }
 
   const handleCancel = () => {
     setEditingDrink(null)
+    setEditingEvent(null)
     setIsAddingNew(false)
+  }
+
+  const handleResetDrinks = () => {
+    const defaultDrinks: Drink[] = [
+      { id: "1", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 12, category: "Coquetéis", image: "/caipirinha-premium.jpg", priceType: "per_person", popular: true, premium: true },
+      { id: "caipirinha", name: "Caipirinha", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Coquetéis", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caipiroska", name: "Caipiroska", description: "Vodka, limão, açúcar e gelo", price: 12, category: "Coquetéis", image: "/caipiroska.jpg", priceType: "per_unit" },
+      { id: "1a", name: "Open Bar Caipirinha", description: "Open bar completo com caipirinhas ilimitadas", price: 60, category: "Open Bar", image: "/open-bar-caipirinha.jpg", priceType: "per_person", popular: true },
+      { id: "1b", name: "Open Bar Caipirinha + Caipiroska", description: "Open bar com caipirinhas e caipiroskas ilimitadas", price: 95, category: "Open Bar", image: "/open-bar-caipirinha-caipiroska.jpg", priceType: "per_person", popular: true },
+      { id: "2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 12, category: "Coquetéis", image: "/mojito.jpg", priceType: "per_person" },
+      { id: "3", name: "Cuba Libre", description: "Rum, cola, limão e gelo", price: 12, category: "Coquetéis", image: "/cupa-livre.jpg", priceType: "per_person" },
+      { id: "aperol-spritz", name: "Aperol Spritz", description: "Aperol, prosecco, água com gás e laranja", price: 12, category: "Coquetéis", image: "/aperol-spritz.jpg", priceType: "per_person" },
+      { id: "4", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 12, category: "Coquetéis", image: "/gin-tonica.jpg", priceType: "per_person" },
+      { id: "5", name: "Cerveja Artesanal", description: "Cerveja artesanal premium", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "6", name: "Cerveja Premium", description: "Cerveja premium importada", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "7", name: "Vinho Tinto", description: "Vinho tinto seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "8", name: "Vinho Branco", description: "Vinho branco seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1514361892635-cebb9b6c7ca7?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "9", name: "Espumante", description: "Espumante premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=200&h=200&fit=crop&crop=center", priceType: "per_person", popular: true },
+      { id: "10", name: "Água", description: "Água mineral", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "11", name: "Refrigerante", description: "Refrigerante variados", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      { id: "12", name: "Suco Natural", description: "Suco natural de frutas", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
+      // Drinks da drinkeira
+      { id: "caip-1", name: "Caipirinha Tradicional", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
+      { id: "caip-2", name: "Caipirinha de Morango", description: "Cachaça, morango fresco, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
+      { id: "caip-3", name: "Caipirinha de Kiwi", description: "Cachaça, kiwi, açúcar e gelo", price: 15, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caip-4", name: "Caipirinha de Maracujá", description: "Cachaça, polpa de maracujá, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caip-5", name: "Caipirinha de Abacaxi", description: "Cachaça, abacaxi fresco, açúcar e gelo", price: 13, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
+      { id: "caip-6", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 18, category: "Caipirinha", image: "/caipirinha-premium.jpg", priceType: "per_unit", premium: true },
+      { id: "caipiroska-1", name: "Caipiroska Tradicional", description: "Vodka, limão, açúcar e gelo", price: 13, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
+      { id: "caipiroska-2", name: "Caipiroska de Morango", description: "Vodka, morango fresco, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
+      { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", description: "Vodka, mix de frutas vermelhas, açúcar e gelo", price: 16, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
+      { id: "caipiroska-4", name: "Caipiroska de Maracujá", description: "Vodka, polpa de maracujá, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
+      { id: "caipiroska-5", name: "Caipiroska de Pêssego", description: "Vodka, pêssego em calda, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
+      { id: "caipiroska-6", name: "Caipiroska Premium", description: "Vodka premium, limão siciliano, açúcar cristal", price: 20, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
+      { id: "classic-1", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 20, category: "Clássico", image: "/gin-tonica.jpg", priceType: "per_unit" },
+      { id: "classic-2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 18, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
+      { id: "classic-3", name: "Daiquiri", description: "Rum, suco de limão e açúcar", price: 22, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
+    ]
+    
+    saveDrinks(defaultDrinks)
+    showMessage("Drinks resetados para os padrões originais!", "success")
   }
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -158,6 +327,23 @@ export default function AdminPage() {
       }
       reader.readAsDataURL(file)
     }
+  }
+
+  const saveDrinks = (newDrinks: Drink[]) => {
+    localStorage.setItem("tenderes_drinks", JSON.stringify(newDrinks))
+    setDrinks(newDrinks)
+    
+    // Disparar evento para notificar outras abas
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'tenderes_drinks',
+      newValue: JSON.stringify(newDrinks)
+    }))
+    
+    toast({
+      title: "Drinks salvos!",
+      description: "As alterações foram aplicadas automaticamente no site principal.",
+      duration: 3000,
+    })
   }
 
   // Login Screen
@@ -245,7 +431,7 @@ export default function AdminPage() {
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-white">Painel Administrativo</h1>
-                <p className="text-gray-300">Gerenciamento de Drinks</p>
+                <p className="text-gray-300">Gerenciamento Completo - TENDERES</p>
               </div>
             </div>
             <Button
@@ -260,78 +446,314 @@ export default function AdminPage() {
         </div>
       </header>
 
+      {/* Navigation Tabs */}
+      <div className="bg-gray-800/60 backdrop-blur-md border-b border-gray-700">
+        <div className="container mx-auto px-4">
+          <div className="flex space-x-1">
+            <Button
+              onClick={() => setActiveTab('dashboard')}
+              variant={activeTab === 'dashboard' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'dashboard' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Dashboard
+            </Button>
+            <Button
+              onClick={() => setActiveTab('drinks')}
+              variant={activeTab === 'drinks' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'drinks' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Drinks
+            </Button>
+            <Button
+              onClick={() => setActiveTab('events')}
+              variant={activeTab === 'events' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'events' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Eventos
+            </Button>
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-8">
-        <div className="grid xl:grid-cols-4 lg:grid-cols-3 gap-8">
-          {/* Drinks List */}
-          <div className="xl:col-span-3 lg:col-span-2">
-            <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="text-xl text-white">Drinks Cadastrados</CardTitle>
-                    <CardDescription className="text-gray-300">
-                      Gerencie todos os drinks do site
-                    </CardDescription>
+        {activeTab === 'dashboard' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+              <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Total de Drinks</p>
+                      <p className="text-3xl font-bold text-white">{drinks.length}</p>
+                    </div>
+                    <Wine className="h-8 w-8 text-purple-400" />
                   </div>
-                  <Button
-                    onClick={handleAddNew}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Novo Drink
-                  </Button>
-                </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Eventos Ativos</p>
+                      <p className="text-3xl font-bold text-white">
+                        {events.filter(e => e.status === 'active').length}
+                      </p>
+                    </div>
+                    <div className="h-8 w-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">✓</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Drinks Populares</p>
+                      <p className="text-3xl font-bold text-white">
+                        {drinks.filter(d => d.popular).length}
+                      </p>
+                    </div>
+                    <Star className="h-8 w-8 text-yellow-400" />
+                  </div>
+                </CardContent>
+              </Card>
+              <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Drinks Premium</p>
+                      <p className="text-3xl font-bold text-white">
+                        {drinks.filter(d => d.premium).length}
+                      </p>
+                    </div>
+                    <div className="h-8 w-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-sm font-bold">★</span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-xl text-white">Bem-vindo ao Painel Administrativo</CardTitle>
+                <CardDescription className="text-gray-300">
+                  Sistema completo de gerenciamento do TENDERES
+                </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {drinks.map((drink) => (
-                    <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
-                      <CardContent className="p-4">
-                        <div className="flex items-center justify-between mb-3">
-                          <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
-                            <Wine className="h-6 w-6 text-purple-300" />
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            <Button
-                              onClick={() => handleEdit(drink)}
-                              variant="outline"
-                              size="sm"
-                              className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              onClick={() => handleDelete(drink.id)}
-                              variant="outline"
-                              size="sm"
-                              className="border-red-600 text-red-300 hover:bg-red-900/50"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </div>
-                        </div>
-                        <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
-                        <div className="flex items-center space-x-2 mb-2">
-                          <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
-                            {drink.category}
-                          </Badge>
-                          <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">
-                            R$ {drink.price}
-                          </Badge>
-                        </div>
-                        {drink.popular && (
-                          <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
-                            <Star className="h-3 w-3 mr-1" />
-                            Popular
-                          </Badge>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white">Drinks Carregados</h3>
+                    <p className="text-gray-300">
+                      O sistema já carregou automaticamente todos os drinks do menu principal, incluindo:
+                    </p>
+                    <ul className="text-gray-300 space-y-1 text-sm">
+                      <li>• {drinks.filter(d => d.category === "Coquetéis").length} Coquetéis</li>
+                      <li>• {drinks.filter(d => d.category === "Cervejas").length} Cervejas</li>
+                      <li>• {drinks.filter(d => d.category === "Vinhos").length} Vinhos</li>
+                      <li>• {drinks.filter(d => d.category === "Não Alcoólicos").length} Não Alcoólicos</li>
+                      <li>• {drinks.filter(d => d.category === "Open Bar").length} Open Bar</li>
+                      <li>• {drinks.filter(d => d.category === "Caipirinha").length} Caipirinhas</li>
+                      <li>• {drinks.filter(d => d.category === "Caipiroska").length} Caipiroskas</li>
+                      <li>• {drinks.filter(d => d.category === "Clássico").length} Clássicos</li>
+                    </ul>
+                  </div>
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-semibold text-white">Funcionalidades</h3>
+                    <ul className="text-gray-300 space-y-2 text-sm">
+                      <li>• ✏️ Editar drinks existentes</li>
+                      <li>• ➕ Adicionar novos drinks</li>
+                      <li>• 🗑️ Remover drinks</li>
+                      <li>• 📅 Gerenciar eventos</li>
+                      <li>• 🖼️ Upload de imagens</li>
+                      <li>• ⭐ Marcar como popular/premium</li>
+                      <li>• 🔄 Resetar para padrões originais</li>
+                    </ul>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          </div>
+        )}
+
+        <div className="grid xl:grid-cols-4 lg:grid-cols-3 gap-8">
+          {/* Content Area */}
+          <div className="xl:col-span-3 lg:col-span-2">
+            {activeTab === 'drinks' && (
+              <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl text-white">Drinks Cadastrados</CardTitle>
+                      <CardDescription className="text-gray-300">
+                        Gerencie todos os drinks do site ({drinks.length} drinks)
+                      </CardDescription>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <Button
+                        onClick={handleResetDrinks}
+                        variant="outline"
+                        className="border-orange-600 text-orange-300 hover:bg-orange-900/50"
+                      >
+                        <span className="mr-2">🔄</span>
+                        Resetar
+                      </Button>
+                      <Button
+                        onClick={handleAddNew}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Novo Drink
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {drinks.map((drink) => (
+                      <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
+                              <Wine className="h-6 w-6 text-purple-300" />
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                onClick={() => handleEdit(drink)}
+                                variant="outline"
+                                size="sm"
+                                className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                onClick={() => handleDelete(drink.id)}
+                                variant="outline"
+                                size="sm"
+                                className="border-red-600 text-red-300 hover:bg-red-900/50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
+                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{drink.description}</p>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
+                              {drink.category}
+                            </Badge>
+                            <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">
+                              R$ {drink.price}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {drink.popular && (
+                              <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
+                                <Star className="h-3 w-3 mr-1" />
+                                Popular
+                              </Badge>
+                            )}
+                            {drink.premium && (
+                              <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50 text-xs">
+                                Premium
+                              </Badge>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === 'events' && (
+              <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-xl text-white">Eventos Cadastrados</CardTitle>
+                      <CardDescription className="text-gray-300">
+                        Gerencie todos os eventos
+                      </CardDescription>
+                    </div>
+                    <Button
+                      onClick={handleAddNew}
+                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                    >
+                      <Plus className="h-4 w-4 mr-2" />
+                      Novo Evento
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {events.map((event) => (
+                      <Card key={event.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-lg flex items-center justify-center">
+                              <span className="text-blue-300 font-bold">E</span>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                onClick={() => handleEdit(event)}
+                                variant="outline"
+                                size="sm"
+                                className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                onClick={() => handleDelete(event.id)}
+                                variant="outline"
+                                size="sm"
+                                className="border-red-600 text-red-300 hover:bg-red-900/50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <h4 className="font-semibold text-white mb-2">{event.name}</h4>
+                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{event.description}</p>
+                          <div className="space-y-1 text-xs text-gray-400">
+                            <p>📅 {new Date(event.date).toLocaleDateString('pt-BR')}</p>
+                            <p>📍 {event.location}</p>
+                            <p>👥 Máx: {event.maxGuests} convidados</p>
+                          </div>
+                          <div className="mt-3">
+                            <Badge className={`text-xs ${
+                              event.status === 'active' 
+                                ? 'bg-green-900/50 text-green-200 border-green-700/50'
+                                : event.status === 'completed'
+                                ? 'bg-gray-900/50 text-gray-200 border-gray-700/50'
+                                : 'bg-red-900/50 text-red-200 border-red-700/50'
+                            }`}>
+                              {event.status === 'active' ? 'Ativo' : event.status === 'completed' ? 'Concluído' : 'Inativo'}
+                            </Badge>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
 
           {/* Edit Form */}
@@ -339,7 +761,8 @@ export default function AdminPage() {
             <Card className="sticky top-8 bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
               <CardHeader>
                 <CardTitle className="text-lg text-white">
-                  {editingDrink ? (isAddingNew ? "Adicionar Drink" : "Editar Drink") : "Formulário"}
+                  {editingDrink ? (isAddingNew ? "Adicionar Drink" : "Editar Drink") : 
+                   editingEvent ? (isAddingNew ? "Adicionar Evento" : "Editar Evento") : "Formulário"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -354,6 +777,18 @@ export default function AdminPage() {
                         onChange={(e) => setEditingDrink(prev => prev ? { ...prev, name: e.target.value } : null)}
                         placeholder="Ex: Caipirinha Premium"
                         className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Descrição
+                      </Label>
+                      <textarea
+                        value={editingDrink.description}
+                        onChange={(e) => setEditingDrink(prev => prev ? { ...prev, description: e.target.value } : null)}
+                        placeholder="Descreva o drink..."
+                        className="w-full h-20 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 rounded-md p-2 resize-none"
                       />
                     </div>
 
@@ -452,6 +887,122 @@ export default function AdminPage() {
                       </Label>
                     </div>
 
+                    <div className="flex items-center space-x-3">
+                      <Switch
+                        checked={editingDrink.premium}
+                        onCheckedChange={(checked) => setEditingDrink(prev => prev ? { ...prev, premium: checked } : null)}
+                      />
+                      <Label className="text-sm font-medium text-gray-200">
+                        Marcar como Premium
+                      </Label>
+                    </div>
+
+                    <div className="flex space-x-2 pt-4">
+                      <Button
+                        onClick={handleCancel}
+                        variant="outline"
+                        className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={handleSave}
+                        className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        Salvar
+                      </Button>
+                    </div>
+                  </div>
+                ) : editingEvent ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Nome do Evento
+                      </Label>
+                      <Input
+                        value={editingEvent.name}
+                        onChange={(e) => setEditingEvent(prev => prev ? { ...prev, name: e.target.value } : null)}
+                        placeholder="Ex: Aniversário João"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Descrição
+                      </Label>
+                      <textarea
+                        value={editingEvent.description}
+                        onChange={(e) => setEditingEvent(prev => prev ? { ...prev, description: e.target.value } : null)}
+                        placeholder="Descreva o evento..."
+                        className="w-full h-20 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 rounded-md p-2 resize-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Data do Evento
+                      </Label>
+                      <Input
+                        type="date"
+                        value={editingEvent.date}
+                        onChange={(e) => setEditingEvent(prev => prev ? { ...prev, date: e.target.value } : null)}
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Local
+                      </Label>
+                      <Input
+                        value={editingEvent.location}
+                        onChange={(e) => setEditingEvent(prev => prev ? { ...prev, location: e.target.value } : null)}
+                        placeholder="Ex: Casa do João"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Máximo de Convidados
+                      </Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={editingEvent.maxGuests}
+                        onChange={(e) => setEditingEvent(prev => prev ? { ...prev, maxGuests: Number(e.target.value) } : null)}
+                        placeholder="50"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Status
+                      </Label>
+                      <Select
+                        value={editingEvent.status}
+                        onValueChange={(value: "active" | "inactive" | "completed") => setEditingEvent(prev => prev ? { ...prev, status: value } : null)}
+                      >
+                        <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-700 border-gray-600">
+                          <SelectItem value="active" className="text-white">
+                            Ativo
+                          </SelectItem>
+                          <SelectItem value="inactive" className="text-white">
+                            Inativo
+                          </SelectItem>
+                          <SelectItem value="completed" className="text-white">
+                            Concluído
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
                     <div className="flex space-x-2 pt-4">
                       <Button
                         onClick={handleCancel}
@@ -473,7 +1024,7 @@ export default function AdminPage() {
                   <div className="text-center py-8">
                     <Wine className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                     <p className="text-gray-400">
-                      Selecione um drink para editar ou clique em "Novo Drink"
+                      Selecione um item para editar ou clique em "Novo"
                     </p>
                   </div>
                 )}

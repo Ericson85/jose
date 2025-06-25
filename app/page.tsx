@@ -14,11 +14,13 @@ import { AnimatePresence, motion } from 'framer-motion'
 export interface Drink {
   id: string
   name: string
+  description: string
   price: number
   category: string
   image: string
   priceType: "per_person" | "per_unit"
   popular?: boolean
+  premium?: boolean
 }
 
 interface UserData {
@@ -27,6 +29,7 @@ interface UserData {
   address: string
   city: string
   state: string
+  phone: string
 }
 
 export interface CompletePlan {
@@ -67,23 +70,90 @@ const drinkeiraMenu: DrinkeiraDrink[] = [
 ]
 
 const drinks: Drink[] = [
-    { id: "1", name: "Caipirinha Premium", price: 12, category: "Coquetéis", image: "/caipirinha-premium.jpg", priceType: "per_person", popular: true },
-    { id: "caipirinha", name: "Caipirinha", price: 12, category: "Coquetéis", image: "/caipirinha.jpg", priceType: "per_unit", },
-    { id: "caipiroska", name: "Caipiroska", price: 12, category: "Coquetéis", image: "/caipiroska.jpg", priceType: "per_unit", },
-    { id: "1a", name: "Open Bar Caipirinha", price: 60, category: "Open Bar", image: "/open-bar-caipirinha.jpg", priceType: "per_person", popular: true, },
-    { id: "1b", name: "Open Bar Caipirinha + Caipiroska", price: 95, category: "Open Bar", image: "/open-bar-caipirinha-caipiroska.jpg", priceType: "per_person", popular: true, },
-    { id: "2", name: "Mojito", price: 12, category: "Coquetéis", image: "/mojito.jpg", priceType: "per_person", },
-    { id: "3", name: "Cuba Libre", price: 12, category: "Coquetéis", image: "/cupa-livre.jpg", priceType: "per_person", },
-    { id: "aperol-spritz", name: "Aperol Spritz", price: 12, category: "Coquetéis", image: "/aperol-spritz.jpg", priceType: "per_person", },
-    { id: "4", name: "Gin Tônica", price: 12, category: "Coquetéis", image: "/gin-tonica.jpg", priceType: "per_person", },
-    { id: "5", name: "Cerveja Artesanal", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
-    { id: "6", name: "Cerveja Premium", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
-    { id: "7", name: "Vinho Tinto", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
-    { id: "8", name: "Vinho Branco", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1514361892635-cebb9b6c7ca7?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
-    { id: "9", name: "Espumante", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=200&h=200&fit=crop&crop=center", priceType: "per_person", popular: true, },
-    { id: "10", name: "Água", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
-    { id: "11", name: "Refrigerante", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
-    { id: "12", name: "Suco Natural", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person", },
+  {
+    id: "caipirinha",
+    name: "Caipirinha",
+    description: "Tradicional caipirinha brasileira com cachaça, limão e açúcar",
+    price: 15,
+    category: "Caipirinha",
+    image: "/caipirinha.jpg",
+    priceType: "per_person",
+    popular: true
+  },
+  {
+    id: "caipiroska",
+    name: "Caipiroska",
+    description: "Caipiroska refrescante com vodka, limão e açúcar",
+    price: 18,
+    category: "Caipiroska",
+    image: "/caipiroska.jpg",
+    priceType: "per_unit"
+  },
+  {
+    id: "caipirinha-premium",
+    name: "Caipirinha Premium",
+    description: "Caipirinha premium com cachaça de qualidade superior",
+    price: 20,
+    category: "Caipirinha",
+    image: "/caipirinha-premium.jpg",
+    priceType: "per_unit"
+  },
+  {
+    id: "aperol-spritz",
+    name: "Aperol Spritz",
+    description: "Cocktail italiano refrescante com Aperol e prosecco",
+    price: 25,
+    category: "Cocktails",
+    image: "/Aperol-Spritz.jpg",
+    priceType: "per_person",
+    popular: true
+  },
+  {
+    id: "gin-tonica",
+    name: "Gin Tônica",
+    description: "Gin tônica clássica com gim premium e água tônica",
+    price: 22,
+    category: "Cocktails",
+    image: "/gin-tonica.jpg",
+    priceType: "per_person",
+    popular: true
+  },
+  {
+    id: "mojito",
+    name: "Mojito",
+    description: "Mojito cubano com rum, hortelã, limão e açúcar",
+    price: 20,
+    category: "Cocktails",
+    image: "/mojito.jpg",
+    priceType: "per_person"
+  },
+  {
+    id: "cupa-livre",
+    name: "Cupa Livre",
+    description: "Cupa livre com frutas frescas e bebida à escolha",
+    price: 30,
+    category: "Especiais",
+    image: "/cupa-livre.jpg",
+    priceType: "per_person"
+  },
+  {
+    id: "open-bar-caipirinha",
+    name: "Open Bar Caipirinha",
+    description: "Open bar completo de caipirinhas durante o evento",
+    price: 50,
+    category: "Open Bar",
+    image: "/Open-bar-caipirinha.jpg",
+    priceType: "per_person"
+  },
+  {
+    id: "open-bar-caipirinha-caipiroska",
+    name: "Open Bar Caipirinha + Caipiroska",
+    description: "Open bar com caipirinhas e caipiroskas ilimitadas",
+    price: 60,
+    category: "Open Bar",
+    image: "/open-bar-caipirinha-caipiroska.jpg",
+    priceType: "per_person"
+  }
 ]
 
 const completePlans: CompletePlan[] = [
@@ -120,9 +190,15 @@ export default function TenderesPage() {
     age: 0,
     address: "",
     city: "",
-    state: ""
+    state: "",
+    phone: ""
   })
   const [isFormValid, setIsFormValid] = useState(false)
+  
+  // Estado para drinks dinâmicos (gerenciados pelo admin)
+  const [dynamicDrinks, setDynamicDrinks] = useState<Drink[]>([])
+  const [isLoadingDrinks, setIsLoadingDrinks] = useState(true)
+  const [showUpdateNotification, setShowUpdateNotification] = useState(false)
 
   // Verificar se o usuário já preencheu os dados
   useEffect(() => {
@@ -134,18 +210,69 @@ export default function TenderesPage() {
     }
   }, [])
 
+  // Carregar drinks do localStorage (gerenciados pelo admin)
+  useEffect(() => {
+    const loadDrinksFromAdmin = () => {
+      const savedDrinks = localStorage.getItem("tenderes_drinks")
+      if (savedDrinks) {
+        try {
+          const adminDrinks = JSON.parse(savedDrinks)
+          setDynamicDrinks(adminDrinks)
+          
+          // Mostrar notificação de atualização se não for o carregamento inicial
+          if (!isLoadingDrinks) {
+            setShowUpdateNotification(true)
+            setTimeout(() => setShowUpdateNotification(false), 3000)
+          }
+        } catch (error) {
+          console.error("Erro ao carregar drinks do admin:", error)
+          // Se houver erro, usa os drinks padrão
+          setDynamicDrinks(drinks)
+        }
+      } else {
+        // Se não há drinks salvos, usa os padrão
+        setDynamicDrinks(drinks)
+      }
+      setIsLoadingDrinks(false)
+    }
+
+    loadDrinksFromAdmin()
+
+    // Listener para mudanças no localStorage
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "tenderes_drinks") {
+        loadDrinksFromAdmin()
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+    
+    // Polling para verificar mudanças (para mesma aba)
+    const interval = setInterval(loadDrinksFromAdmin, 2000)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+      clearInterval(interval)
+    }
+  }, [])
+
   // Validar formulário
   useEffect(() => {
     const isValid = userData.name.trim() !== "" &&
-                   userData.age > 0 &&
+                   userData.age >= 18 &&
                    userData.address.trim() !== "" &&
                    userData.city.trim() !== "" &&
-                   userData.state.trim() !== ""
+                   userData.state.trim() !== "" &&
+                   userData.phone.trim() !== ""
     setIsFormValid(isValid)
   }, [userData])
 
   const handleWelcomeSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (userData.age < 18) {
+      showToast("É necessário ter pelo menos 18 anos para continuar.", "error")
+      return
+    }
     if (isFormValid) {
       localStorage.setItem("tenderes_user_data", JSON.stringify(userData))
       setShowWelcomeModal(false)
@@ -201,7 +328,7 @@ export default function TenderesPage() {
 
     let subtotal = 0
     Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
-      const drink = drinks.find((d) => d.id === drinkId)
+      const drink = dynamicDrinks.find((d) => d.id === drinkId)
       if (drink) {
         subtotal += drink.price * quantity * people
       }
@@ -209,7 +336,7 @@ export default function TenderesPage() {
 
     const total = subtotal + TRANSPORTATION_FEE
     return { total, transportFee: TRANSPORTATION_FEE, subtotal, bartenders }
-  }, [isDrinkeiraMode, selectedDrinks, people, hours])
+  }, [isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks])
 
   const sendToWhatsApp = () => {
     let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
@@ -230,7 +357,7 @@ export default function TenderesPage() {
         message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n\n`
         message += `Drinks Selecionados:\n`
         Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
-            const drink = drinks.find(d => d.id === drinkId)
+            const drink = dynamicDrinks.find(d => d.id === drinkId)
             if(drink) message += `- ${quantity}x ${drink.name}\n`
         })
     }
@@ -242,7 +369,7 @@ export default function TenderesPage() {
     window.open(whatsappUrl, "_blank")
   }
 
-  const categories = [...new Set(drinks.map((drink) => drink.category))]
+  const categories = [...new Set(dynamicDrinks.map((drink) => drink.category))]
   const caipirinhas = drinkeiraMenu.filter((drink) => drink.category === "Caipirinha")
   const caipiroskas = drinkeiraMenu.filter((drink) => drink.category === "Caipiroska")
   const outrosClassicos = drinkeiraMenu.filter((drink) => drink.category === "Clássico")
@@ -261,37 +388,42 @@ export default function TenderesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 dark:from-gray-900 dark:via-purple-900 dark:to-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      {/* Notification de atualização automática */}
+      {showUpdateNotification && (
+        <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
+          <div className="bg-green-600/90 backdrop-blur-md text-white px-4 py-2 rounded-lg shadow-lg border border-green-500/50 flex items-center gap-2">
+            <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+            <span className="text-sm font-medium">Drinks atualizados automaticamente!</span>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
-      <header className="bg-gray-800/80 backdrop-blur-md shadow-lg border-b border-purple-500/20 sticky top-0 z-40">
+      <header className="relative z-10 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/30">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <div className="relative">
-                <Wine className="h-8 w-8 md:h-10 md:w-10 text-purple-400" />
-                <Sparkles className="h-3 w-3 md:h-4 md:w-4 text-yellow-400 absolute -top-1 -right-1 animate-pulse" />
-              </div>
-              <div>
-                <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                  TENDERES
-                </h1>
-                <div className="flex items-center space-x-2">
-                   <p className="text-xs md:text-sm text-gray-300 font-medium">Drinks Premium</p>
-                   <Badge variant="outline" className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
-                     <MapPin className="h-3 w-3 mr-1" />
-                     Fortaleza - CE
-                   </Badge>
-                </div>
-              </div>
+              <Wine className="h-8 w-8 text-purple-400" />
+              <h1 className="text-2xl font-bold text-white">Tenderes</h1>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-4">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                className="text-gray-300 hover:text-white"
+              >
+                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </Button>
               <Button
                 variant="outline"
-                size="icon"
-                className="h-9 w-9 bg-gray-700/50 border-gray-600 text-gray-200 hover:bg-gray-600/50"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                size="sm"
+                onClick={() => setShowWelcomeModal(true)}
+                className="border-purple-500 text-purple-300 hover:bg-purple-900/50"
               >
-                {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+                <User className="h-4 w-4 mr-2" />
+                Perfil
               </Button>
             </div>
           </div>
@@ -513,36 +645,85 @@ export default function TenderesPage() {
               </div>
             )}
             {mode === 'detalhado' && (
-              categories.map((category) => (
-                <div key={category}>
-                  <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {drinks.filter((drink) => drink.category === category).map((drink) => (
-                      <Card key={drink.id} className={`bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/60 border border-purple-700 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
-                        <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                          <Wine className="h-7 w-7 text-purple-300 drop-shadow" />
-                          <CardTitle className="text-2xl font-bold text-white tracking-tight">
-                            {drink.name}
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex items-center gap-2 mb-2">
-                            <span className="inline-block px-3 py-1 rounded-full bg-purple-700/60 text-white text-lg font-bold shadow">
-                              {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                              <span className="text-xs text-gray-400"> / unidade</span>
-                            </span>
-                          </div>
-                          <div className="flex items-center justify-end gap-3 bg-gray-900/50 p-2 rounded-lg">
-                            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)} disabled={!selectedDrinks[drink.id]}>-</Button>
-                            <span className="text-xl font-bold text-white w-8 text-center">{selectedDrinks[drink.id] || 0}</span>
-                            <Button variant="outline" size="icon" className="h-8 w-8 rounded-full bg-gray-700 border-gray-600" onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}>+</Button>
-                          </div>
-                        </CardContent>
-                      </Card>
+              <div className="space-y-8">
+                <h2 className="text-3xl font-bold text-center text-white mb-8">Orçamento Detalhado</h2>
+                
+                {isLoadingDrinks ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                    <p className="text-gray-300">Carregando drinks...</p>
+                  </div>
+                ) : (
+                  <div className="space-y-8">
+                    {categories.map((category) => (
+                      <div key={category} className="space-y-4">
+                        <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
+                        <div className="grid md:grid-cols-2 gap-6">
+                          {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => (
+                            <Card key={drink.id} className={`bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/60 border border-purple-700 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
+                              <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
+                                  <Wine className="h-6 w-6 text-white" />
+                                </div>
+                                <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                                  {drink.name}
+                                </CardTitle>
+                              </CardHeader>
+                              <CardContent>
+                                <div className="flex items-center justify-between mb-3">
+                                  <span className="text-2xl font-bold text-purple-300">
+                                    {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </span>
+                                  <div className="flex items-center space-x-2">
+                                    {drink.popular && (
+                                      <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50">
+                                        <Star className="h-3 w-3 mr-1" />
+                                        Popular
+                                      </Badge>
+                                    )}
+                                    {drink.premium && (
+                                      <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50">
+                                        Premium
+                                      </Badge>
+                                    )}
+                                  </div>
+                                </div>
+                                <p className="text-gray-300 mb-4">{drink.description}</p>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm text-gray-400">
+                                    {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
+                                  </span>
+                                  <div className="flex items-center space-x-2">
+                                    <Button
+                                      onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)}
+                                      variant="outline"
+                                      size="sm"
+                                      className="border-purple-600 text-purple-300 hover:bg-purple-900/50"
+                                    >
+                                      -
+                                    </Button>
+                                    <span className="text-white font-semibold min-w-[2rem] text-center">
+                                      {selectedDrinks[drink.id] || 0}
+                                    </span>
+                                    <Button
+                                      onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}
+                                      variant="outline"
+                                      size="sm"
+                                      className="border-purple-600 text-purple-300 hover:bg-purple-900/50"
+                                    >
+                                      +
+                                    </Button>
+                                  </div>
+                                </div>
+                              </CardContent>
+                            </Card>
+                          ))}
+                        </div>
+                      </div>
                     ))}
                   </div>
-                </div>
-              ))
+                )}
+              </div>
             )}
             {mode === 'drinkeira' && (
               <div className="space-y-8 bg-gray-900 p-8 rounded-xl border border-gray-700">
@@ -692,37 +873,108 @@ export default function TenderesPage() {
       
       {/* Welcome Modal */}
       {showWelcomeModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
-          <Card className="w-full max-w-lg bg-gray-900 border-purple-700">
-            <CardHeader>
-              <CardTitle>Bem-vindo(a) à TENDERES!</CardTitle>
-              <CardDescription>Para uma melhor experiência, por favor, nos informe alguns dados.</CardDescription>
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-lg bg-gray-800/90 backdrop-blur-md border-2 border-purple-500/30 shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
+            <CardHeader className="text-center pb-6 relative z-10">
+              <div className="mx-auto mb-4 p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-16 h-16 flex items-center justify-center">
+                <User className="h-8 w-8 text-white" />
+              </div>
+              <CardTitle className="text-2xl font-bold text-white mb-2">Bem-vindo(a) à TENDERES!</CardTitle>
+              <CardDescription className="text-gray-300 text-base leading-relaxed">
+                Para uma melhor experiência, por favor, nos informe alguns dados.
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <form onSubmit={handleWelcomeSubmit} className="space-y-4">
+            <CardContent className="px-6 pb-6 relative z-10">
+              <form onSubmit={handleWelcomeSubmit} className="space-y-5">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Nome Completo</Label>
-                  <Input id="name" value={userData.name} onChange={(e) => setUserData({...userData, name: e.target.value})} />
+                  <Label htmlFor="name" className="text-sm font-semibold text-gray-200">Nome Completo</Label>
+                  <Input 
+                    id="name" 
+                    value={userData.name} 
+                    onChange={(e) => setUserData({...userData, name: e.target.value})}
+                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    placeholder="Digite seu nome completo"
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                    <div className="space-y-2">
-                     <Label htmlFor="age">Idade</Label>
-                     <Input id="age" type="number" value={userData.age || ''} onChange={(e) => setUserData({...userData, age: parseInt(e.target.value)})} />
+                     <Label htmlFor="age" className="text-sm font-semibold text-gray-200">Idade</Label>
+                     <Input 
+                       id="age" 
+                       type="number" 
+                       value={userData.age || ''} 
+                       onChange={(e) => setUserData({...userData, age: parseInt(e.target.value)})}
+                       className={`h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 ${
+                         userData.age > 0 && userData.age < 18 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                       }`}
+                       placeholder="Ex: 25"
+                       min="18"
+                     />
+                     {userData.age > 0 && userData.age < 18 && (
+                       <p className="text-red-400 text-xs mt-1 flex items-center">
+                         <span className="mr-1">⚠</span>
+                         É necessário ter pelo menos 18 anos
+                       </p>
+                     )}
                    </div>
                    <div className="space-y-2">
-                     <Label htmlFor="state">Estado</Label>
-                     <Input id="state" value={userData.state} onChange={(e) => setUserData({...userData, state: e.target.value})} />
+                     <Label htmlFor="state" className="text-sm font-semibold text-gray-200">Estado</Label>
+                     <Input 
+                       id="state" 
+                       value={userData.state} 
+                       onChange={(e) => setUserData({...userData, state: e.target.value})}
+                       className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                       placeholder="Ex: Ceará"
+                     />
                    </div>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="city">Cidade</Label>
-                  <Input id="city" value={userData.city} onChange={(e) => setUserData({...userData, city: e.target.value})} />
+                  <Label htmlFor="city" className="text-sm font-semibold text-gray-200">Cidade</Label>
+                  <Input 
+                    id="city" 
+                    value={userData.city} 
+                    onChange={(e) => setUserData({...userData, city: e.target.value})}
+                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    placeholder="Ex: Fortaleza"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone" className="text-sm font-semibold text-gray-200">Telefone</Label>
+                  <Input 
+                    id="phone" 
+                    value={userData.phone} 
+                    onChange={(e) => setUserData({...userData, phone: e.target.value})}
+                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    placeholder="Ex: (85) 99999-9999"
+                  />
                 </div>
                  <div className="space-y-2">
-                  <Label htmlFor="address">Endereço</Label>
-                  <Input id="address" value={userData.address} onChange={(e) => setUserData({...userData, address: e.target.value})} />
+                  <Label htmlFor="address" className="text-sm font-semibold text-gray-200">Endereço</Label>
+                  <Input 
+                    id="address" 
+                    value={userData.address} 
+                    onChange={(e) => setUserData({...userData, address: e.target.value})}
+                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    placeholder="Digite seu endereço"
+                  />
                 </div>
-                <Button type="submit" disabled={!isFormValid} className="w-full bg-purple-600 hover:bg-purple-700">Salvar e Começar</Button>
+                <Button 
+                  type="submit" 
+                  disabled={!isFormValid} 
+                  className={`w-full h-12 text-base font-semibold transition-all duration-200 ${
+                    isFormValid 
+                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl' 
+                      : 'bg-gray-600 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  {!isFormValid && userData.age > 0 && userData.age < 18 
+                    ? 'É necessário ter 18 anos ou mais' 
+                    : !isFormValid 
+                    ? 'Preencha todos os campos' 
+                    : 'Salvar e Começar'
+                  }
+                </Button>
               </form>
             </CardContent>
           </Card>
@@ -731,8 +983,19 @@ export default function TenderesPage() {
 
       {/* Custom Toast */}
       {toast && (
-         <div className={`fixed top-5 right-5 p-4 rounded-lg text-white shadow-lg z-50 ${toast.type === 'success' ? 'bg-green-600' : 'bg-red-600'}`}>
-            {toast.message}
+         <div className={`fixed top-5 right-5 p-4 rounded-xl text-white shadow-2xl z-50 max-w-sm border-l-4 ${
+           toast.type === 'success' 
+             ? 'bg-green-500 border-green-600' 
+             : toast.type === 'error'
+             ? 'bg-red-500 border-red-600'
+             : 'bg-blue-500 border-blue-600'
+         }`}>
+            <div className="flex items-center space-x-3">
+              {toast.type === 'success' && <CheckCircle className="h-5 w-5 text-green-100" />}
+              {toast.type === 'error' && <div className="h-5 w-5 text-red-100">✕</div>}
+              {toast.type === 'info' && <div className="h-5 w-5 text-blue-100">ℹ</div>}
+              <span className="font-medium text-sm">{toast.message}</span>
+            </div>
          </div>
       )}
 
