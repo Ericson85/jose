@@ -9,7 +9,6 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { useTheme } from "next-themes"
-import { AnimatePresence, motion } from 'framer-motion'
 
 export interface Drink {
   id: string
@@ -757,14 +756,10 @@ export default function TenderesPage() {
                   </div>
                 </section>
                 {/* Lista dinâmica de drinks animada */}
-                <AnimatePresence mode="wait">
+                <div>
                   {drinkeiraTab === 'caipirinhas' && (
-                    <motion.div
+                    <div
                       key="caipirinhas"
-                      initial={{ x: 100, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -100, opacity: 0 }}
-                      transition={{ duration: 0.7, ease: 'easeOut' }}
                       className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl"
                     >
                       <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
@@ -791,15 +786,11 @@ export default function TenderesPage() {
                           </Card>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                   {drinkeiraTab === 'caipiroskas' && (
-                    <motion.div
+                    <div
                       key="caipiroskas"
-                      initial={{ x: 100, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -100, opacity: 0 }}
-                      transition={{ duration: 0.7, ease: 'easeOut' }}
                       className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl"
                     >
                       <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
@@ -826,15 +817,11 @@ export default function TenderesPage() {
                           </Card>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                   {drinkeiraTab === 'classicos' && (
-                    <motion.div
+                    <div
                       key="classicos"
-                      initial={{ x: 100, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      exit={{ x: -100, opacity: 0 }}
-                      transition={{ duration: 0.7, ease: 'easeOut' }}
                       className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl"
                     >
                       <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
@@ -861,9 +848,9 @@ export default function TenderesPage() {
                           </Card>
                         ))}
                       </div>
-                    </motion.div>
+                    </div>
                   )}
-                </AnimatePresence>
+                </div>
               </div>
             )}
 
