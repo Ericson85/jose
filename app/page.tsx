@@ -257,12 +257,12 @@ export default function TenderesPage() {
 
   // Validar formulário
   useEffect(() => {
-    const isValid = userData.name.trim() !== "" &&
+    const isValid = (userData.name || "").trim() !== "" &&
                    userData.age >= 18 &&
-                   userData.address.trim() !== "" &&
-                   userData.city.trim() !== "" &&
-                   userData.state.trim() !== "" &&
-                   userData.phone.trim() !== ""
+                   (userData.address || "").trim() !== "" &&
+                   (userData.city || "").trim() !== "" &&
+                   (userData.state || "").trim() !== "" &&
+                   (userData.phone || "").trim() !== ""
     setIsFormValid(isValid)
   }, [userData])
 

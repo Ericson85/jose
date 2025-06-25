@@ -164,18 +164,18 @@ export default function AdminPage() {
 
   const handleAddNew = () => {
     if (activeTab === 'drinks') {
-      const newDrink: Drink = {
-        id: Date.now().toString(),
-        name: "",
+    const newDrink: Drink = {
+      id: Date.now().toString(),
+      name: "",
         description: "",
-        price: 0,
-        category: "Coquetéis",
-        image: "/placeholder.svg?height=120&width=120",
-        priceType: "per_person",
+      price: 0,
+      category: "Coquetéis",
+      image: "/placeholder.svg?height=120&width=120",
+      priceType: "per_person",
         popular: false,
         premium: false
-      }
-      setEditingDrink(newDrink)
+    }
+    setEditingDrink(newDrink)
       setEditingEvent(null)
     } else if (activeTab === 'events') {
       const newEvent: Event = {
@@ -210,7 +210,7 @@ export default function AdminPage() {
     if (activeTab === 'drinks') {
       const updatedDrinks = drinks.filter(drink => drink.id !== id)
       saveDrinks(updatedDrinks)
-      showMessage("Drink removido com sucesso!", "success")
+    showMessage("Drink removido com sucesso!", "success")
     } else if (activeTab === 'events') {
       const updatedEvents = events.filter(event => event.id !== id)
       setEvents(updatedEvents)
@@ -221,28 +221,28 @@ export default function AdminPage() {
 
   const handleSave = () => {
     if (activeTab === 'drinks' && editingDrink) {
-      if (!editingDrink.name.trim() || editingDrink.price <= 0) {
-        showMessage("Preencha todos os campos obrigatórios!", "error")
-        return
-      }
+    if (!editingDrink.name.trim() || editingDrink.price <= 0) {
+      showMessage("Preencha todos os campos obrigatórios!", "error")
+      return
+    }
 
-      let updatedDrinks: Drink[]
+    let updatedDrinks: Drink[]
 
-      if (isAddingNew) {
-        updatedDrinks = [...drinks, editingDrink]
-      } else {
-        updatedDrinks = drinks.map(drink => 
-          drink.id === editingDrink.id ? editingDrink : drink
-        )
-      }
+    if (isAddingNew) {
+      updatedDrinks = [...drinks, editingDrink]
+    } else {
+      updatedDrinks = drinks.map(drink => 
+        drink.id === editingDrink.id ? editingDrink : drink
+      )
+    }
 
       saveDrinks(updatedDrinks)
-      setEditingDrink(null)
-      setIsAddingNew(false)
-      showMessage(
-        isAddingNew ? "Drink adicionado com sucesso!" : "Drink atualizado com sucesso!", 
-        "success"
-      )
+    setEditingDrink(null)
+    setIsAddingNew(false)
+    showMessage(
+      isAddingNew ? "Drink adicionado com sucesso!" : "Drink atualizado com sucesso!", 
+      "success"
+    )
     } else if (activeTab === 'events' && editingEvent) {
       if (!editingEvent.name.trim() || !editingEvent.date || !editingEvent.location) {
         showMessage("Preencha todos os campos obrigatórios!", "error")
@@ -595,15 +595,15 @@ export default function AdminPage() {
           {/* Content Area */}
           <div className="xl:col-span-3 lg:col-span-2">
             {activeTab === 'drinks' && (
-              <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-xl text-white">Drinks Cadastrados</CardTitle>
-                      <CardDescription className="text-gray-300">
+            <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="text-xl text-white">Drinks Cadastrados</CardTitle>
+                    <CardDescription className="text-gray-300">
                         Gerencie todos os drinks do site ({drinks.length} drinks)
-                      </CardDescription>
-                    </div>
+                    </CardDescription>
+                  </div>
                     <div className="flex items-center space-x-2">
                       <Button
                         onClick={handleResetDrinks}
@@ -613,61 +613,61 @@ export default function AdminPage() {
                         <span className="mr-2">🔄</span>
                         Resetar
                       </Button>
-                      <Button
-                        onClick={handleAddNew}
-                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                      >
-                        <Plus className="h-4 w-4 mr-2" />
-                        Novo Drink
-                      </Button>
+                  <Button
+                    onClick={handleAddNew}
+                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Drink
+                  </Button>
                     </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {drinks.map((drink) => (
-                      <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
-                              <Wine className="h-6 w-6 text-purple-300" />
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                onClick={() => handleEdit(drink)}
-                                variant="outline"
-                                size="sm"
-                                className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                onClick={() => handleDelete(drink.id)}
-                                variant="outline"
-                                size="sm"
-                                className="border-red-600 text-red-300 hover:bg-red-900/50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
-                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{drink.description}</p>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
-                              {drink.category}
-                            </Badge>
-                            <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">
-                              R$ {drink.price}
-                            </Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {drinks.map((drink) => (
+                    <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                      <CardContent className="p-4">
+                        <div className="flex items-center justify-between mb-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
+                            <Wine className="h-6 w-6 text-purple-300" />
                           </div>
                           <div className="flex items-center space-x-2">
-                            {drink.popular && (
-                              <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
-                                <Star className="h-3 w-3 mr-1" />
-                                Popular
-                              </Badge>
-                            )}
+                            <Button
+                              onClick={() => handleEdit(drink)}
+                              variant="outline"
+                              size="sm"
+                              className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              onClick={() => handleDelete(drink.id)}
+                              variant="outline"
+                              size="sm"
+                              className="border-red-600 text-red-300 hover:bg-red-900/50"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                        <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
+                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{drink.description}</p>
+                        <div className="flex items-center space-x-2 mb-2">
+                          <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
+                            {drink.category}
+                          </Badge>
+                          <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">
+                            R$ {drink.price}
+                          </Badge>
+                        </div>
+                          <div className="flex items-center space-x-2">
+                        {drink.popular && (
+                          <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
+                            <Star className="h-3 w-3 mr-1" />
+                            Popular
+                          </Badge>
+                        )}
                             {drink.premium && (
                               <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50 text-xs">
                                 Premium
@@ -747,12 +747,12 @@ export default function AdminPage() {
                               {event.status === 'active' ? 'Ativo' : event.status === 'completed' ? 'Concluído' : 'Inativo'}
                             </Badge>
                           </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
             )}
           </div>
 
