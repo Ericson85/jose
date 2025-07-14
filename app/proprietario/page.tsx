@@ -45,17 +45,19 @@ export default function ProprietarioPage() {
     setIsAuthenticated(true)
   }, [router])
 
-  // Load drinks
+  // Load drinks from API
   useEffect(() => {
-    const saved = localStorage.getItem("tenderes_drinks")
-    if (saved) {
+    async function fetchDrinks() {
       try {
-        setDrinks(JSON.parse(saved))
+        const response = await fetch("/api/drinks");
+        const data = await response.json();
+        setDrinks(data);
       } catch (error) {
-        console.error("Error loading drinks:", error)
+        showMessage("Erro ao carregar drinks!", "error");
       }
     }
-  }, [])
+    fetchDrinks();
+  }, []);
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
     setToastMessage(message)
@@ -89,40 +91,50 @@ export default function ProprietarioPage() {
     setIsAddingNew(false)
   }
 
-  const handleDelete = (drinkId: string) => {
-    const updatedDrinks = drinks.filter(drink => drink.id !== drinkId)
-    setDrinks(updatedDrinks)
-    localStorage.setItem("tenderes_drinks", JSON.stringify(updatedDrinks))
-    showMessage("Drink removido com sucesso!", "success")
-  }
+  const handleDelete = async (drinkId: string) => {
+    try {
+      await fetch(`/api/drinks/${drinkId}`, { method: "DELETE" });
+      setDrinks(drinks.filter(drink => drink.id !== drinkId));
+      showMessage("Drink removido com sucesso!", "success");
+    } catch (error) {
+      showMessage("Erro ao remover drink!", "error");
+    }
+  };
 
-  const handleSave = () => {
-    if (!editingDrink) return
+  const handleSave = async () => {
+    if (!editingDrink) return;
 
     if (!editingDrink.name.trim() || editingDrink.price <= 0) {
-      showMessage("Preencha todos os campos obrigatórios!", "error")
-      return
+      showMessage("Preencha todos os campos obrigatórios!", "error");
+      return;
     }
 
-    let updatedDrinks: Drink[]
-
-    if (isAddingNew) {
-      updatedDrinks = [...drinks, editingDrink]
-    } else {
-      updatedDrinks = drinks.map(drink => 
-        drink.id === editingDrink.id ? editingDrink : drink
-      )
+    try {
+      if (isAddingNew) {
+        await fetch("/api/drinks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editingDrink)
+        });
+        showMessage("Drink adicionado com sucesso!", "success");
+      } else {
+        await fetch(`/api/drinks/${editingDrink.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editingDrink)
+        });
+        showMessage("Drink atualizado com sucesso!", "success");
+      }
+      // Recarregar lista de drinks
+      const response = await fetch("/api/drinks");
+      const data = await response.json();
+      setDrinks(data);
+      setEditingDrink(null);
+      setIsAddingNew(false);
+    } catch (error) {
+      showMessage("Erro ao salvar drink!", "error");
     }
-
-    setDrinks(updatedDrinks)
-    localStorage.setItem("tenderes_drinks", JSON.stringify(updatedDrinks))
-    setEditingDrink(null)
-    setIsAddingNew(false)
-    showMessage(
-      isAddingNew ? "Drink adicionado com sucesso!" : "Drink atualizado com sucesso!", 
-      "success"
-    )
-  }
+  };
 
   const handleCancel = () => {
     setEditingDrink(null)
