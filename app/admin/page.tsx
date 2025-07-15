@@ -69,69 +69,27 @@ export default function AdminPage() {
 
   // Load drinks and events
   useEffect(() => {
-    const savedDrinks = localStorage.getItem("tenderes_drinks")
-    const savedEvents = localStorage.getItem("tenderes_events")
-    
-    // Drinks padrão do menu principal
-    const defaultDrinks: Drink[] = [
-      { id: "1", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 12, category: "Coquetéis", image: "/caipirinha-premium.jpg", priceType: "per_person", popular: true, premium: true },
-      { id: "caipirinha", name: "Caipirinha", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Coquetéis", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caipiroska", name: "Caipiroska", description: "Vodka, limão, açúcar e gelo", price: 12, category: "Coquetéis", image: "/caipiroska.jpg", priceType: "per_unit" },
-      { id: "1a", name: "Open Bar Caipirinha", description: "Open bar completo com caipirinhas ilimitadas", price: 60, category: "Open Bar", image: "/open-bar-caipirinha.jpg", priceType: "per_person", popular: true },
-      { id: "1b", name: "Open Bar Caipirinha + Caipiroska", description: "Open bar com caipirinhas e caipiroskas ilimitadas", price: 95, category: "Open Bar", image: "/open-bar-caipirinha-caipiroska.jpg", priceType: "per_person", popular: true },
-      { id: "2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 12, category: "Coquetéis", image: "/mojito.jpg", priceType: "per_person" },
-      { id: "3", name: "Cuba Libre", description: "Rum, cola, limão e gelo", price: 12, category: "Coquetéis", image: "/cupa-livre.jpg", priceType: "per_person" },
-      { id: "aperol-spritz", name: "Aperol Spritz", description: "Aperol, prosecco, água com gás e laranja", price: 12, category: "Coquetéis", image: "/aperol-spritz.jpg", priceType: "per_person" },
-      { id: "4", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 12, category: "Coquetéis", image: "/gin-tonica.jpg", priceType: "per_person" },
-      { id: "5", name: "Cerveja Artesanal", description: "Cerveja artesanal premium", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      { id: "6", name: "Cerveja Premium", description: "Cerveja premium importada", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      { id: "7", name: "Vinho Tinto", description: "Vinho tinto seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      { id: "8", name: "Vinho Branco", description: "Vinho branco seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1514361892635-cebb9b6c7ca7?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      { id: "9", name: "Espumante", description: "Espumante premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1519864600265-abb23847ef2c?w=200&h=200&fit=crop&crop=center", priceType: "per_person", popular: true },
-      { id: "10", name: "Água", description: "Água mineral", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      { id: "11", name: "Refrigerante", description: "Refrigerante variados", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      { id: "12", name: "Suco Natural", description: "Suco natural de frutas", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      // Drinks da drinkeira
-      { id: "caip-1", name: "Caipirinha Tradicional", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
-      { id: "caip-2", name: "Caipirinha de Morango", description: "Cachaça, morango fresco, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
-      { id: "caip-3", name: "Caipirinha de Kiwi", description: "Cachaça, kiwi, açúcar e gelo", price: 15, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caip-4", name: "Caipirinha de Maracujá", description: "Cachaça, polpa de maracujá, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caip-5", name: "Caipirinha de Abacaxi", description: "Cachaça, abacaxi fresco, açúcar e gelo", price: 13, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caip-6", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 18, category: "Caipirinha", image: "/caipirinha-premium.jpg", priceType: "per_unit", premium: true },
-      { id: "caipiroska-1", name: "Caipiroska Tradicional", description: "Vodka, limão, açúcar e gelo", price: 13, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
-      { id: "caipiroska-2", name: "Caipiroska de Morango", description: "Vodka, morango fresco, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
-      { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", description: "Vodka, mix de frutas vermelhas, açúcar e gelo", price: 16, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
-      { id: "caipiroska-4", name: "Caipiroska de Maracujá", description: "Vodka, polpa de maracujá, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
-      { id: "caipiroska-5", name: "Caipiroska de Pêssego", description: "Vodka, pêssego em calda, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
-      { id: "caipiroska-6", name: "Caipiroska Premium", description: "Vodka premium, limão siciliano, açúcar cristal", price: 20, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
-      { id: "classic-1", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 20, category: "Clássico", image: "/gin-tonica.jpg", priceType: "per_unit" },
-      { id: "classic-2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 18, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
-      { id: "classic-3", name: "Daiquiri", description: "Rum, suco de limão e açúcar", price: 22, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
-    ]
-    
-    if (savedDrinks) {
+    async function fetchDrinks() {
       try {
-        setDrinks(JSON.parse(savedDrinks))
+        const response = await fetch("/api/drinks");
+        const data = await response.json();
+        setDrinks(data);
       } catch (error) {
-        console.error("Error loading drinks:", error)
-        // Se houver erro, carrega os drinks padrão
-        setDrinks(defaultDrinks)
-        localStorage.setItem("tenderes_drinks", JSON.stringify(defaultDrinks))
+        showMessage("Erro ao carregar drinks!", "error");
       }
-    } else {
-      // Se não há drinks salvos, carrega os padrão
-      setDrinks(defaultDrinks)
-      localStorage.setItem("tenderes_drinks", JSON.stringify(defaultDrinks))
     }
-    
+    fetchDrinks();
+
+    // Eventos continuam no localStorage
+    const savedEvents = localStorage.getItem("tenderes_events");
     if (savedEvents) {
       try {
-        setEvents(JSON.parse(savedEvents))
+        setEvents(JSON.parse(savedEvents));
       } catch (error) {
-        console.error("Error loading events:", error)
+        console.error("Error loading events:", error);
       }
     }
-  }, [])
+  }, []);
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
     setToastMessage(message)
@@ -208,69 +166,80 @@ export default function AdminPage() {
     setIsAddingNew(false)
   }
 
-  const handleDelete = (id: string) => {
+  const handleDelete = async (id: string) => {
     if (activeTab === 'drinks') {
-      const updatedDrinks = drinks.filter(drink => drink.id !== id)
-      saveDrinks(updatedDrinks)
-    showMessage("Drink removido com sucesso!", "success")
+      try {
+        await fetch(`/api/drinks/${id}`, { method: "DELETE" });
+        // Recarregar lista de drinks
+        const response = await fetch("/api/drinks");
+        const data = await response.json();
+        setDrinks(data);
+        showMessage("Drink removido com sucesso!", "success");
+      } catch (error) {
+        showMessage("Erro ao remover drink!", "error");
+      }
     } else if (activeTab === 'events') {
-      const updatedEvents = events.filter(event => event.id !== id)
-      setEvents(updatedEvents)
-      localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents))
-      showMessage("Evento removido com sucesso!", "success")
+      const updatedEvents = events.filter(event => event.id !== id);
+      setEvents(updatedEvents);
+      localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents));
+      showMessage("Evento removido com sucesso!", "success");
     }
-  }
+  };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (activeTab === 'drinks' && editingDrink) {
     if (!editingDrink.name.trim() || editingDrink.price <= 0) {
-      showMessage("Preencha todos os campos obrigatórios!", "error")
-      return
+      showMessage("Preencha todos os campos obrigatórios!", "error");
+      return;
     }
-
-    let updatedDrinks: Drink[]
-
-    if (isAddingNew) {
-      updatedDrinks = [...drinks, editingDrink]
-    } else {
-      updatedDrinks = drinks.map(drink => 
-        drink.id === editingDrink.id ? editingDrink : drink
-      )
-    }
-
-      saveDrinks(updatedDrinks)
-    setEditingDrink(null)
-    setIsAddingNew(false)
-    showMessage(
-      isAddingNew ? "Drink adicionado com sucesso!" : "Drink atualizado com sucesso!", 
-      "success"
-    )
-    } else if (activeTab === 'events' && editingEvent) {
-      if (!editingEvent.name.trim() || !editingEvent.date || !editingEvent.location) {
-        showMessage("Preencha todos os campos obrigatórios!", "error")
-        return
-      }
-
-      let updatedEvents: Event[]
-
+    try {
       if (isAddingNew) {
-        updatedEvents = [...events, editingEvent]
+        // Não envie o campo id ao adicionar
+        const { id, ...payload } = editingDrink;
+        await fetch("/api/drinks", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        showMessage("Drink adicionado com sucesso!", "success");
       } else {
-        updatedEvents = events.map(event => 
-          event.id === editingEvent.id ? editingEvent : event
-        )
+        await fetch(`/api/drinks/${editingDrink.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(editingDrink)
+        });
+        showMessage("Drink atualizado com sucesso!", "success");
       }
-
-      setEvents(updatedEvents)
-      localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents))
-      setEditingEvent(null)
-      setIsAddingNew(false)
-      showMessage(
-        isAddingNew ? "Evento adicionado com sucesso!" : "Evento atualizado com sucesso!", 
-        "success"
-      )
+      // Recarregar lista de drinks
+      const response = await fetch("/api/drinks");
+      const data = await response.json();
+      setDrinks(data);
+      setEditingDrink(null);
+      setIsAddingNew(false);
+    } catch (error) {
+      showMessage("Erro ao salvar drink!", "error");
     }
+  } else if (activeTab === 'events' && editingEvent) {
+    if (!editingEvent.name.trim() || !editingEvent.date || !editingEvent.location) {
+      showMessage("Preencha todos os campos obrigatórios!", "error");
+      return;
+    }
+    let updatedEvents: Event[];
+    if (isAddingNew) {
+      updatedEvents = [...events, editingEvent];
+    } else {
+      updatedEvents = events.map(event => event.id === editingEvent.id ? editingEvent : event);
+    }
+    setEvents(updatedEvents);
+    localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents));
+    setEditingEvent(null);
+    setIsAddingNew(false);
+    showMessage(
+      isAddingNew ? "Evento adicionado com sucesso!" : "Evento atualizado com sucesso!",
+      "success"
+    );
   }
+};
 
   const handleCancel = () => {
     setEditingDrink(null)
@@ -315,7 +284,7 @@ export default function AdminPage() {
       { id: "classic-3", name: "Daiquiri", description: "Rum, suco de limão e açúcar", price: 22, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
     ]
     
-    saveDrinks(defaultDrinks)
+    // saveDrinks(defaultDrinks) // This line is removed as per the edit hint
     showMessage("Drinks resetados para os padrões originais!", "success")
   }
 
@@ -331,22 +300,7 @@ export default function AdminPage() {
     }
   }
 
-  const saveDrinks = (newDrinks: Drink[]) => {
-    localStorage.setItem("tenderes_drinks", JSON.stringify(newDrinks))
-    setDrinks(newDrinks)
-    
-    // Disparar evento para notificar outras abas
-    window.dispatchEvent(new StorageEvent('storage', {
-      key: 'tenderes_drinks',
-      newValue: JSON.stringify(newDrinks)
-    }))
-    
-    toast({
-      title: "Drinks salvos!",
-      description: "As alterações foram aplicadas automaticamente no site principal.",
-      duration: 3000,
-    })
-  }
+  // Remover saveDrinks e uso de localStorage para drinks
 
   // Login Screen
   if (!isLoggedIn) {
