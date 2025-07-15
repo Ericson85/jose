@@ -122,6 +122,10 @@ export default function ProprietarioPage() {
       showMessage("Preencha todos os campos obrigatórios!", "error");
       return;
     }
+    if (!editingDrink.priceType) {
+      showMessage("Selecione o tipo de preço!", "error");
+      return;
+    }
 
     try {
       if (isAddingNew) {
