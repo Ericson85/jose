@@ -131,16 +131,16 @@ export default function ProprietarioPage() {
 
     try {
       if (isAddingNew) {
-        // Não envie o campo id ao adicionar
+        // Montar payload explicitamente, apenas com campos válidos
         const payload = {
           name: editingDrink.name,
           price: editingDrink.price,
           category: editingDrink.category,
           image: editingDrink.image,
-          price_type: editingDrink.priceType,
+          price_type: editingDrink.priceType, // snake_case
           popular: editingDrink.popular,
         };
-        console.log("Payload enviado:", payload);
+        console.log("Payload FINAL enviado para API:", JSON.stringify(payload, null, 2));
         await fetch("/api/drinks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
