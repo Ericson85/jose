@@ -172,6 +172,7 @@ export default function ProprietarioPage() {
   }
 
   // Admin Panel
+  console.log("Renderizando lista de drinks:", drinks);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
       {/* Header */}
