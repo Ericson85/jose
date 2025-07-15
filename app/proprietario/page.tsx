@@ -91,6 +91,7 @@ export default function ProprietarioPage() {
   }
 
   const handleDelete = async (drinkId: string) => {
+    console.log("Removendo drink com id:", drinkId); // Debug
     try {
       await fetch(`/api/drinks/${drinkId}`, { method: "DELETE" });
       // Recarregar lista de drinks do banco
