@@ -22,6 +22,7 @@ export interface Drink {
 }
 
 export default function ProprietarioPage() {
+  console.log("Painel do Proprietário renderizado");
   const router = useRouter()
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [drinks, setDrinks] = useState<Drink[]>([])
