@@ -199,21 +199,27 @@ export default function TenderesPage() {
   const [isLoadingDrinks, setIsLoadingDrinks] = useState(true)
   const [showUpdateNotification, setShowUpdateNotification] = useState(false)
 
-  // Carregar drinks do banco de dados via API
+  // Carregar drinks do banco de dados via API (com polling)
   useEffect(() => {
+    let isMounted = true;
     const fetchDrinks = async () => {
       setIsLoadingDrinks(true);
       try {
         const response = await fetch("/api/drinks");
         const data = await response.json();
-        setDynamicDrinks(data);
+        if (isMounted) setDynamicDrinks(data);
       } catch (error) {
         console.error("Erro ao carregar drinks do banco de dados:", error);
-        setDynamicDrinks(drinks); // fallback para os drinks padrão
+        if (isMounted) setDynamicDrinks(drinks); // fallback para os drinks padrão
       }
       setIsLoadingDrinks(false);
     };
     fetchDrinks();
+    const interval = setInterval(fetchDrinks, 2000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   // Verificar se o usuário já preencheu os dados

@@ -50,18 +50,24 @@ export default function ProprietarioPage() {
     setIsAuthenticated(true)
   }, [router])
 
-  // Load drinks from API
+  // Load drinks from API (com polling)
   useEffect(() => {
+    let isMounted = true;
     async function fetchDrinks() {
       try {
         const response = await fetch("/api/drinks");
         const data = await response.json();
-        setDrinks(data);
+        if (isMounted) setDrinks(data);
       } catch (error) {
         showMessage("Erro ao carregar drinks!", "error");
       }
     }
     fetchDrinks();
+    const interval = setInterval(fetchDrinks, 2000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
   }, []);
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
@@ -140,6 +146,7 @@ export default function ProprietarioPage() {
       const response = await fetch("/api/drinks");
       const data = await response.json();
       setDrinks(data);
+      localStorage.setItem("tenderes_drinks", JSON.stringify(data));
       setEditingDrink(null);
       setIsAddingNew(false);
     } catch (error) {
