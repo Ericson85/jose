@@ -91,7 +91,7 @@ export default function ProprietarioPage() {
   }
 
   const handleDelete = async (drinkId: string) => {
-    console.log("Removendo drink com id:", drinkId); // Debug
+    console.log("Tentando remover drink, id recebido:", drinkId);
     try {
       await fetch(`/api/drinks/${drinkId}`, { method: "DELETE" });
       // Recarregar lista de drinks do banco
@@ -249,7 +249,10 @@ export default function ProprietarioPage() {
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
-                              onClick={() => handleDelete(drink.id)}
+                              onClick={() => {
+                                console.log("Cliquei no botão de remover, id:", drink.id);
+                                handleDelete(drink.id);
+                              }}
                               variant="outline"
                               size="sm"
                               className="border-red-600 text-red-300 hover:bg-red-900/50"
