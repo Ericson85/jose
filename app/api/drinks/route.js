@@ -14,7 +14,9 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const { name, price, category, image, price_type, popular } = await request.json();
+  const body = await request.json();
+  console.log("Payload recebido:", body);
+  const { name, price, category, image, price_type, popular } = body;
   await db.query(
     'INSERT INTO drinks (name, price, category, image, price_type, popular) VALUES (?, ?, ?, ?, ?, ?)',
     [name, price, category, image, price_type, popular]
