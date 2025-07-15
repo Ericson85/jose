@@ -94,7 +94,10 @@ export default function ProprietarioPage() {
   const handleDelete = async (drinkId: string) => {
     try {
       await fetch(`/api/drinks/${drinkId}`, { method: "DELETE" });
-      setDrinks(drinks.filter(drink => drink.id !== drinkId));
+      // Recarregar lista de drinks do banco
+      const response = await fetch("/api/drinks");
+      const data = await response.json();
+      setDrinks(data);
       showMessage("Drink removido com sucesso!", "success");
     } catch (error) {
       showMessage("Erro ao remover drink!", "error");
