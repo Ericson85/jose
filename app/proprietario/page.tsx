@@ -134,6 +134,8 @@ export default function ProprietarioPage() {
         // Não envie o campo id ao adicionar
         const { id, priceType, ...rest } = editingDrink;
         const payload = { ...rest, price_type: priceType };
+        // Remover priceType do payload final
+        if ('priceType' in payload) delete (payload as any).priceType;
         console.log("Payload enviado:", payload);
         await fetch("/api/drinks", {
           method: "POST",
