@@ -73,18 +73,17 @@ export default function ProprietarioPage() {
   }
 
   const handleAddNew = () => {
-    const newDrink: Drink = {
-      id: Date.now().toString(),
+    const newDrink: Omit<Drink, 'id'> = {
       name: "",
       price: 0,
       category: "Coquetéis",
       image: "/placeholder.svg?height=120&width=120",
       priceType: "per_person",
       popular: false
-    }
-    setEditingDrink(newDrink)
-    setIsAddingNew(true)
-  }
+    };
+    setEditingDrink(newDrink as Drink);
+    setIsAddingNew(true);
+  };
 
   const handleEdit = (drink: Drink) => {
     setEditingDrink({ ...drink })
@@ -114,10 +113,12 @@ export default function ProprietarioPage() {
 
     try {
       if (isAddingNew) {
+        // Não envie o campo id ao adicionar
+        const { id, ...payload } = editingDrink;
         await fetch("/api/drinks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editingDrink)
+          body: JSON.stringify(payload)
         });
         showMessage("Drink adicionado com sucesso!", "success");
       } else {
