@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 
 export interface Drink {
   id: string
@@ -53,6 +54,7 @@ export default function AdminPage() {
   const [showToast, setShowToast] = useState(false)
   const [toastMessage, setToastMessage] = useState("")
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success")
+  const [drinkToDelete, setDrinkToDelete] = useState<Drink | null>(null);
 
   const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar", "Caipirinha", "Caipiroska", "Clássico"]
   const eventStatuses = ["active", "inactive", "completed"]
@@ -642,7 +644,7 @@ export default function AdminPage() {
                               <Edit className="h-4 w-4" />
                             </Button>
                             <Button
-                              onClick={() => handleDelete(drink.id)}
+                              onClick={() => setDrinkToDelete(drink)}
                               variant="outline"
                               size="sm"
                               className="border-red-600 text-red-300 hover:bg-red-900/50"
@@ -1048,6 +1050,32 @@ export default function AdminPage() {
           </div>
         </div>
       )}
+      {drinkToDelete && activeTab === 'drinks' && (
+  <Dialog open={!!drinkToDelete} onOpenChange={() => setDrinkToDelete(null)}>
+    <DialogContent>
+      <DialogHeader>
+        <DialogTitle>Confirmar remoção</DialogTitle>
+        <DialogDescription>
+          Tem certeza que deseja remover o drink <b>{drinkToDelete.name}</b>?
+        </DialogDescription>
+      </DialogHeader>
+      <div className="flex justify-end gap-2 mt-4">
+        <Button variant="outline" onClick={() => setDrinkToDelete(null)}>
+          Cancelar
+        </Button>
+        <Button
+          className="bg-red-600 text-white"
+          onClick={() => {
+            handleDelete(drinkToDelete.id);
+            setDrinkToDelete(null);
+          }}
+        >
+          Remover
+        </Button>
+      </div>
+    </DialogContent>
+  </Dialog>
+)}
     </div>
   )
 } 
