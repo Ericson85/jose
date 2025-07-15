@@ -132,10 +132,15 @@ export default function ProprietarioPage() {
     try {
       if (isAddingNew) {
         // Não envie o campo id ao adicionar
-        const { id, priceType, ...rest } = editingDrink;
-        const payload = { ...rest, price_type: priceType };
-        // Remover priceType do payload final
-        if ('priceType' in payload) delete (payload as any).priceType;
+        const { id, name, price, category, image, priceType, popular } = editingDrink;
+        const payload: any = {
+          name,
+          price,
+          category,
+          image,
+          price_type: priceType,
+          popular,
+        };
         console.log("Payload enviado:", payload);
         await fetch("/api/drinks", {
           method: "POST",
