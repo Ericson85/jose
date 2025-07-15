@@ -35,6 +35,8 @@ export default function ProprietarioPage() {
   const [toastMessage, setToastMessage] = useState("")
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success")
   const [drinkToDelete, setDrinkToDelete] = useState<Drink | null>(null);
+  // Adicionar novo estado para controlar o Dialog de confirmação de adição
+  const [showAddConfirm, setShowAddConfirm] = useState(false);
 
   const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar"]
 
@@ -118,7 +120,8 @@ export default function ProprietarioPage() {
     try {
       if (isAddingNew) {
         // Não envie o campo id ao adicionar
-        const { id, ...payload } = editingDrink;
+        const { id, priceType, ...rest } = editingDrink;
+        const payload = { ...rest, price_type: priceType };
         await fetch("/api/drinks", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -412,7 +415,7 @@ export default function ProprietarioPage() {
                         Cancelar
                       </Button>
                       <Button
-                        onClick={handleSave}
+                        onClick={() => setShowAddConfirm(true)}
                         className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                       >
                         <Save className="h-4 w-4 mr-2" />
@@ -470,6 +473,33 @@ export default function ProprietarioPage() {
                 }}
               >
                 Remover
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
+
+      {showAddConfirm && (
+        <Dialog open={showAddConfirm} onOpenChange={setShowAddConfirm}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar adição</DialogTitle>
+              <DialogDescription>
+                Tem certeza que deseja adicionar o drink <b>{editingDrink?.name}</b>?
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="outline" onClick={() => setShowAddConfirm(false)}>
+                Cancelar
+              </Button>
+              <Button
+                className="bg-green-600 text-white"
+                onClick={async () => {
+                  setShowAddConfirm(false);
+                  await handleSave();
+                }}
+              >
+                Adicionar
               </Button>
             </div>
           </DialogContent>
