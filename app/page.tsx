@@ -199,6 +199,23 @@ export default function TenderesPage() {
   const [isLoadingDrinks, setIsLoadingDrinks] = useState(true)
   const [showUpdateNotification, setShowUpdateNotification] = useState(false)
 
+  // Carregar drinks do banco de dados via API
+  useEffect(() => {
+    const fetchDrinks = async () => {
+      setIsLoadingDrinks(true);
+      try {
+        const response = await fetch("/api/drinks");
+        const data = await response.json();
+        setDynamicDrinks(data);
+      } catch (error) {
+        console.error("Erro ao carregar drinks do banco de dados:", error);
+        setDynamicDrinks(drinks); // fallback para os drinks padrão
+      }
+      setIsLoadingDrinks(false);
+    };
+    fetchDrinks();
+  }, []);
+
   // Verificar se o usuário já preencheu os dados
   useEffect(() => {
     const savedUserData = localStorage.getItem("tenderes_user_data")
@@ -206,52 +223,6 @@ export default function TenderesPage() {
       setShowWelcomeModal(true)
     } else {
       setUserData(JSON.parse(savedUserData))
-    }
-  }, [])
-
-  // Carregar drinks do localStorage (gerenciados pelo admin)
-  useEffect(() => {
-    const loadDrinksFromAdmin = () => {
-      const savedDrinks = localStorage.getItem("tenderes_drinks")
-      if (savedDrinks) {
-        try {
-          const adminDrinks = JSON.parse(savedDrinks)
-          setDynamicDrinks(adminDrinks)
-          
-          // Mostrar notificação de atualização se não for o carregamento inicial
-          if (!isLoadingDrinks) {
-            setShowUpdateNotification(true)
-            setTimeout(() => setShowUpdateNotification(false), 3000)
-          }
-        } catch (error) {
-          console.error("Erro ao carregar drinks do admin:", error)
-          // Se houver erro, usa os drinks padrão
-          setDynamicDrinks(drinks)
-        }
-      } else {
-        // Se não há drinks salvos, usa os padrão
-        setDynamicDrinks(drinks)
-      }
-      setIsLoadingDrinks(false)
-    }
-
-    loadDrinksFromAdmin()
-
-    // Listener para mudanças no localStorage
-    const handleStorageChange = (e: StorageEvent) => {
-      if (e.key === "tenderes_drinks") {
-        loadDrinksFromAdmin()
-      }
-    }
-
-    window.addEventListener('storage', handleStorageChange)
-    
-    // Polling para verificar mudanças (para mesma aba)
-    const interval = setInterval(loadDrinksFromAdmin, 2000)
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange)
-      clearInterval(interval)
     }
   }, [])
 
