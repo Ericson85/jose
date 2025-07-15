@@ -84,6 +84,7 @@ export default function ProprietarioPage() {
   }
 
   const handleAddNew = () => {
+    console.log("handleAddNew chamado");
     const newDrink: Omit<Drink, 'id'> = {
       name: "",
       price: 0,
@@ -190,6 +191,11 @@ export default function ProprietarioPage() {
   }
 
   // Admin Panel
+  useEffect(() => {
+    if (editingDrink) {
+      console.log("Renderizando formulário de edição/adicionar", editingDrink);
+    }
+  }, [editingDrink]);
   console.log("Renderizando lista de drinks:", drinks);
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900">
@@ -428,7 +434,7 @@ export default function ProprietarioPage() {
                         Cancelar
                       </Button>
                       <Button
-                        onClick={() => setShowAddConfirm(true)}
+                        onClick={() => { console.log('Botão Salvar clicado'); setShowAddConfirm(true); }}
                         className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                       >
                         <Save className="h-4 w-4 mr-2" />
