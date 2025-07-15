@@ -116,6 +116,7 @@ export default function ProprietarioPage() {
   };
 
   const handleSave = async () => {
+    console.log("handleSave chamado", editingDrink);
     if (!editingDrink) return;
 
     if (!editingDrink.name.trim() || editingDrink.price <= 0) {
