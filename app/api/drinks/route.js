@@ -16,16 +16,17 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, price, category, image, price_type, popular } = body;
+    const { name, price, category, image, price_type, priceType, popular, description, premium } = body;
+    const finalPriceType = price_type || priceType;
 
     // Validação básica dos campos obrigatórios
-    if (!name || !price || !category || !image || !price_type) {
+    if (!name || !price || !category || !image || !finalPriceType) {
       return NextResponse.json({ error: 'Preencha todos os campos obrigatórios.' }, { status: 400 });
     }
 
     await db.query(
-      'INSERT INTO drinks (name, price, category, image, price_type, popular) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, price, category, image, price_type, popular ? 1 : 0]
+      'INSERT INTO drinks (name, price, category, image, price_type, popular, description, premium) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [name, price, category, image, finalPriceType, popular ? 1 : 0, description || null, premium ? 1 : 0]
     );
     return NextResponse.json({ message: 'Drink adicionado!' }, { status: 201 });
   } catch (error) {
