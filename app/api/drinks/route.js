@@ -14,12 +14,21 @@ export async function GET() {
 }
 
 export async function POST(request) {
-  const body = await request.json();
-  console.log("Payload recebido:", body);
-  const { name, price, category, image, price_type, popular } = body;
-  await db.query(
-    'INSERT INTO drinks (name, price, category, image, price_type, popular) VALUES (?, ?, ?, ?, ?, ?)',
-    [name, price, category, image, price_type, popular]
-  );
-  return NextResponse.json({ message: 'Drink adicionado!' }, { status: 201 });
+  try {
+    const body = await request.json();
+    const { name, price, category, image, price_type, popular } = body;
+
+    // Validação básica dos campos obrigatórios
+    if (!name || !price || !category || !image || !price_type) {
+      return NextResponse.json({ error: 'Preencha todos os campos obrigatórios.' }, { status: 400 });
+    }
+
+    await db.query(
+      'INSERT INTO drinks (name, price, category, image, price_type, popular) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, price, category, image, price_type, popular ? 1 : 0]
+    );
+    return NextResponse.json({ message: 'Drink adicionado!' }, { status: 201 });
+  } catch (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
 } 
