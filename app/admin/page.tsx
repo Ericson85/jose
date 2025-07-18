@@ -40,7 +40,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [drinks, setDrinks] = useState<Drink[]>([])
   const [events, setEvents] = useState<Event[]>([])
-  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira'>('dashboard')
   
   // Login states
   const [password, setPassword] = useState("")
@@ -55,6 +55,16 @@ export default function AdminPage() {
   const [toastMessage, setToastMessage] = useState("")
   const [toastType, setToastType] = useState<"success" | "error" | "info">("success")
   const [drinkToDelete, setDrinkToDelete] = useState<Drink | null>(null);
+
+  // Estados para Planos
+  const [plans, setPlans] = useState([]);
+  const [loadingPlans, setLoadingPlans] = useState(false);
+  const [planForm, setPlanForm] = useState({ name: '', description: '', id: null });
+  const [editingPlan, setEditingPlan] = useState(null);
+
+  // Estados para Drinkeira
+  const [drinkeiraConfig, setDrinkeiraConfig] = useState({ ativo: false, valor: '', descricao: '', drinks: [] });
+  const [loadingDrinkeira, setLoadingDrinkeira] = useState(false);
 
   const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar", "Caipirinha", "Caipiroska", "Clássico"]
   const eventStatuses = ["active", "inactive", "completed"]
@@ -90,6 +100,86 @@ export default function AdminPage() {
       }
     }
   }, []);
+
+  // Buscar planos ao abrir aba
+  useEffect(() => {
+    if (activeTab === 'plans') fetchPlans();
+  }, [activeTab]);
+
+  async function fetchPlans() {
+    setLoadingPlans(true);
+    try {
+      const res = await fetch('/api/plans');
+      const data = await res.json();
+      setPlans(data);
+    } finally {
+      setLoadingPlans(false);
+    }
+  }
+
+  async function handleCreatePlan(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await fetch('/api/plans', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: planForm.name, description: planForm.description }),
+    });
+    setPlanForm({ name: '', description: '', id: null });
+    fetchPlans();
+  }
+
+  async function handleEditPlan(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await fetch(`/api/plans/${planForm.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: planForm.name, description: planForm.description }),
+    });
+    setPlanForm({ name: '', description: '', id: null });
+    setEditingPlan(null);
+    fetchPlans();
+  }
+
+  function startEditPlan(plan: any) {
+    setPlanForm({ name: plan.name, description: plan.description, id: plan.id });
+    setEditingPlan(plan.id);
+  }
+
+  async function handleDeletePlan(id: number) {
+    await fetch(`/api/plans/${id}`, { method: 'DELETE' });
+    fetchPlans();
+  }
+
+  // Buscar config drinkeira ao abrir aba
+  useEffect(() => {
+    if (activeTab === 'drinkeira') fetchDrinkeiraConfig();
+  }, [activeTab]);
+
+  async function fetchDrinkeiraConfig() {
+    setLoadingDrinkeira(true);
+    try {
+      const res = await fetch('/api/drinkeira');
+      const data = await res.json();
+      setDrinkeiraConfig({
+        ativo: !!data.ativo,
+        valor: data.valor || '',
+        descricao: data.descricao || '',
+        drinks: data.drinks ? data.drinks.split(',').map(Number).filter(Boolean) : [],
+      });
+    } finally {
+      setLoadingDrinkeira(false);
+    }
+  }
+
+  async function handleSaveDrinkeira(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await fetch('/api/drinkeira', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(drinkeiraConfig),
+    });
+    fetchDrinkeiraConfig();
+  }
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
     setToastMessage(message)
@@ -439,6 +529,28 @@ export default function AdminPage() {
             >
               Eventos
             </Button>
+            <Button
+              onClick={() => setActiveTab('plans')}
+              variant={activeTab === 'plans' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'plans' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Planos
+            </Button>
+            <Button
+              onClick={() => setActiveTab('drinkeira')}
+              variant={activeTab === 'drinkeira' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'drinkeira' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Drinkeira
+            </Button>
           </div>
         </div>
       </div>
@@ -545,6 +657,94 @@ export default function AdminPage() {
               </CardContent>
             </Card>
           </div>
+        )}
+
+        {activeTab === 'plans' && (
+          <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0 mt-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-white">Gerenciamento de Planos</CardTitle>
+              <CardDescription className="text-gray-300">CRUD de planos e seleção de drinks por plano</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {/* Mock de listagem de planos */}
+              <div className="mb-4 flex justify-between items-center">
+                <span className="text-gray-200 font-semibold">Planos cadastrados:</span>
+                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Novo Plano</Button>
+              </div>
+              <div className="space-y-4">
+                <Card className="bg-gray-700/50 border-gray-600">
+                  <CardContent className="p-4 flex justify-between items-center">
+                    <div>
+                      <p className="text-white font-bold">Plano Open Bar</p>
+                      <p className="text-gray-300 text-sm">Inclui todos os drinks do menu</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="outline" className="border-blue-600 text-blue-300 hover:bg-blue-900/50">Editar</Button>
+                      <Button size="sm" variant="outline" className="border-red-600 text-red-300 hover:bg-red-900/50">Remover</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+                <Card className="bg-gray-700/50 border-gray-600">
+                  <CardContent className="p-4 flex justify-between items-center">
+                    <div>
+                      <p className="text-white font-bold">Plano Premium</p>
+                      <p className="text-gray-300 text-sm">Inclui drinks premium e clássicos</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <Button size="sm" variant="outline" className="border-blue-600 text-blue-300 hover:bg-blue-900/50">Editar</Button>
+                      <Button size="sm" variant="outline" className="border-red-600 text-red-300 hover:bg-red-900/50">Remover</Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              {/* Mock de formulário de plano */}
+              <div className="mt-8 p-4 bg-gray-900/60 rounded-lg">
+                <h3 className="text-white font-semibold mb-2">Formulário de Plano (mock)</h3>
+                <div className="space-y-2">
+                  <Input placeholder="Nome do Plano" className="border-gray-600 bg-gray-700 text-white" />
+                  <textarea placeholder="Descrição do Plano" className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" />
+                  <Label className="text-gray-200">Drinks inclusos (mock)</Label>
+                  <div className="flex flex-wrap gap-2">
+                    <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Caipirinha</Badge>
+                    <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Mojito</Badge>
+                    <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Gin Tônica</Badge>
+                  </div>
+                  <div className="flex space-x-2 pt-2">
+                    <Button variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">Cancelar</Button>
+                    <Button className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+        {activeTab === 'drinkeira' && (
+          <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0 mt-8">
+            <CardHeader>
+              <CardTitle className="text-xl text-white">Modo Drinkeira</CardTitle>
+              <CardDescription className="text-gray-300">Configuração do modo drinkeira, valor, descrição e drinks</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center space-x-4">
+                  <Label className="text-gray-200">Ativar Drinkeira</Label>
+                  <Switch />
+                </div>
+                <Input placeholder="Valor (R$)" className="border-gray-600 bg-gray-700 text-white" />
+                <textarea placeholder="Descrição do modo drinkeira" className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" />
+                <Label className="text-gray-200">Drinks disponíveis (mock)</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Caipirinha</Badge>
+                  <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Mojito</Badge>
+                  <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Gin Tônica</Badge>
+                </div>
+                <div className="flex space-x-2 pt-2">
+                  <Button variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">Cancelar</Button>
+                  <Button className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         )}
 
         <div className="grid xl:grid-cols-4 lg:grid-cols-3 gap-8">
