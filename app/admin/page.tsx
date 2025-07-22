@@ -725,24 +725,88 @@ export default function AdminPage() {
               <CardDescription className="text-gray-300">Configuração do modo drinkeira, valor, descrição e drinks</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-4">
-                  <Label className="text-gray-200">Ativar Drinkeira</Label>
-                  <Switch />
+              <form onSubmit={handleSaveDrinkeira}>
+                <div className="space-y-4">
+                  <div className="flex items-center space-x-4">
+                    <Label className="text-gray-200">Ativar Drinkeira</Label>
+                    <Switch
+                      checked={drinkeiraConfig.ativo}
+                      onCheckedChange={ativo => setDrinkeiraConfig(prev => ({ ...prev, ativo }))}
+                    />
+                  </div>
+                  <Input
+                    placeholder="Valor (R$)"
+                    className="border-gray-600 bg-gray-700 text-white"
+                    value={drinkeiraConfig.valor}
+                    onChange={e => setDrinkeiraConfig(prev => ({ ...prev, valor: e.target.value }))}
+                  />
+                  <textarea
+                    placeholder="Descrição do modo drinkeira"
+                    className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none"
+                    value={drinkeiraConfig.descricao}
+                    onChange={e => setDrinkeiraConfig(prev => ({ ...prev, descricao: e.target.value }))}
+                  />
+                  <Label className="text-gray-200">Drinks disponíveis</Label>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {drinks.filter(drink => drinkeiraConfig.drinks.map(String).includes(String(drink.id))).map(drink => (
+                      <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                        <CardContent className="p-4">
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
+                              <Wine className="h-6 w-6 text-purple-300" />
+                            </div>
+                            <div className="flex items-center space-x-2">
+                              <Button
+                                onClick={() => handleEdit(drink)}
+                                variant="outline"
+                                size="sm"
+                                className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                onClick={() => setDrinkToDelete(drink)}
+                                variant="outline"
+                                size="sm"
+                                className="border-red-600 text-red-300 hover:bg-red-900/50"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                          <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
+                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{drink.description}</p>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
+                              {drink.category}
+                            </Badge>
+                            <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">
+                              R$ {drink.price}
+                            </Badge>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {drink.popular && (
+                              <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
+                                <Star className="h-3 w-3 mr-1" />
+                                Popular
+                              </Badge>
+                            )}
+                            {drink.premium && (
+                              <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50 text-xs">
+                                Premium
+                              </Badge>
+                            )}
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                  <div className="flex space-x-2 pt-2">
+                    <Button type="button" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700" onClick={fetchDrinkeiraConfig}>Cancelar</Button>
+                    <Button type="submit" className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
+                  </div>
                 </div>
-                <Input placeholder="Valor (R$)" className="border-gray-600 bg-gray-700 text-white" />
-                <textarea placeholder="Descrição do modo drinkeira" className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" />
-                <Label className="text-gray-200">Drinks disponíveis (mock)</Label>
-                <div className="flex flex-wrap gap-2">
-                  <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Caipirinha</Badge>
-                  <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Mojito</Badge>
-                  <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Gin Tônica</Badge>
-                </div>
-                <div className="flex space-x-2 pt-2">
-                  <Button variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">Cancelar</Button>
-                  <Button className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
-                </div>
-              </div>
+              </form>
             </CardContent>
           </Card>
         )}
