@@ -66,6 +66,13 @@ export default function AdminPage() {
   const [drinkeiraConfig, setDrinkeiraConfig] = useState({ ativo: false, valor: '', descricao: '', drinks: [] });
   const [loadingDrinkeira, setLoadingDrinkeira] = useState(false);
 
+  // Novo estado para drinks do modo drinkeira
+  const [drinkeiraDrinks, setDrinkeiraDrinks] = useState<Drink[]>([]);
+  const [loadingDrinkeiraDrinks, setLoadingDrinkeiraDrinks] = useState(false);
+  const [editingDrinkeiraDrink, setEditingDrinkeiraDrink] = useState<Drink | null>(null);
+  const [isAddingNewDrinkeira, setIsAddingNewDrinkeira] = useState(false);
+  const [drinkeiraDrinkToDelete, setDrinkeiraDrinkToDelete] = useState<Drink | null>(null);
+
   const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar", "Caipirinha", "Caipiroska", "Clássico"]
   const eventStatuses = ["active", "inactive", "completed"]
 
@@ -179,6 +186,88 @@ export default function AdminPage() {
       body: JSON.stringify(drinkeiraConfig),
     });
     fetchDrinkeiraConfig();
+  }
+
+  // Buscar drinks do modo drinkeira ao abrir aba
+  useEffect(() => {
+    if (activeTab === 'drinkeira') fetchDrinkeiraDrinks();
+  }, [activeTab]);
+
+  async function fetchDrinkeiraDrinks() {
+    setLoadingDrinkeiraDrinks(true);
+    try {
+      const res = await fetch('/api/drinkeira/drinks');
+      const data = await res.json();
+      setDrinkeiraDrinks(data);
+    } finally {
+      setLoadingDrinkeiraDrinks(false);
+    }
+  }
+
+  async function handleSaveDrinkeiraDrink() {
+    if (!editingDrinkeiraDrink) return;
+    if (!editingDrinkeiraDrink.name.trim() || editingDrinkeiraDrink.price <= 0) {
+      showMessage('Preencha todos os campos obrigatórios!', 'error');
+      return;
+    }
+    try {
+      if (isAddingNewDrinkeira) {
+        const { id, ...payload } = editingDrinkeiraDrink;
+        await fetch('/api/drinkeira/drinks', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        showMessage('Drink adicionado com sucesso!', 'success');
+      } else {
+        await fetch(`/api/drinkeira/drinks/${editingDrinkeiraDrink.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(editingDrinkeiraDrink)
+        });
+        showMessage('Drink atualizado com sucesso!', 'success');
+      }
+      fetchDrinkeiraDrinks();
+      setEditingDrinkeiraDrink(null);
+      setIsAddingNewDrinkeira(false);
+    } catch (error) {
+      showMessage('Erro ao salvar drink!', 'error');
+    }
+  }
+
+  async function handleDeleteDrinkeiraDrink(id: string) {
+    try {
+      await fetch(`/api/drinkeira/drinks/${id}`, { method: 'DELETE' });
+      fetchDrinkeiraDrinks();
+      showMessage('Drink removido com sucesso!', 'success');
+    } catch (error) {
+      showMessage('Erro ao remover drink!', 'error');
+    }
+  }
+
+  function handleAddNewDrinkeiraDrink() {
+    setEditingDrinkeiraDrink({
+      id: Date.now().toString(),
+      name: '',
+      description: '',
+      price: 0,
+      category: 'Caipirinha',
+      image: '/placeholder.svg?height=120&width=120',
+      priceType: 'per_unit',
+      popular: false,
+      premium: false
+    });
+    setIsAddingNewDrinkeira(true);
+  }
+
+  function handleEditDrinkeiraDrink(drink: Drink) {
+    setEditingDrinkeiraDrink({ ...drink });
+    setIsAddingNewDrinkeira(false);
+  }
+
+  function handleCancelDrinkeiraDrink() {
+    setEditingDrinkeiraDrink(null);
+    setIsAddingNewDrinkeira(false);
   }
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
