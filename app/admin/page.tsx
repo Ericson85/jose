@@ -811,91 +811,106 @@ export default function AdminPage() {
           <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0 mt-8">
             <CardHeader>
               <CardTitle className="text-xl text-white">Modo Drinkeira</CardTitle>
-              <CardDescription className="text-gray-300">Configuração do modo drinkeira, valor, descrição e drinks</CardDescription>
+              <CardDescription className="text-gray-300">Gerencie os drinks exclusivos do modo drinkeira</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSaveDrinkeira}>
-                <div className="space-y-4">
-                  <div className="flex items-center space-x-4">
-                    <Label className="text-gray-200">Ativar Drinkeira</Label>
-                    <Switch
-                      checked={drinkeiraConfig.ativo}
-                      onCheckedChange={ativo => setDrinkeiraConfig(prev => ({ ...prev, ativo }))}
-                    />
-                  </div>
-                  <Input
-                    placeholder="Valor (R$)"
-                    className="border-gray-600 bg-gray-700 text-white"
-                    value={drinkeiraConfig.valor}
-                    onChange={e => setDrinkeiraConfig(prev => ({ ...prev, valor: e.target.value }))}
-                  />
-                  <textarea
-                    placeholder="Descrição do modo drinkeira"
-                    className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none"
-                    value={drinkeiraConfig.descricao}
-                    onChange={e => setDrinkeiraConfig(prev => ({ ...prev, descricao: e.target.value }))}
-                  />
-                  <Label className="text-gray-200">Drinks disponíveis</Label>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {drinks.filter(drink => drinkeiraConfig.drinks.map(String).includes(String(drink.id))).map(drink => (
-                      <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
-                              <Wine className="h-6 w-6 text-purple-300" />
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                onClick={() => handleEdit(drink)}
-                                variant="outline"
-                                size="sm"
-                                className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                onClick={() => setDrinkToDelete(drink)}
-                                variant="outline"
-                                size="sm"
-                                className="border-red-600 text-red-300 hover:bg-red-900/50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
-                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{drink.description}</p>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
-                              {drink.category}
-                            </Badge>
-                            <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">
-                              R$ {drink.price}
-                            </Badge>
-                          </div>
-                          <div className="flex items-center space-x-2">
-                            {drink.popular && (
-                              <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
-                                <Star className="h-3 w-3 mr-1" />
-                                Popular
-                              </Badge>
-                            )}
-                            {drink.premium && (
-                              <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50 text-xs">
-                                Premium
-                              </Badge>
-                            )}
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                  <div className="flex space-x-2 pt-2">
-                    <Button type="button" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700" onClick={fetchDrinkeiraConfig}>Cancelar</Button>
-                    <Button type="submit" className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
-                  </div>
+              <div className="flex justify-end mb-4">
+                <Button onClick={handleAddNewDrinkeiraDrink} className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">
+                  <Plus className="h-4 w-4 mr-2" /> Novo Drink
+                </Button>
+              </div>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {drinkeiraDrinks.length === 0 && !loadingDrinkeiraDrinks && (
+                  <div className="col-span-full text-center text-gray-400">Nenhum drink cadastrado no modo drinkeira.</div>
+                )}
+                {drinkeiraDrinks.map(drink => (
+                  <Card key={drink.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                    <CardContent className="p-4">
+                      <div className="flex items-center justify-between mb-3">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center">
+                          <Wine className="h-6 w-6 text-purple-300" />
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Button onClick={() => handleEditDrinkeiraDrink(drink)} variant="outline" size="sm" className="border-blue-600 text-blue-300 hover:bg-blue-900/50">
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button onClick={() => setDrinkeiraDrinkToDelete(drink)} variant="outline" size="sm" className="border-red-600 text-red-300 hover:bg-red-900/50">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                      <h4 className="font-semibold text-white mb-2">{drink.name}</h4>
+                      <p className="text-gray-300 text-sm mb-2 line-clamp-2">{drink.description}</p>
+                      <div className="flex items-center space-x-2 mb-2">
+                        <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">{drink.category}</Badge>
+                        <Badge className="bg-blue-900/50 text-blue-200 border-blue-700/50 text-xs">R$ {drink.price}</Badge>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        {drink.popular && (
+                          <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50 text-xs">
+                            <Star className="h-3 w-3 mr-1" /> Popular
+                          </Badge>
+                        )}
+                        {drink.premium && (
+                          <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50 text-xs">Premium</Badge>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+              {editingDrinkeiraDrink && (
+                <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50">
+                  <Card className="w-full max-w-md mx-auto bg-gray-800 border border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-lg text-white">{isAddingNewDrinkeira ? 'Adicionar Drink' : 'Editar Drink'}</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <Input value={editingDrinkeiraDrink.name} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, name: e.target.value } : null)} placeholder="Nome do Drink" className="border-gray-600 bg-gray-700 text-white" />
+                        <Input type="number" min="0" step="0.01" value={editingDrinkeiraDrink.price} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, price: Number(e.target.value) } : null)} placeholder="Preço (R$)" className="border-gray-600 bg-gray-700 text-white" />
+                        <Input value={editingDrinkeiraDrink.category} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, category: e.target.value } : null)} placeholder="Categoria" className="border-gray-600 bg-gray-700 text-white" />
+                        <Input value={editingDrinkeiraDrink.image} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: e.target.value } : null)} placeholder="URL da Imagem" className="border-gray-600 bg-gray-700 text-white" />
+                        <Input value={editingDrinkeiraDrink.priceType} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, priceType: e.target.value as any } : null)} placeholder="Tipo de Preço (per_unit/per_person)" className="border-gray-600 bg-gray-700 text-white" />
+                        <textarea value={editingDrinkeiraDrink.description} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, description: e.target.value } : null)} placeholder="Descrição" className="w-full h-20 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" />
+                        <div className="flex items-center space-x-3">
+                          <Switch checked={editingDrinkeiraDrink.popular} onCheckedChange={checked => setEditingDrinkeiraDrink(prev => prev ? { ...prev, popular: checked } : null)} />
+                          <Label className="text-sm font-medium text-gray-200">Marcar como Popular</Label>
+                        </div>
+                        <div className="flex items-center space-x-3">
+                          <Switch checked={editingDrinkeiraDrink.premium} onCheckedChange={checked => setEditingDrinkeiraDrink(prev => prev ? { ...prev, premium: checked } : null)} />
+                          <Label className="text-sm font-medium text-gray-200">Marcar como Premium</Label>
+                        </div>
+                        <div className="flex space-x-2 pt-4">
+                          <Button onClick={handleCancelDrinkeiraDrink} variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">Cancelar</Button>
+                          <Button onClick={handleSaveDrinkeiraDrink} className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
                 </div>
-              </form>
+              )}
+              {/* Modal de confirmação de remoção */}
+              {drinkeiraDrinkToDelete && (
+                <Dialog open={!!drinkeiraDrinkToDelete} onOpenChange={() => setDrinkeiraDrinkToDelete(null)}>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Confirmar remoção</DialogTitle>
+                      <DialogDescription>
+                        Tem certeza que deseja remover o drink <b>{drinkeiraDrinkToDelete.name}</b>?
+                      </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex justify-end gap-2 mt-4">
+                      <Button variant="outline" onClick={() => setDrinkeiraDrinkToDelete(null)}>
+                        Cancelar
+                      </Button>
+                      <Button className="bg-red-600 text-white" onClick={() => { handleDeleteDrinkeiraDrink(drinkeiraDrinkToDelete.id); setDrinkeiraDrinkToDelete(null); }}>
+                        Remover
+                      </Button>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              )}
             </CardContent>
           </Card>
         )}
