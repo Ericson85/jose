@@ -222,6 +222,29 @@ export default function TenderesPage() {
     };
   }, []);
 
+  // Carregar drinks do modo drinkeira do banco de dados
+  useEffect(() => {
+    let isMounted = true;
+    const fetchDrinkeiraDrinks = async () => {
+      setLoadingDrinkeiraDrinks(true);
+      try {
+        const response = await fetch("/api/drinkeira/drinks");
+        const data = await response.json();
+        if (isMounted) setDrinkeiraDrinks(data);
+      } catch (error) {
+        console.error("Erro ao carregar drinks do modo drinkeira:", error);
+        if (isMounted) setDrinkeiraDrinks(drinkeiraMenu); // fallback para os drinks padrão
+      }
+      setLoadingDrinkeiraDrinks(false);
+    };
+    fetchDrinkeiraDrinks();
+    const interval = setInterval(fetchDrinkeiraDrinks, 2000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   // Verificar se o usuário já preencheu os dados
   useEffect(() => {
     const savedUserData = localStorage.getItem("tenderes_user_data")
@@ -262,6 +285,8 @@ export default function TenderesPage() {
   const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
   const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
   const [drinkeiraTab, setDrinkeiraTab] = useState<'caipirinhas' | 'caipiroskas' | 'classicos'>('caipirinhas')
+  const [drinkeiraDrinks, setDrinkeiraDrinks] = useState<DrinkeiraDrink[]>([])
+  const [loadingDrinkeiraDrinks, setLoadingDrinkeiraDrinks] = useState(false)
 
   const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -346,9 +371,9 @@ export default function TenderesPage() {
   }
 
   const categories = [...new Set(dynamicDrinks.map((drink) => drink.category))]
-  const caipirinhas = drinkeiraMenu.filter((drink) => drink.category === "Caipirinha")
-  const caipiroskas = drinkeiraMenu.filter((drink) => drink.category === "Caipiroska")
-  const outrosClassicos = drinkeiraMenu.filter((drink) => drink.category === "Clássico")
+  const caipirinhas = drinkeiraDrinks.filter((drink) => drink.category === "Caipirinha")
+  const caipiroskas = drinkeiraDrinks.filter((drink) => drink.category === "Caipiroska")
+  const outrosClassicos = drinkeiraDrinks.filter((drink) => drink.category === "Clássico")
 
   // Efeito para o toast
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null)

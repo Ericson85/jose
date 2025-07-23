@@ -31,12 +31,15 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, price, category, image, price_type, popular, description } = body;
+    const { name, price, category, image, price_type, priceType, popular, description } = body;
+    
+    // Aceitar tanto price_type quanto priceType
+    const finalPriceType = price_type || priceType || 'per_unit';
     
     const connection = await getConnection();
     const [result] = await connection.execute(
       'INSERT INTO drinkeira_drinks (name, price, category, image, price_type, popular, description) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [name, price, category, image, price_type, popular ? 1 : 0, description]
+      [name, price, category, image, finalPriceType, popular ? 1 : 0, description]
     );
     await connection.end();
     
@@ -46,7 +49,7 @@ export async function POST(request) {
       price, 
       category, 
       image, 
-      price_type, 
+      price_type: finalPriceType, 
       popular, 
       description 
     });

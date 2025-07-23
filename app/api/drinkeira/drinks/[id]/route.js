@@ -20,13 +20,18 @@ export async function PUT(request, { params }) {
     const { id } = params;
     const body = await request.json();
     
-    const { name, description, price, image_url, category } = body;
+    const { name, description, price, image, image_url, category, price_type, priceType, popular } = body;
+    
+    // Aceitar tanto image quanto image_url
+    const finalImage = image || image_url;
+    // Aceitar tanto price_type quanto priceType
+    const finalPriceType = price_type || priceType || 'per_unit';
     
     const connection = await getConnection();
     
     const [result] = await connection.execute(
-      'UPDATE drinkeira_drinks SET name = ?, description = ?, price = ?, image_url = ?, category = ? WHERE id = ?',
-      [name, description, price, image_url, category, id]
+      'UPDATE drinkeira_drinks SET name = ?, description = ?, price = ?, image = ?, category = ?, price_type = ?, popular = ? WHERE id = ?',
+      [name, description, price, finalImage, category, finalPriceType, popular ? 1 : 0, id]
     );
     
     await connection.end();
