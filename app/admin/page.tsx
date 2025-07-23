@@ -869,9 +869,42 @@ export default function AdminPage() {
                       <div className="space-y-4">
                         <Input value={editingDrinkeiraDrink.name} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, name: e.target.value } : null)} placeholder="Nome do Drink" className="border-gray-600 bg-gray-700 text-white" />
                         <Input type="number" min="0" step="0.01" value={editingDrinkeiraDrink.price} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, price: Number(e.target.value) } : null)} placeholder="Preço (R$)" className="border-gray-600 bg-gray-700 text-white" />
-                        <Input value={editingDrinkeiraDrink.category} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, category: e.target.value } : null)} placeholder="Categoria" className="border-gray-600 bg-gray-700 text-white" />
+                        <Select
+                          value={editingDrinkeiraDrink.category}
+                          onValueChange={(value) => setEditingDrinkeiraDrink(prev => prev ? { ...prev, category: value } : null)}
+                        >
+                          <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                            <SelectValue placeholder="Selecione a categoria" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-700 border-gray-600">
+                            <SelectItem value="Caipirinha" className="text-white">
+                              Caipirinha
+                            </SelectItem>
+                            <SelectItem value="Caipiroska" className="text-white">
+                              Caipiroska
+                            </SelectItem>
+                            <SelectItem value="Clássico" className="text-white">
+                              Clássico
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                         <Input value={editingDrinkeiraDrink.image} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: e.target.value } : null)} placeholder="URL da Imagem" className="border-gray-600 bg-gray-700 text-white" />
-                        <Input value={editingDrinkeiraDrink.priceType} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, priceType: e.target.value as any } : null)} placeholder="Tipo de Preço (per_unit/per_person)" className="border-gray-600 bg-gray-700 text-white" />
+                        <Select
+                          value={editingDrinkeiraDrink.priceType}
+                          onValueChange={(value: "per_person" | "per_unit") => setEditingDrinkeiraDrink(prev => prev ? { ...prev, priceType: value } : null)}
+                        >
+                          <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                            <SelectValue placeholder="Selecione o tipo de preço" />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-700 border-gray-600">
+                            <SelectItem value="per_unit" className="text-white">
+                              Por Unidade
+                            </SelectItem>
+                            <SelectItem value="per_person" className="text-white">
+                              Por Pessoa
+                            </SelectItem>
+                          </SelectContent>
+                        </Select>
                         <textarea value={editingDrinkeiraDrink.description} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, description: e.target.value } : null)} placeholder="Descrição" className="w-full h-20 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" />
                         <div className="flex items-center space-x-3">
                           <Switch checked={editingDrinkeiraDrink.popular} onCheckedChange={checked => setEditingDrinkeiraDrink(prev => prev ? { ...prev, popular: checked } : null)} />
