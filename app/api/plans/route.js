@@ -5,8 +5,13 @@ import db from "@/lib/utils";
 export async function GET() {
   try {
     const [rows] = await db.query('SELECT * FROM plans');
-    return NextResponse.json(rows);
+    const plans = rows.map(plan => ({
+      ...plan,
+      drinks: plan.drinks_inclusos ? plan.drinks_inclusos.split(',').map(s => s.trim()) : [],
+    }));
+    return NextResponse.json(plans);
   } catch (error) {
+    console.error('Erro ao buscar planos:', error);
     return NextResponse.json({ error: 'Erro ao buscar planos', details: error }, { status: 500 });
   }
 }
