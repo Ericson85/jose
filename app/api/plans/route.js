@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/utils";
+import { db } from "@/lib/db";
 
 // GET: Listar todos os planos
 export async function GET() {
