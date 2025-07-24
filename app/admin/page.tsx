@@ -36,6 +36,15 @@ export interface Event {
   createdAt: string
 }
 
+interface Plan {
+  id: number | null;
+  name: string;
+  subtitle?: string;
+  description: string;
+  price: string | number;
+  drinks_inclusos?: string;
+}
+
 export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [drinks, setDrinks] = useState<Drink[]>([])
@@ -57,9 +66,9 @@ export default function AdminPage() {
   const [drinkToDelete, setDrinkToDelete] = useState<Drink | null>(null);
 
   // Estados para Planos
-  const [plans, setPlans] = useState([]);
+  const [plans, setPlans] = useState<Plan[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(false);
-  const [planForm, setPlanForm] = useState({ name: '', description: '', id: null });
+  const [planForm, setPlanForm] = useState<Plan>({ name: '', subtitle: '', description: '', price: '', drinks_inclusos: '', id: null });
   const [editingPlan, setEditingPlan] = useState(null);
 
   // Estados para Drinkeira
@@ -148,11 +157,19 @@ export default function AdminPage() {
   }
 
   function startEditPlan(plan: any) {
-    setPlanForm({ name: plan.name, description: plan.description, id: plan.id });
+    setPlanForm({
+      name: plan.name || '',
+      subtitle: plan.subtitle || '',
+      description: plan.description || '',
+      price: plan.price || '',
+      drinks_inclusos: plan.drinks_inclusos || '',
+      id: plan.id || null
+    });
     setEditingPlan(plan.id);
   }
 
-  async function handleDeletePlan(id: number) {
+  async function handleDeletePlan(id: number | null) {
+    if (id === null) return;
     await fetch(`/api/plans/${id}`, { method: 'DELETE' });
     fetchPlans();
   }
@@ -755,55 +772,50 @@ export default function AdminPage() {
               <CardDescription className="text-gray-300">CRUD de planos e seleção de drinks por plano</CardDescription>
             </CardHeader>
             <CardContent>
-              {/* Mock de listagem de planos */}
+              {/* Listagem de planos reais */}
               <div className="mb-4 flex justify-between items-center">
                 <span className="text-gray-200 font-semibold">Planos cadastrados:</span>
-                <Button className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Novo Plano</Button>
+                <Button onClick={() => setPlanForm({ name: '', subtitle: '', description: '', price: '', drinks_inclusos: '', id: null })} className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Novo Plano</Button>
               </div>
               <div className="space-y-4">
-                <Card className="bg-gray-700/50 border-gray-600">
-                  <CardContent className="p-4 flex justify-between items-center">
-                    <div>
-                      <p className="text-white font-bold">Plano Open Bar</p>
-                      <p className="text-gray-300 text-sm">Inclui todos os drinks do menu</p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" className="border-blue-600 text-blue-300 hover:bg-blue-900/50">Editar</Button>
-                      <Button size="sm" variant="outline" className="border-red-600 text-red-300 hover:bg-red-900/50">Remover</Button>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card className="bg-gray-700/50 border-gray-600">
-                  <CardContent className="p-4 flex justify-between items-center">
-                    <div>
-                      <p className="text-white font-bold">Plano Premium</p>
-                      <p className="text-gray-300 text-sm">Inclui drinks premium e clássicos</p>
-                    </div>
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline" className="border-blue-600 text-blue-300 hover:bg-blue-900/50">Editar</Button>
-                      <Button size="sm" variant="outline" className="border-red-600 text-red-300 hover:bg-red-900/50">Remover</Button>
-                    </div>
-                  </CardContent>
-                </Card>
+                {plans.length === 0 && !loadingPlans && (
+                  <div className="text-center text-gray-400">Nenhum plano cadastrado.</div>
+                )}
+                {plans.map((plan) => (
+                  <Card key={plan.id} className="bg-gray-700/50 border-gray-600">
+                    <CardContent className="p-4 flex justify-between items-center">
+                      <div>
+                        <p className="text-white font-bold text-lg">{plan.name}</p>
+                        {plan.subtitle && <p className="text-purple-300 text-sm font-semibold">{plan.subtitle}</p>}
+                        <p className="text-gray-300 text-sm mb-1">{plan.description}</p>
+                        <p className="text-green-300 text-sm font-bold">R$ {plan.price}</p>
+                        <p className="text-gray-400 text-xs">Drinks: {plan.drinks_inclusos}</p>
+                      </div>
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline" className="border-blue-600 text-blue-300 hover:bg-blue-900/50" onClick={() => setPlanForm({ ...plan, id: plan.id })}>Editar</Button>
+                        <Button size="sm" variant="outline" className="border-red-600 text-red-300 hover:bg-red-900/50" onClick={() => handleDeletePlan(plan.id)}>Remover</Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
-              {/* Mock de formulário de plano */}
-              <div className="mt-8 p-4 bg-gray-900/60 rounded-lg">
-                <h3 className="text-white font-semibold mb-2">Formulário de Plano (mock)</h3>
-                <div className="space-y-2">
-                  <Input placeholder="Nome do Plano" className="border-gray-600 bg-gray-700 text-white" />
-                  <textarea placeholder="Descrição do Plano" className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" />
-                  <Label className="text-gray-200">Drinks inclusos (mock)</Label>
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Caipirinha</Badge>
-                    <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Mojito</Badge>
-                    <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">Gin Tônica</Badge>
-                  </div>
-                  <div className="flex space-x-2 pt-2">
-                    <Button variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700">Cancelar</Button>
-                    <Button className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
-                  </div>
+              {/* Formulário real de plano */}
+              {planForm && (
+                <div className="mt-8 p-4 bg-gray-900/60 rounded-lg">
+                  <h3 className="text-white font-semibold mb-2">{planForm.id ? 'Editar Plano' : 'Novo Plano'}</h3>
+                  <form onSubmit={planForm.id ? handleEditPlan : handleCreatePlan} className="space-y-2">
+                    <Input value={planForm.name} onChange={e => setPlanForm({ ...planForm, name: e.target.value })} placeholder="Nome do Plano" className="border-gray-600 bg-gray-700 text-white" required />
+                    <Input value={planForm.subtitle || ''} onChange={e => setPlanForm({ ...planForm, subtitle: e.target.value })} placeholder="Subtítulo do Plano" className="border-gray-600 bg-gray-700 text-white" />
+                    <textarea value={planForm.description} onChange={e => setPlanForm({ ...planForm, description: e.target.value })} placeholder="Descrição do Plano" className="w-full h-16 border-gray-600 bg-gray-700 text-white rounded-md p-2 resize-none" required />
+                    <Input type="number" min="0" step="0.01" value={planForm.price} onChange={e => setPlanForm({ ...planForm, price: e.target.value })} placeholder="Preço (R$)" className="border-gray-600 bg-gray-700 text-white" required />
+                    <Input value={planForm.drinks_inclusos || ''} onChange={e => setPlanForm({ ...planForm, drinks_inclusos: e.target.value })} placeholder="Drinks inclusos (separados por vírgula)" className="border-gray-600 bg-gray-700 text-white" />
+                    <div className="flex space-x-2 pt-2">
+                      <Button type="button" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700" onClick={() => setPlanForm({ name: '', subtitle: '', description: '', price: '', drinks_inclusos: '', id: null })}>Cancelar</Button>
+                      <Button type="submit" className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
+                    </div>
+                  </form>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         )}
