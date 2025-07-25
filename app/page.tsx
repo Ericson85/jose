@@ -245,6 +245,31 @@ export default function TenderesPage() {
     };
   }, []);
 
+  // Carregar planos completos do banco de dados via API (com polling)
+  const [completePlans, setCompletePlans] = useState<CompletePlan[]>([]);
+  const [isLoadingPlans, setIsLoadingPlans] = useState(true);
+
+  useEffect(() => {
+    let isMounted = true;
+    const fetchPlans = async () => {
+      setIsLoadingPlans(true);
+      try {
+        const response = await fetch("/api/plans");
+        const data = await response.json();
+        if (isMounted) setCompletePlans(data);
+      } catch (error) {
+        console.error("Erro ao carregar planos completos do banco de dados:", error);
+      }
+      setIsLoadingPlans(false);
+    };
+    fetchPlans();
+    const interval = setInterval(fetchPlans, 2000);
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+    };
+  }, []);
+
   // Verificar se o usuário já preencheu os dados
   useEffect(() => {
     const savedUserData = localStorage.getItem("tenderes_user_data")
@@ -618,31 +643,38 @@ export default function TenderesPage() {
             {mode === 'planos' && (
               <div className="space-y-8">
                 <h2 className="text-3xl font-bold text-center text-white mb-8">Planos Completos</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {completePlans.map((plan) => (
-                    <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
-                      <CardHeader>
-                        <CardTitle className="text-2xl text-white flex items-center gap-2">
-                          {plan.popular && <Star className="h-5 w-5 text-yellow-400" />} {plan.name}
-                        </CardTitle>
-                        <CardDescription className="text-lg text-purple-200 font-bold mb-2">
-                          {plan.price.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} por pessoa
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-300 mb-4">{plan.description}</p>
-                        <div>
-                          <span className="font-semibold text-white">Drinks inclusos:</span>
-                          <ul className="list-disc list-inside text-gray-200 mt-2">
-                            {plan.drinks.map((drink, idx) => (
-                              <li key={idx}>{drink}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                {isLoadingPlans ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                    <p className="text-gray-300">Carregando planos...</p>
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    {completePlans.map((plan) => (
+                      <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
+                        <CardHeader>
+                          <CardTitle className="text-2xl text-white flex items-center gap-2">
+                            {plan.popular && <Star className="h-5 w-5 text-yellow-400" />} {plan.name}
+                          </CardTitle>
+                          <CardDescription className="text-lg text-purple-200 font-bold mb-2">
+                            {Number(plan.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} por pessoa
+                          </CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <p className="text-gray-300 mb-4">{plan.description}</p>
+                          <div>
+                            <span className="font-semibold text-white">Drinks inclusos:</span>
+                            <ul className="list-disc list-inside text-gray-200 mt-2">
+                              {plan.drinks && plan.drinks.map((drink, idx) => (
+                                <li key={idx}>{drink}</li>
+                              ))}
+                            </ul>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </div>
+                )}
               </div>
             )}
             {mode === 'detalhado' && (
