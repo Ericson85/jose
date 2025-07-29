@@ -698,37 +698,37 @@ export default function TenderesPage() {
                         <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
                         <div className="grid md:grid-cols-2 gap-6">
                           {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => (
-                            <Card key={drink.id} className={`bg-gradient-to-br from-purple-900/80 via-gray-900/80 to-pink-900/60 border border-purple-700 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
+                            <Card key={drink.id} className={`bg-white border-2 border-black shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
                               <CardHeader className="pb-2 flex flex-row items-center gap-3">
                                 <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                                   <Wine className="h-6 w-6 text-white" />
                                 </div>
-                                <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                                <CardTitle className="text-2xl font-bold text-gray-800 tracking-tight">
                                   {drink.name}
                                 </CardTitle>
                               </CardHeader>
                               <CardContent>
                                 <div className="flex items-center justify-between mb-3">
-                                  <span className="text-2xl font-bold text-purple-300">
+                                  <span className="text-2xl font-bold text-green-600">
                                     {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                   </span>
                                   <div className="flex items-center space-x-2">
                                     {drink.popular && (
-                                      <Badge className="bg-yellow-900/50 text-yellow-200 border-yellow-700/50">
+                                      <Badge className="bg-orange-500 text-white border-orange-600">
                                         <Star className="h-3 w-3 mr-1" />
                                         Popular
                                       </Badge>
                                     )}
                                     {drink.premium && (
-                                      <Badge className="bg-gradient-to-r from-purple-900/50 to-pink-900/50 text-purple-200 border-purple-700/50">
+                                      <Badge className="bg-purple-500 text-white border-purple-600">
                                         Premium
                                       </Badge>
                                     )}
                                   </div>
                                 </div>
-                                <p className="text-gray-300 mb-4">{drink.description}</p>
+                                <p className="text-gray-700 mb-4">{drink.description}</p>
                                 <div className="flex items-center justify-between">
-                                  <span className="text-sm text-gray-400">
+                                  <span className="text-sm text-blue-600 font-medium">
                                     {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
                                   </span>
                                   <div className="flex items-center space-x-2">
@@ -736,18 +736,18 @@ export default function TenderesPage() {
                                       onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)}
                                       variant="outline"
                                       size="sm"
-                                      className="border-purple-600 text-purple-300 hover:bg-purple-900/50"
+                                      className="border-gray-800 text-gray-800 hover:bg-gray-100"
                                     >
                                       -
                                     </Button>
-                                    <span className="text-white font-semibold min-w-[2rem] text-center">
+                                    <span className="text-gray-800 font-semibold min-w-[2rem] text-center">
                                       {selectedDrinks[drink.id] || 0}
                                     </span>
                                     <Button
                                       onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}
                                       variant="outline"
                                       size="sm"
-                                      className="border-purple-600 text-purple-300 hover:bg-purple-900/50"
+                                      className="border-gray-800 text-gray-800 hover:bg-gray-100"
                                     >
                                       +
                                     </Button>
