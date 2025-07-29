@@ -698,7 +698,7 @@ export default function TenderesPage() {
                         <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
                         <div className="grid md:grid-cols-2 gap-6">
                           {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => (
-                            <Card key={drink.id} className={`bg-white border-2 border-black shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
+                            <Card key={drink.id} className={`bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 border-2 border-black shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl`}>
                               <CardHeader className="pb-2 flex flex-row items-center gap-3">
                                 <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
                                   <Wine className="h-6 w-6 text-white" />
