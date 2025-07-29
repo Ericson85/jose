@@ -207,10 +207,29 @@ export default function TenderesPage() {
       try {
         const response = await fetch("/api/drinks");
         const data = await response.json();
-        if (isMounted) setDynamicDrinks(data);
+        console.log('Debug - Drinks carregados da API:', data);
+        if (isMounted) {
+          // Mapear os dados da API para garantir compatibilidade
+          const mappedDrinks = data.map((drink: any) => ({
+            id: drink.id.toString(),
+            name: drink.name,
+            description: drink.description || '',
+            price: Number(drink.price) || 0,
+            category: drink.category || '',
+            image: drink.image || '/placeholder.jpg',
+            priceType: drink.price_type || drink.priceType || 'per_unit',
+            popular: Boolean(drink.popular),
+            premium: Boolean(drink.premium)
+          }));
+          console.log('Debug - Drinks mapeados:', mappedDrinks);
+          setDynamicDrinks(mappedDrinks);
+        }
       } catch (error) {
         console.error("Erro ao carregar drinks do banco de dados:", error);
-        if (isMounted) setDynamicDrinks(drinks); // fallback para os drinks padrão
+        if (isMounted) {
+          console.log('Debug - Usando drinks padrão como fallback');
+          setDynamicDrinks(drinks); // fallback para os drinks padrão
+        }
       }
       setIsLoadingDrinks(false);
     };
@@ -415,17 +434,27 @@ export default function TenderesPage() {
     }
 
     let subtotal = 0
+    console.log('Debug - selectedDrinks:', selectedDrinks)
+    console.log('Debug - dynamicDrinks:', dynamicDrinks)
+    console.log('Debug - people:', people)
+    
     Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
       const drink = dynamicDrinks.find((d) => d.id === drinkId)
+      console.log('Debug - drinkId:', drinkId, 'quantity:', quantity, 'found drink:', drink)
       if (drink) {
         if (drink.priceType === 'per_person') {
-          subtotal += drink.price * quantity * people
+          const drinkCost = drink.price * quantity * people
+          subtotal += drinkCost
+          console.log('Debug - per_person cost:', drinkCost, 'for drink:', drink.name)
         } else {
-          subtotal += drink.price * quantity
+          const drinkCost = drink.price * quantity
+          subtotal += drinkCost
+          console.log('Debug - per_unit cost:', drinkCost, 'for drink:', drink.name)
         }
       }
     })
 
+    console.log('Debug - final subtotal:', subtotal)
     const extraCostsTotal = extraCosts.reduce((sum, cost) => sum + cost.value, 0)
     const total = subtotal + config.transportationFee + extraCostsTotal
     return { 
