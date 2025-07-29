@@ -256,7 +256,18 @@ export default function TenderesPage() {
       try {
         const response = await fetch("/api/plans");
         const data = await response.json();
-        if (isMounted) setCompletePlans(data);
+        if (isMounted) {
+          // Mapear os dados do banco para a interface CompletePlan
+          const mappedPlans = data.map((plan: any) => ({
+            id: plan.id.toString(),
+            name: plan.name,
+            price: Number(plan.price) || 0,
+            description: plan.description,
+            drinks: plan.drinks_inclusos ? plan.drinks_inclusos.split(',').map((s: string) => s.trim()) : [],
+            popular: plan.popular || false
+          }));
+          setCompletePlans(mappedPlans);
+        }
       } catch (error) {
         console.error("Erro ao carregar planos completos do banco de dados:", error);
       }

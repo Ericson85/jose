@@ -20,10 +20,21 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
-    const { name, description } = body;
-    const [result] = await db.query('INSERT INTO plans (name, description) VALUES (?, ?)', [name, description]);
-    return NextResponse.json({ id: result.insertId, name, description });
+    const { name, subtitle, description, price, drinks_inclusos } = body;
+    const [result] = await db.query(
+      'INSERT INTO plans (name, subtitle, description, price, drinks_inclusos) VALUES (?, ?, ?, ?, ?)', 
+      [name, subtitle, description, price, drinks_inclusos]
+    );
+    return NextResponse.json({ 
+      id: result.insertId, 
+      name, 
+      subtitle, 
+      description, 
+      price, 
+      drinks_inclusos 
+    });
   } catch (error) {
+    console.error('Erro ao criar plano:', error);
     return NextResponse.json({ error: 'Erro ao criar plano', details: error }, { status: 500 });
   }
 }

@@ -68,7 +68,7 @@ export default function AdminPage() {
   // Estados para Planos
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loadingPlans, setLoadingPlans] = useState(false);
-  const [planForm, setPlanForm] = useState<Plan>({ name: '', subtitle: '', description: '', price: '', drinks_inclusos: '', id: null });
+  const [planForm, setPlanForm] = useState<Plan>({ name: '', subtitle: '', description: '', price: 0, drinks_inclusos: '', id: null });
   const [editingPlan, setEditingPlan] = useState(null);
 
   // Estados para Drinkeira
@@ -135,25 +135,49 @@ export default function AdminPage() {
 
   async function handleCreatePlan(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await fetch('/api/plans', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: planForm.name, description: planForm.description }),
-    });
-    setPlanForm({ name: '', description: '', id: null });
-    fetchPlans();
+    try {
+      await fetch('/api/plans', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: planForm.name, 
+          subtitle: planForm.subtitle, 
+          description: planForm.description, 
+          price: planForm.price, 
+          drinks_inclusos: planForm.drinks_inclusos 
+        }),
+      });
+      showMessage('Plano criado com sucesso!', 'success');
+      setPlanForm({ name: '', subtitle: '', description: '', price: 0, drinks_inclusos: '', id: null });
+      fetchPlans();
+    } catch (error) {
+      console.error('Erro ao criar plano:', error);
+      showMessage('Erro ao criar plano!', 'error');
+    }
   }
 
   async function handleEditPlan(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    await fetch(`/api/plans/${planForm.id}`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: planForm.name, description: planForm.description }),
-    });
-    setPlanForm({ name: '', description: '', id: null });
-    setEditingPlan(null);
-    fetchPlans();
+    try {
+      await fetch(`/api/plans/${planForm.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: planForm.name, 
+          subtitle: planForm.subtitle, 
+          description: planForm.description, 
+          price: planForm.price, 
+          drinks_inclusos: planForm.drinks_inclusos 
+        }),
+      });
+      showMessage('Plano atualizado com sucesso!', 'success');
+      setPlanForm({ name: '', subtitle: '', description: '', price: 0, drinks_inclusos: '', id: null });
+      setEditingPlan(null);
+      fetchPlans();
+    } catch (error) {
+      console.error('Erro ao editar plano:', error);
+      showMessage('Erro ao editar plano!', 'error');
+    }
   }
 
   function startEditPlan(plan: any) {
@@ -170,8 +194,20 @@ export default function AdminPage() {
 
   async function handleDeletePlan(id: number | null) {
     if (id === null) return;
-    await fetch(`/api/plans/${id}`, { method: 'DELETE' });
-    fetchPlans();
+    try {
+      console.log('Tentando deletar plano com ID:', id);
+      const response = await fetch(`/api/plans/${id}`, { method: 'DELETE' });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const result = await response.json();
+      console.log('Plano deletado com sucesso:', result);
+      showMessage('Plano removido com sucesso!', 'success');
+      fetchPlans();
+    } catch (error) {
+      console.error('Erro ao deletar plano:', error);
+      showMessage('Erro ao remover plano!', 'error');
+    }
   }
 
   // Buscar config drinkeira ao abrir aba
@@ -775,7 +811,7 @@ export default function AdminPage() {
               {/* Listagem de planos reais */}
               <div className="mb-4 flex justify-between items-center">
                 <span className="text-gray-200 font-semibold">Planos cadastrados:</span>
-                <Button onClick={() => setPlanForm({ name: '', subtitle: '', description: '', price: '', drinks_inclusos: '', id: null })} className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Novo Plano</Button>
+                <Button onClick={() => setPlanForm({ name: '', subtitle: '', description: '', price: 0, drinks_inclusos: '', id: null })} className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Novo Plano</Button>
               </div>
               <div className="space-y-4">
                 {plans.length === 0 && !loadingPlans && (
@@ -810,7 +846,7 @@ export default function AdminPage() {
                     <Input type="number" min="0" step="0.01" value={planForm.price} onChange={e => setPlanForm({ ...planForm, price: e.target.value })} placeholder="Preço (R$)" className="border-gray-600 bg-gray-700 text-white" required />
                     <Input value={planForm.drinks_inclusos || ''} onChange={e => setPlanForm({ ...planForm, drinks_inclusos: e.target.value })} placeholder="Drinks inclusos (separados por vírgula)" className="border-gray-600 bg-gray-700 text-white" />
                     <div className="flex space-x-2 pt-2">
-                      <Button type="button" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700" onClick={() => setPlanForm({ name: '', subtitle: '', description: '', price: '', drinks_inclusos: '', id: null })}>Cancelar</Button>
+                      <Button type="button" variant="outline" className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700" onClick={() => setPlanForm({ name: '', subtitle: '', description: '', price: 0, drinks_inclusos: '', id: null })}>Cancelar</Button>
                       <Button type="submit" className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700">Salvar</Button>
                     </div>
                   </form>

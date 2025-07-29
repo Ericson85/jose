@@ -1,15 +1,19 @@
 import { NextResponse } from "next/server";
-import db from "@/lib/utils";
+import { db } from "@/lib/db";
 
 // PUT: Editar plano
 export async function PUT(request, { params }) {
   try {
     const { id } = params;
     const body = await request.json();
-    const { name, description } = body;
-    await db.query('UPDATE plans SET name = ?, description = ? WHERE id = ?', [name, description, id]);
-    return NextResponse.json({ id, name, description });
+    const { name, subtitle, description, price, drinks_inclusos } = body;
+    await db.query(
+      'UPDATE plans SET name = ?, subtitle = ?, description = ?, price = ?, drinks_inclusos = ? WHERE id = ?', 
+      [name, subtitle, description, price, drinks_inclusos, id]
+    );
+    return NextResponse.json({ id, name, subtitle, description, price, drinks_inclusos });
   } catch (error) {
+    console.error('Erro ao editar plano:', error);
     return NextResponse.json({ error: 'Erro ao editar plano', details: error }, { status: 500 });
   }
 }
