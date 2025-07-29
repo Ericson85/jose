@@ -207,7 +207,6 @@ export default function TenderesPage() {
       try {
         const response = await fetch("/api/drinks");
         const data = await response.json();
-        console.log('Debug - Drinks carregados da API:', data);
         if (isMounted) {
           // Mapear os dados da API para garantir compatibilidade
           const mappedDrinks = data.map((drink: any) => ({
@@ -221,13 +220,11 @@ export default function TenderesPage() {
             popular: Boolean(drink.popular),
             premium: Boolean(drink.premium)
           }));
-          console.log('Debug - Drinks mapeados:', mappedDrinks);
           setDynamicDrinks(mappedDrinks);
         }
       } catch (error) {
         console.error("Erro ao carregar drinks do banco de dados:", error);
         if (isMounted) {
-          console.log('Debug - Usando drinks padrão como fallback');
           setDynamicDrinks(drinks); // fallback para os drinks padrão
         }
       }
@@ -297,10 +294,10 @@ export default function TenderesPage() {
         const data = await response.json();
         if (isMounted && response.ok) {
           setConfig({
-            transportationFee: data.transportation_fee || 150,
-            bartenderBaseCost: data.bartender_base_cost || 100,
-            extraHourCost: data.extra_hour_cost || 15,
-            maxHoursBeforeExtra: data.max_hours_before_extra || 4
+            transportationFee: Number(data.transportation_fee) || 150,
+            bartenderBaseCost: Number(data.bartender_base_cost) || 100,
+            extraHourCost: Number(data.extra_hour_cost) || 15,
+            maxHoursBeforeExtra: Number(data.max_hours_before_extra) || 4
           });
         }
       } catch (error) {
@@ -313,7 +310,11 @@ export default function TenderesPage() {
         const response = await fetch("/api/extra-costs");
         const data = await response.json();
         if (isMounted && response.ok) {
-          setExtraCosts(data);
+          setExtraCosts(data.map((cost: any) => ({
+            id: cost.id.toString(),
+            name: cost.name,
+            value: Number(cost.value) || 0
+          })));
         }
       } catch (error) {
         console.error("Erro ao carregar custos extras:", error);
@@ -434,27 +435,19 @@ export default function TenderesPage() {
     }
 
     let subtotal = 0
-    console.log('Debug - selectedDrinks:', selectedDrinks)
-    console.log('Debug - dynamicDrinks:', dynamicDrinks)
-    console.log('Debug - people:', people)
     
     Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
       const drink = dynamicDrinks.find((d) => d.id === drinkId)
-      console.log('Debug - drinkId:', drinkId, 'quantity:', quantity, 'found drink:', drink)
       if (drink) {
         if (drink.priceType === 'per_person') {
           const drinkCost = drink.price * quantity * people
           subtotal += drinkCost
-          console.log('Debug - per_person cost:', drinkCost, 'for drink:', drink.name)
         } else {
           const drinkCost = drink.price * quantity
           subtotal += drinkCost
-          console.log('Debug - per_unit cost:', drinkCost, 'for drink:', drink.name)
         }
       }
     })
-
-    console.log('Debug - final subtotal:', subtotal)
     const extraCostsTotal = extraCosts.reduce((sum, cost) => sum + cost.value, 0)
     const total = subtotal + config.transportationFee + extraCostsTotal
     return { 
