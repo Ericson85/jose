@@ -199,7 +199,7 @@ export default function TenderesPage() {
   const [isLoadingDrinks, setIsLoadingDrinks] = useState(true)
   const [showUpdateNotification, setShowUpdateNotification] = useState(false)
 
-  // Carregar drinks do banco de dados via API (com polling)
+  // Carregar drinks do banco de dados via API
   useEffect(() => {
     let isMounted = true;
     const fetchDrinks = async () => {
@@ -215,10 +215,8 @@ export default function TenderesPage() {
       setIsLoadingDrinks(false);
     };
     fetchDrinks();
-    const interval = setInterval(fetchDrinks, 2000);
     return () => {
       isMounted = false;
-      clearInterval(interval);
     };
   }, []);
 
@@ -238,14 +236,12 @@ export default function TenderesPage() {
       setLoadingDrinkeiraDrinks(false);
     };
     fetchDrinkeiraDrinks();
-    const interval = setInterval(fetchDrinkeiraDrinks, 2000);
     return () => {
       isMounted = false;
-      clearInterval(interval);
     };
   }, []);
 
-  // Carregar planos completos do banco de dados via API (com polling)
+  // Carregar planos completos do banco de dados via API
   const [completePlans, setCompletePlans] = useState<CompletePlan[]>([]);
   const [isLoadingPlans, setIsLoadingPlans] = useState(true);
 
@@ -274,10 +270,8 @@ export default function TenderesPage() {
       setIsLoadingPlans(false);
     };
     fetchPlans();
-    const interval = setInterval(fetchPlans, 2000);
     return () => {
       isMounted = false;
-      clearInterval(interval);
     };
   }, []);
 
