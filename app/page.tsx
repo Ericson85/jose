@@ -317,6 +317,18 @@ export default function TenderesPage() {
   const [drinkeiraTab, setDrinkeiraTab] = useState<'caipirinhas' | 'caipiroskas' | 'classicos'>('caipirinhas')
   const [drinkeiraDrinks, setDrinkeiraDrinks] = useState<DrinkeiraDrink[]>([])
   const [loadingDrinkeiraDrinks, setLoadingDrinkeiraDrinks] = useState(false)
+  
+  // Controle de custos extras
+  const [extraCosts, setExtraCosts] = useState<Array<{id: string, name: string, value: number}>>([])
+  const [newExtraCost, setNewExtraCost] = useState({name: '', value: 0})
+  
+  // Configurações editáveis
+  const [config, setConfig] = useState({
+    transportationFee: 150,
+    bartenderBaseCost: 100,
+    extraHourCost: 15,
+    maxHoursBeforeExtra: 4
+  })
 
   const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -331,6 +343,28 @@ export default function TenderesPage() {
     }
   }
 
+  // Funções para gerenciar custos extras
+  const addExtraCost = () => {
+    if (newExtraCost.name.trim() && newExtraCost.value > 0) {
+      const newCost = {
+        id: Date.now().toString(),
+        name: newExtraCost.name.trim(),
+        value: newExtraCost.value
+      }
+      setExtraCosts(prev => [...prev, newCost])
+      setNewExtraCost({name: '', value: 0})
+    }
+  }
+
+  const removeExtraCost = (id: string) => {
+    setExtraCosts(prev => prev.filter(cost => cost.id !== id))
+  }
+
+  // Função para atualizar configurações
+  const updateConfig = (key: string, value: number) => {
+    setConfig(prev => ({...prev, [key]: value}))
+  }
+
   const calculateBartenders = () => {
     if (people <= 0) return 0
     if (people <= 50) return 1
@@ -340,34 +374,53 @@ export default function TenderesPage() {
   }
 
   const budgetResult = useMemo(() => {
-    const TRANSPORTATION_FEE = 150
     const bartenders = calculateBartenders()
 
     if (isDrinkeiraMode) {
-      let bartenderCost = bartenders * 100
+      let bartenderCost = bartenders * config.bartenderBaseCost
       let extraHours = 0
       
-      if (hours > 4) {
-        extraHours = hours - 4
-        const extraCost = bartenders * extraHours * 15
+      if (hours > config.maxHoursBeforeExtra) {
+        extraHours = hours - config.maxHoursBeforeExtra
+        const extraCost = bartenders * extraHours * config.extraHourCost
         bartenderCost += extraCost
       }
       
-      const total = bartenderCost + TRANSPORTATION_FEE
-      return { total, transportFee: TRANSPORTATION_FEE, bartenderCost, bartenders, extraHours, subtotal: bartenderCost }
+      const extraCostsTotal = extraCosts.reduce((sum, cost) => sum + cost.value, 0)
+      const total = bartenderCost + config.transportationFee + extraCostsTotal
+      return { 
+        total, 
+        transportFee: config.transportationFee, 
+        bartenderCost, 
+        bartenders, 
+        extraHours, 
+        subtotal: bartenderCost,
+        extraCosts: extraCostsTotal
+      }
     }
 
     let subtotal = 0
     Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
       const drink = dynamicDrinks.find((d) => d.id === drinkId)
       if (drink) {
-        subtotal += drink.price * quantity * people
+        if (drink.priceType === 'per_person') {
+          subtotal += drink.price * quantity * people
+        } else {
+          subtotal += drink.price * quantity
+        }
       }
     })
 
-    const total = subtotal + TRANSPORTATION_FEE
-    return { total, transportFee: TRANSPORTATION_FEE, subtotal, bartenders }
-  }, [isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks])
+    const extraCostsTotal = extraCosts.reduce((sum, cost) => sum + cost.value, 0)
+    const total = subtotal + config.transportationFee + extraCostsTotal
+    return { 
+      total, 
+      transportFee: config.transportationFee, 
+      subtotal, 
+      bartenders,
+      extraCosts: extraCostsTotal
+    }
+  }, [isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks, config, extraCosts])
 
   const sendToWhatsApp = () => {
     let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
@@ -382,11 +435,23 @@ export default function TenderesPage() {
         message += `--- MODO DRINKEIRA ---\n`
         message += `Custo dos Bartenders: ${budgetResult.bartenderCost?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
         message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        if (budgetResult.extraCosts > 0) {
+            message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+            extraCosts.forEach(cost => {
+                message += `  - ${cost.name}: ${cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+            })
+        }
     } else {
         message += `--- MODO PRÉ-COMPRA ---\n`
         message += `Custo dos Drinks: ${budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n\n`
-        message += `Drinks Selecionados:\n`
+        message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        if (budgetResult.extraCosts > 0) {
+            message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+            extraCosts.forEach(cost => {
+                message += `  - ${cost.name}: ${cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+            })
+        }
+        message += `\nDrinks Selecionados:\n`
         Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
             const drink = dynamicDrinks.find(d => d.id === drinkId)
             if(drink) message += `- ${quantity}x ${drink.name}\n`
@@ -550,6 +615,104 @@ export default function TenderesPage() {
                      placeholder="Ex: 4"
                    />
                  </div>
+
+                 {/* Configurações Avançadas */}
+                 <div className="space-y-4 border-t border-gray-600 pt-4">
+                   <h4 className="text-lg font-semibold text-white">Configurações</h4>
+                   
+                   <div className="space-y-3">
+                     <Label className="text-gray-300">Taxa de Locomoção</Label>
+                     <Input
+                       type="number"
+                       value={config.transportationFee}
+                       onChange={(e) => updateConfig('transportationFee', Number(e.target.value))}
+                       className="bg-gray-700 border-gray-600 text-white"
+                     />
+                   </div>
+                   
+                   <div className="space-y-3">
+                     <Label className="text-gray-300">Custo Base Bartender</Label>
+                     <Input
+                       type="number"
+                       value={config.bartenderBaseCost}
+                       onChange={(e) => updateConfig('bartenderBaseCost', Number(e.target.value))}
+                       className="bg-gray-700 border-gray-600 text-white"
+                     />
+                   </div>
+                   
+                   <div className="space-y-3">
+                     <Label className="text-gray-300">Custo Hora Extra</Label>
+                     <Input
+                       type="number"
+                       value={config.extraHourCost}
+                       onChange={(e) => updateConfig('extraHourCost', Number(e.target.value))}
+                       className="bg-gray-700 border-gray-600 text-white"
+                     />
+                   </div>
+                   
+                   <div className="space-y-3">
+                     <Label className="text-gray-300">Horas antes da Hora Extra</Label>
+                     <Input
+                       type="number"
+                       value={config.maxHoursBeforeExtra}
+                       onChange={(e) => updateConfig('maxHoursBeforeExtra', Number(e.target.value))}
+                       className="bg-gray-700 border-gray-600 text-white"
+                     />
+                   </div>
+                 </div>
+
+                 {/* Custos Extras */}
+                 <div className="space-y-4 border-t border-gray-600 pt-4">
+                   <h4 className="text-lg font-semibold text-white">Custos Extras</h4>
+                   
+                   <div className="space-y-3">
+                     <div className="flex gap-2">
+                       <Input
+                         placeholder="Nome do custo"
+                         value={newExtraCost.name}
+                         onChange={(e) => setNewExtraCost(prev => ({...prev, name: e.target.value}))}
+                         className="bg-gray-700 border-gray-600 text-white flex-1"
+                       />
+                       <Input
+                         type="number"
+                         placeholder="Valor"
+                         value={newExtraCost.value}
+                         onChange={(e) => setNewExtraCost(prev => ({...prev, value: Number(e.target.value)}))}
+                         className="bg-gray-700 border-gray-600 text-white w-20"
+                       />
+                       <Button
+                         onClick={addExtraCost}
+                         size="sm"
+                         className="bg-green-600 hover:bg-green-700"
+                       >
+                         +
+                       </Button>
+                     </div>
+                   </div>
+                   
+                   {extraCosts.length > 0 && (
+                     <div className="space-y-2">
+                       {extraCosts.map((cost) => (
+                         <div key={cost.id} className="flex justify-between items-center bg-gray-700/50 p-2 rounded">
+                           <span className="text-gray-200 text-sm">{cost.name}</span>
+                           <div className="flex items-center gap-2">
+                             <span className="text-green-300 font-semibold">
+                               R$ {cost.value.toFixed(2)}
+                             </span>
+                             <Button
+                               onClick={() => removeExtraCost(cost.id)}
+                               size="sm"
+                               variant="outline"
+                               className="h-6 w-6 p-0 text-red-400 border-red-400 hover:bg-red-900/50"
+                             >
+                               ×
+                             </Button>
+                           </div>
+                         </div>
+                       ))}
+                     </div>
+                   )}
+                 </div>
                  
                  {/* Resumo do Orçamento */}
                  {(people > 0 || hours > 0) && (
@@ -569,6 +732,12 @@ export default function TenderesPage() {
                          <span>Taxa de Locomoção</span>
                          <span className="font-semibold">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
+                       {budgetResult.extraCosts > 0 && (
+                         <div className="flex justify-between items-center bg-orange-500/10 p-3 rounded-lg">
+                           <span>Custos Extras</span>
+                           <span className="font-semibold text-orange-300">{budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                         </div>
+                       )}
                      </div>
                      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4 flex justify-between items-center mt-4">
                        <span className="text-2xl font-bold text-white">Total</span>
