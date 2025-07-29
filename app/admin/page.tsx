@@ -49,7 +49,7 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [drinks, setDrinks] = useState<Drink[]>([])
   const [events, setEvents] = useState<Event[]>([])
-  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config'>('dashboard')
   
   // Login states
   const [password, setPassword] = useState("")
@@ -81,6 +81,20 @@ export default function AdminPage() {
   const [editingDrinkeiraDrink, setEditingDrinkeiraDrink] = useState<Drink | null>(null);
   const [isAddingNewDrinkeira, setIsAddingNewDrinkeira] = useState(false);
   const [drinkeiraDrinkToDelete, setDrinkeiraDrinkToDelete] = useState<Drink | null>(null);
+
+  // Estados para Configurações de Eventos
+  const [eventConfig, setEventConfig] = useState({
+    transportation_fee: 150,
+    bartender_base_cost: 100,
+    extra_hour_cost: 15,
+    max_hours_before_extra: 4
+  });
+  const [loadingEventConfig, setLoadingEventConfig] = useState(false);
+
+  // Estados para Custos Extras
+  const [extraCosts, setExtraCosts] = useState<Array<{id: string, name: string, value: number}>>([]);
+  const [loadingExtraCosts, setLoadingExtraCosts] = useState(false);
+  const [newExtraCost, setNewExtraCost] = useState({name: '', value: 0});
 
   const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar", "Caipirinha", "Caipiroska", "Clássico"]
   const eventStatuses = ["active", "inactive", "completed"]
@@ -115,6 +129,10 @@ export default function AdminPage() {
         console.error("Error loading events:", error);
       }
     }
+
+    // Carregar configurações de eventos e custos extras
+    fetchEventConfig();
+    fetchExtraCosts();
   }, []);
 
   // Buscar planos ao abrir aba
@@ -321,6 +339,106 @@ export default function AdminPage() {
   function handleCancelDrinkeiraDrink() {
     setEditingDrinkeiraDrink(null);
     setIsAddingNewDrinkeira(false);
+  }
+
+  // Funções para Configurações de Eventos
+  async function fetchEventConfig() {
+    try {
+      setLoadingEventConfig(true);
+      const response = await fetch("/api/event-config");
+      const data = await response.json();
+      if (response.ok) {
+        setEventConfig(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar configurações de eventos:", error);
+      showMessage("Erro ao carregar configurações", "error");
+    } finally {
+      setLoadingEventConfig(false);
+    }
+  }
+
+  async function saveEventConfig() {
+    try {
+      setLoadingEventConfig(true);
+      const response = await fetch("/api/event-config", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(eventConfig)
+      });
+      
+      if (response.ok) {
+        showMessage("Configurações salvas com sucesso!");
+      } else {
+        showMessage("Erro ao salvar configurações", "error");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar configurações:", error);
+      showMessage("Erro ao salvar configurações", "error");
+    } finally {
+      setLoadingEventConfig(false);
+    }
+  }
+
+  // Funções para Custos Extras
+  async function fetchExtraCosts() {
+    try {
+      setLoadingExtraCosts(true);
+      const response = await fetch("/api/extra-costs");
+      const data = await response.json();
+      if (response.ok) {
+        setExtraCosts(data);
+      }
+    } catch (error) {
+      console.error("Erro ao carregar custos extras:", error);
+      showMessage("Erro ao carregar custos extras", "error");
+    } finally {
+      setLoadingExtraCosts(false);
+    }
+  }
+
+  async function addExtraCost() {
+    if (!newExtraCost.name.trim() || newExtraCost.value <= 0) {
+      showMessage("Nome e valor são obrigatórios", "error");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/extra-costs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newExtraCost)
+      });
+      
+      if (response.ok) {
+        showMessage("Custo extra adicionado com sucesso!");
+        setNewExtraCost({name: '', value: 0});
+        fetchExtraCosts(); // Recarregar lista
+      } else {
+        showMessage("Erro ao adicionar custo extra", "error");
+      }
+    } catch (error) {
+      console.error("Erro ao adicionar custo extra:", error);
+      showMessage("Erro ao adicionar custo extra", "error");
+    }
+  }
+
+  async function removeExtraCost(id: string) {
+    try {
+      const response = await fetch(`/api/extra-costs/${id}`, {
+        method: "DELETE"
+      });
+      
+      if (response.ok) {
+        showMessage("Custo extra removido com sucesso!");
+        fetchExtraCosts(); // Recarregar lista
+      } else {
+        showMessage("Erro ao remover custo extra", "error");
+      }
+    } catch (error) {
+      console.error("Erro ao remover custo extra:", error);
+      showMessage("Erro ao remover custo extra", "error");
+    }
   }
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
@@ -692,6 +810,17 @@ export default function AdminPage() {
               }`}
             >
               Drinkeira
+            </Button>
+            <Button
+              onClick={() => setActiveTab('config')}
+              variant={activeTab === 'config' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'config' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Configurações
             </Button>
           </div>
         </div>
@@ -1438,6 +1567,188 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
+
+      {/* Aba de Configurações */}
+      {activeTab === 'config' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Configurações de Eventos */}
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-xl text-white flex items-center space-x-2">
+                  <div className="p-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg">
+                    <Wine className="h-5 w-5 text-white" />
+                  </div>
+                  <span>Configurações de Eventos</span>
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Configure valores padrão para cálculos de eventos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-200">
+                      Taxa de Locomoção (R$)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={eventConfig.transportation_fee}
+                      onChange={(e) => setEventConfig(prev => ({
+                        ...prev,
+                        transportation_fee: Number(e.target.value)
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-200">
+                      Custo Base Bartender (R$)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={eventConfig.bartender_base_cost}
+                      onChange={(e) => setEventConfig(prev => ({
+                        ...prev,
+                        bartender_base_cost: Number(e.target.value)
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-200">
+                      Custo Hora Extra (R$)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={eventConfig.extra_hour_cost}
+                      onChange={(e) => setEventConfig(prev => ({
+                        ...prev,
+                        extra_hour_cost: Number(e.target.value)
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-200">
+                      Horas antes da Hora Extra
+                    </Label>
+                    <Input
+                      type="number"
+                      value={eventConfig.max_hours_before_extra}
+                      onChange={(e) => setEventConfig(prev => ({
+                        ...prev,
+                        max_hours_before_extra: Number(e.target.value)
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                    />
+                  </div>
+                </div>
+                
+                <Button
+                  onClick={saveEventConfig}
+                  disabled={loadingEventConfig}
+                  className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                >
+                  <Save className="h-4 w-4 mr-2" />
+                  {loadingEventConfig ? 'Salvando...' : 'Salvar Configurações'}
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Custos Extras */}
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-xl text-white flex items-center space-x-2">
+                  <div className="p-2 bg-gradient-to-r from-orange-500 to-orange-600 rounded-lg">
+                    <Plus className="h-5 w-5 text-white" />
+                  </div>
+                  <span>Custos Extras</span>
+                </CardTitle>
+                <CardDescription className="text-gray-300">
+                  Gerencie custos extras para eventos
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Adicionar novo custo */}
+                <div className="space-y-3">
+                  <Label className="text-sm font-medium text-gray-200">
+                    Adicionar Novo Custo
+                  </Label>
+                  <div className="flex gap-2">
+                    <Input
+                      placeholder="Nome do custo"
+                      value={newExtraCost.name}
+                      onChange={(e) => setNewExtraCost(prev => ({
+                        ...prev,
+                        name: e.target.value
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white flex-1"
+                    />
+                    <Input
+                      type="number"
+                      placeholder="Valor"
+                      value={newExtraCost.value}
+                      onChange={(e) => setNewExtraCost(prev => ({
+                        ...prev,
+                        value: Number(e.target.value)
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white w-24"
+                    />
+                    <Button
+                      onClick={addExtraCost}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700"
+                    >
+                      <Plus className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+
+                {/* Lista de custos extras */}
+                <div className="space-y-2">
+                  <Label className="text-sm font-medium text-gray-200">
+                    Custos Ativos
+                  </Label>
+                  {loadingExtraCosts ? (
+                    <div className="text-center py-4">
+                      <span className="text-gray-400">Carregando...</span>
+                    </div>
+                  ) : extraCosts.length === 0 ? (
+                    <div className="text-center py-4">
+                      <span className="text-gray-400">Nenhum custo extra cadastrado</span>
+                    </div>
+                  ) : (
+                    <div className="space-y-2 max-h-48 overflow-y-auto">
+                      {extraCosts.map((cost) => (
+                        <div key={cost.id} className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
+                          <div>
+                            <span className="text-gray-200 font-medium">{cost.name}</span>
+                            <div className="text-green-400 font-semibold">
+                              R$ {Number(cost.value).toFixed(2)}
+                            </div>
+                          </div>
+                          <Button
+                            onClick={() => removeExtraCost(cost.id)}
+                            size="sm"
+                            variant="outline"
+                            className="h-8 w-8 p-0 text-red-400 border-red-400 hover:bg-red-900/50"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
 
       {/* Toast */}
       {showToast && (

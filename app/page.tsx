@@ -270,6 +270,40 @@ export default function TenderesPage() {
       setIsLoadingPlans(false);
     };
     fetchPlans();
+    
+    // Carregar configurações de eventos e custos extras
+    const fetchEventConfig = async () => {
+      try {
+        const response = await fetch("/api/event-config");
+        const data = await response.json();
+        if (isMounted && response.ok) {
+          setConfig({
+            transportationFee: data.transportation_fee || 150,
+            bartenderBaseCost: data.bartender_base_cost || 100,
+            extraHourCost: data.extra_hour_cost || 15,
+            maxHoursBeforeExtra: data.max_hours_before_extra || 4
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao carregar configurações:", error);
+      }
+    };
+
+    const fetchExtraCosts = async () => {
+      try {
+        const response = await fetch("/api/extra-costs");
+        const data = await response.json();
+        if (isMounted && response.ok) {
+          setExtraCosts(data);
+        }
+      } catch (error) {
+        console.error("Erro ao carregar custos extras:", error);
+      }
+    };
+
+    fetchEventConfig();
+    fetchExtraCosts();
+    
     return () => {
       isMounted = false;
     };
@@ -318,17 +352,16 @@ export default function TenderesPage() {
   const [drinkeiraDrinks, setDrinkeiraDrinks] = useState<DrinkeiraDrink[]>([])
   const [loadingDrinkeiraDrinks, setLoadingDrinkeiraDrinks] = useState(false)
   
-  // Controle de custos extras
-  const [extraCosts, setExtraCosts] = useState<Array<{id: string, name: string, value: number}>>([])
-  const [newExtraCost, setNewExtraCost] = useState({name: '', value: 0})
-  
-  // Configurações editáveis
+  // Configurações carregadas do banco de dados
   const [config, setConfig] = useState({
     transportationFee: 150,
     bartenderBaseCost: 100,
     extraHourCost: 15,
     maxHoursBeforeExtra: 4
   })
+  
+  // Custos extras carregados do banco de dados
+  const [extraCosts, setExtraCosts] = useState<Array<{id: string, name: string, value: number}>>([])
 
   const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
     if (quantity <= 0) {
@@ -343,27 +376,9 @@ export default function TenderesPage() {
     }
   }
 
-  // Funções para gerenciar custos extras
-  const addExtraCost = () => {
-    if (newExtraCost.name.trim() && newExtraCost.value > 0) {
-      const newCost = {
-        id: Date.now().toString(),
-        name: newExtraCost.name.trim(),
-        value: newExtraCost.value
-      }
-      setExtraCosts(prev => [...prev, newCost])
-      setNewExtraCost({name: '', value: 0})
-    }
-  }
 
-  const removeExtraCost = (id: string) => {
-    setExtraCosts(prev => prev.filter(cost => cost.id !== id))
-  }
 
-  // Função para atualizar configurações
-  const updateConfig = (key: string, value: number) => {
-    setConfig(prev => ({...prev, [key]: value}))
-  }
+
 
   const calculateBartenders = () => {
     if (people <= 0) return 0
@@ -616,103 +631,7 @@ export default function TenderesPage() {
                    />
                  </div>
 
-                 {/* Configurações Avançadas */}
-                 <div className="space-y-4 border-t border-gray-600 pt-4">
-                   <h4 className="text-lg font-semibold text-white">Configurações</h4>
-                   
-                   <div className="space-y-3">
-                     <Label className="text-gray-300">Taxa de Locomoção</Label>
-                     <Input
-                       type="number"
-                       value={config.transportationFee}
-                       onChange={(e) => updateConfig('transportationFee', Number(e.target.value))}
-                       className="bg-gray-700 border-gray-600 text-white"
-                     />
-                   </div>
-                   
-                   <div className="space-y-3">
-                     <Label className="text-gray-300">Custo Base Bartender</Label>
-                     <Input
-                       type="number"
-                       value={config.bartenderBaseCost}
-                       onChange={(e) => updateConfig('bartenderBaseCost', Number(e.target.value))}
-                       className="bg-gray-700 border-gray-600 text-white"
-                     />
-                   </div>
-                   
-                   <div className="space-y-3">
-                     <Label className="text-gray-300">Custo Hora Extra</Label>
-                     <Input
-                       type="number"
-                       value={config.extraHourCost}
-                       onChange={(e) => updateConfig('extraHourCost', Number(e.target.value))}
-                       className="bg-gray-700 border-gray-600 text-white"
-                     />
-                   </div>
-                   
-                   <div className="space-y-3">
-                     <Label className="text-gray-300">Horas antes da Hora Extra</Label>
-                     <Input
-                       type="number"
-                       value={config.maxHoursBeforeExtra}
-                       onChange={(e) => updateConfig('maxHoursBeforeExtra', Number(e.target.value))}
-                       className="bg-gray-700 border-gray-600 text-white"
-                     />
-                   </div>
-                 </div>
 
-                 {/* Custos Extras */}
-                 <div className="space-y-4 border-t border-gray-600 pt-4">
-                   <h4 className="text-lg font-semibold text-white">Custos Extras</h4>
-                   
-                   <div className="space-y-3">
-                     <div className="flex gap-2">
-                       <Input
-                         placeholder="Nome do custo"
-                         value={newExtraCost.name}
-                         onChange={(e) => setNewExtraCost(prev => ({...prev, name: e.target.value}))}
-                         className="bg-gray-700 border-gray-600 text-white flex-1"
-                       />
-                       <Input
-                         type="number"
-                         placeholder="Valor"
-                         value={newExtraCost.value}
-                         onChange={(e) => setNewExtraCost(prev => ({...prev, value: Number(e.target.value)}))}
-                         className="bg-gray-700 border-gray-600 text-white w-20"
-                       />
-                       <Button
-                         onClick={addExtraCost}
-                         size="sm"
-                         className="bg-green-600 hover:bg-green-700"
-                       >
-                         +
-                       </Button>
-                     </div>
-                   </div>
-                   
-                   {extraCosts.length > 0 && (
-                     <div className="space-y-2">
-                       {extraCosts.map((cost) => (
-                         <div key={cost.id} className="flex justify-between items-center bg-gray-700/50 p-2 rounded">
-                           <span className="text-gray-200 text-sm">{cost.name}</span>
-                           <div className="flex items-center gap-2">
-                             <span className="text-green-300 font-semibold">
-                               R$ {cost.value.toFixed(2)}
-                             </span>
-                             <Button
-                               onClick={() => removeExtraCost(cost.id)}
-                               size="sm"
-                               variant="outline"
-                               className="h-6 w-6 p-0 text-red-400 border-red-400 hover:bg-red-900/50"
-                             >
-                               ×
-                             </Button>
-                           </div>
-                         </div>
-                       ))}
-                     </div>
-                   )}
-                 </div>
                  
                  {/* Resumo do Orçamento */}
                  {(people > 0 || hours > 0) && (
