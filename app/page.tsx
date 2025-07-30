@@ -708,7 +708,7 @@ export default function TenderesPage() {
                        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg h-14 rounded-xl shadow-lg mt-4"
                      >
                        <MessageCircle className="mr-2 h-5 w-5" />
-                       {!userData.name || !userData.phone ? 'Preencher Dados e Solicitar Orçamento' : 'Solicitar Orçamento'}
+                                               Finalizar Contrato
                      </Button>
                    </div>
                  )}
