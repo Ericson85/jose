@@ -672,12 +672,12 @@ export default function TenderesPage() {
                          <span>Taxa de Locomoção</span>
                          <span className="font-semibold">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
-                       {budgetResult.extraCosts > 0 && (
-                         <div className="flex justify-between items-center bg-orange-500/10 p-3 rounded-lg">
-                           <span>Custos Extras</span>
-                           <span className="font-semibold text-orange-300">{budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                       {extraCosts.map((cost) => (
+                         <div key={cost.id} className="flex justify-between items-center bg-orange-500/10 p-3 rounded-lg">
+                           <span>{cost.name}</span>
+                           <span className="font-semibold text-orange-300">{cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                          </div>
-                       )}
+                       ))}
                      </div>
                      <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4 flex justify-between items-center mt-4">
                        <span className="text-2xl font-bold text-white">Total</span>
