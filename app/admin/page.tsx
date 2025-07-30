@@ -88,7 +88,13 @@ export default function AdminPage() {
     bartender_base_cost: 100,
     extra_hour_cost: 15,
     max_hours_before_extra: 4,
-    bartenders_per_50_people: 1
+    bartenders_per_50_people: 1,
+    // Nomes personalizáveis
+    transportation_fee_name: 'Taxa de Locomoção',
+    bartender_base_cost_name: 'Custo Base Bartender',
+    extra_hour_cost_name: 'Custo Hora Extra',
+    max_hours_before_extra_name: 'Horas antes da Hora Extra',
+    bartenders_per_50_people_name: 'Bartenders por 50 Convidados'
   });
   const [loadingEventConfig, setLoadingEventConfig] = useState(false);
 
@@ -1625,77 +1631,162 @@ export default function AdminPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-200">
-                      Taxa de Locomoção (R$)
+                      Nome da Taxa de Locomoção
                     </Label>
                     <Input
-                      type="number"
-                      value={eventConfig.transportation_fee}
+                      type="text"
+                      value={eventConfig.transportation_fee_name}
                       onChange={(e) => setEventConfig(prev => ({
                         ...prev,
-                        transportation_fee: Number(e.target.value)
+                        transportation_fee_name: e.target.value
                       }))}
                       className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="Ex: Taxa de Locomoção"
                     />
                   </div>
                   
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-200">
-                      Custo Base Bartender (R$)
+                      Nome do Custo Base Bartender
                     </Label>
                     <Input
-                      type="number"
-                      value={eventConfig.bartender_base_cost}
+                      type="text"
+                      value={eventConfig.bartender_base_cost_name}
                       onChange={(e) => setEventConfig(prev => ({
                         ...prev,
-                        bartender_base_cost: Number(e.target.value)
+                        bartender_base_cost_name: e.target.value
                       }))}
                       className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="Ex: Custo Base Bartender"
                     />
                   </div>
                   
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-200">
-                      Custo Hora Extra (R$)
+                      Nome do Custo Hora Extra
                     </Label>
                     <Input
-                      type="number"
-                      value={eventConfig.extra_hour_cost}
+                      type="text"
+                      value={eventConfig.extra_hour_cost_name}
                       onChange={(e) => setEventConfig(prev => ({
                         ...prev,
-                        extra_hour_cost: Number(e.target.value)
+                        extra_hour_cost_name: e.target.value
                       }))}
                       className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="Ex: Custo Hora Extra"
                     />
                   </div>
                   
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-200">
-                      Horas antes da Hora Extra
+                      Nome das Horas antes da Hora Extra
                     </Label>
                     <Input
-                      type="number"
-                      value={eventConfig.max_hours_before_extra}
+                      type="text"
+                      value={eventConfig.max_hours_before_extra_name}
                       onChange={(e) => setEventConfig(prev => ({
                         ...prev,
-                        max_hours_before_extra: Number(e.target.value)
+                        max_hours_before_extra_name: e.target.value
                       }))}
                       className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="Ex: Horas antes da Hora Extra"
                     />
                   </div>
                   
                   <div className="space-y-2">
                     <Label className="text-sm font-medium text-gray-200">
-                      Bartenders por 50 Convidados
+                      Nome dos Bartenders por 50 Convidados
                     </Label>
                     <Input
-                      type="number"
-                      value={eventConfig.bartenders_per_50_people}
+                      type="text"
+                      value={eventConfig.bartenders_per_50_people_name}
                       onChange={(e) => setEventConfig(prev => ({
                         ...prev,
-                        bartenders_per_50_people: Number(e.target.value)
+                        bartenders_per_50_people_name: e.target.value
                       }))}
                       className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="Ex: Bartenders por 50 Convidados"
                     />
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-600 pt-4">
+                  <h4 className="text-lg font-semibold text-white mb-4">Valores das Configurações</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        {eventConfig.transportation_fee_name} (R$)
+                      </Label>
+                      <Input
+                        type="number"
+                        value={eventConfig.transportation_fee}
+                        onChange={(e) => setEventConfig(prev => ({
+                          ...prev,
+                          transportation_fee: Number(e.target.value)
+                        }))}
+                        className="border-gray-600 bg-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        {eventConfig.bartender_base_cost_name} (R$)
+                      </Label>
+                      <Input
+                        type="number"
+                        value={eventConfig.bartender_base_cost}
+                        onChange={(e) => setEventConfig(prev => ({
+                          ...prev,
+                          bartender_base_cost: Number(e.target.value)
+                        }))}
+                        className="border-gray-600 bg-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        {eventConfig.extra_hour_cost_name} (R$)
+                      </Label>
+                      <Input
+                        type="number"
+                        value={eventConfig.extra_hour_cost}
+                        onChange={(e) => setEventConfig(prev => ({
+                          ...prev,
+                          extra_hour_cost: Number(e.target.value)
+                        }))}
+                        className="border-gray-600 bg-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        {eventConfig.max_hours_before_extra_name}
+                      </Label>
+                      <Input
+                        type="number"
+                        value={eventConfig.max_hours_before_extra}
+                        onChange={(e) => setEventConfig(prev => ({
+                          ...prev,
+                          max_hours_before_extra: Number(e.target.value)
+                        }))}
+                        className="border-gray-600 bg-gray-700 text-white"
+                      />
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        {eventConfig.bartenders_per_50_people_name}
+                      </Label>
+                      <Input
+                        type="number"
+                        value={eventConfig.bartenders_per_50_people}
+                        onChange={(e) => setEventConfig(prev => ({
+                          ...prev,
+                          bartenders_per_50_people: Number(e.target.value)
+                        }))}
+                        className="border-gray-600 bg-gray-700 text-white"
+                      />
+                    </div>
                   </div>
                 </div>
                 

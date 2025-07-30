@@ -298,7 +298,13 @@ export default function TenderesPage() {
             bartenderBaseCost: Number(data.bartender_base_cost) || 100,
             extraHourCost: Number(data.extra_hour_cost) || 15,
             maxHoursBeforeExtra: Number(data.max_hours_before_extra) || 4,
-            bartendersPer50People: Number(data.bartenders_per_50_people) || 1
+            bartendersPer50People: Number(data.bartenders_per_50_people) || 1,
+            // Nomes personalizáveis
+            transportationFeeName: data.transportation_fee_name || 'Taxa de Locomoção',
+            bartenderBaseCostName: data.bartender_base_cost_name || 'Custo Base Bartender',
+            extraHourCostName: data.extra_hour_cost_name || 'Custo Hora Extra',
+            maxHoursBeforeExtraName: data.max_hours_before_extra_name || 'Horas antes da Hora Extra',
+            bartendersPer50PeopleName: data.bartenders_per_50_people_name || 'Bartenders por 50 Convidados'
           });
         }
       } catch (error) {
@@ -379,7 +385,13 @@ export default function TenderesPage() {
     bartenderBaseCost: 100,
     extraHourCost: 15,
     maxHoursBeforeExtra: 4,
-    bartendersPer50People: 1
+    bartendersPer50People: 1,
+    // Nomes personalizáveis
+    transportationFeeName: 'Taxa de Locomoção',
+    bartenderBaseCostName: 'Custo Base Bartender',
+    extraHourCostName: 'Custo Hora Extra',
+    maxHoursBeforeExtraName: 'Horas antes da Hora Extra',
+    bartendersPer50PeopleName: 'Bartenders por 50 Convidados'
   })
   
   // Custos extras carregados do banco de dados
@@ -469,8 +481,8 @@ export default function TenderesPage() {
 
     if (isDrinkeiraMode) {
         message += `--- MODO DRINKEIRA ---\n`
-        message += `Custo dos Bartenders: ${budgetResult.bartenderCost?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        message += `${config.bartenderBaseCostName}: ${budgetResult.bartenderCost?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        message += `${config.transportationFeeName}: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
         if (budgetResult.extraCosts > 0) {
             message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
             extraCosts.forEach(cost => {
@@ -669,7 +681,7 @@ export default function TenderesPage() {
                          <span className="font-semibold">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
                        <div className="flex justify-between items-center bg-purple-500/10 p-3 rounded-lg">
-                         <span>Taxa de Locomoção</span>
+                         <span>{config.transportationFeeName}</span>
                          <span className="font-semibold">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
                        {extraCosts.map((cost) => (

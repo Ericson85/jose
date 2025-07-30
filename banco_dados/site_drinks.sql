@@ -30,6 +30,12 @@ CREATE TABLE event_config (
     extra_hour_cost DECIMAL(10,2) NOT NULL DEFAULT 15.00,
     max_hours_before_extra INT NOT NULL DEFAULT 4,
     bartenders_per_50_people INT NOT NULL DEFAULT 1,
+    -- Nomes personalizáveis
+    transportation_fee_name VARCHAR(100) NOT NULL DEFAULT 'Taxa de Locomoção',
+    bartender_base_cost_name VARCHAR(100) NOT NULL DEFAULT 'Custo Base Bartender',
+    extra_hour_cost_name VARCHAR(100) NOT NULL DEFAULT 'Custo Hora Extra',
+    max_hours_before_extra_name VARCHAR(100) NOT NULL DEFAULT 'Horas antes da Hora Extra',
+    bartenders_per_50_people_name VARCHAR(100) NOT NULL DEFAULT 'Bartenders por 50 Convidados',
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -44,5 +50,26 @@ CREATE TABLE extra_costs (
 );
 
 -- Inserir configuração padrão
-INSERT INTO event_config (transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people) 
-VALUES (150.00, 100.00, 15.00, 4, 1); 
+INSERT INTO event_config (
+    transportation_fee, 
+    bartender_base_cost, 
+    extra_hour_cost, 
+    max_hours_before_extra, 
+    bartenders_per_50_people,
+    transportation_fee_name,
+    bartender_base_cost_name,
+    extra_hour_cost_name,
+    max_hours_before_extra_name,
+    bartenders_per_50_people_name
+) VALUES (
+    150.00, 
+    100.00, 
+    15.00, 
+    4, 
+    1,
+    'Taxa de Locomoção',
+    'Custo Base Bartender',
+    'Custo Hora Extra',
+    'Horas antes da Hora Extra',
+    'Bartenders por 50 Convidados'
+); 
