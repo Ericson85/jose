@@ -339,9 +339,7 @@ export default function TenderesPage() {
   // Verificar se o usuário já preencheu os dados
   useEffect(() => {
     const savedUserData = localStorage.getItem("tenderes_user_data")
-    if (!savedUserData) {
-      setShowWelcomeModal(true)
-    } else {
+    if (savedUserData) {
       setUserData(JSON.parse(savedUserData))
     }
   }, [])
@@ -366,7 +364,7 @@ export default function TenderesPage() {
     if (isFormValid) {
       localStorage.setItem("tenderes_user_data", JSON.stringify(userData))
       setShowWelcomeModal(false)
-      showToast(`Bem-vindo(a), ${userData.name}!`, "success")
+      showToast(`Dados salvos com sucesso! Agora você pode solicitar seu orçamento.`, "success")
     }
   }
 
@@ -471,6 +469,14 @@ export default function TenderesPage() {
   }, [isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks, config, extraCosts])
 
   const sendToWhatsApp = () => {
+    // Verificar se o usuário já preencheu os dados
+    const savedUserData = localStorage.getItem("tenderes_user_data")
+    if (!savedUserData || !userData.name || !userData.phone) {
+      setShowWelcomeModal(true)
+      showToast("Por favor, preencha seus dados antes de solicitar o orçamento.", "info")
+      return
+    }
+
     let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
     message += `*Cliente:* ${userData.name || "Não informado"}\n`
     message += `*Contato:* ${userData.phone || "Não informado"}\n\n`
@@ -702,7 +708,7 @@ export default function TenderesPage() {
                        className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg h-14 rounded-xl shadow-lg mt-4"
                      >
                        <MessageCircle className="mr-2 h-5 w-5" />
-                       Solicitar Orçamento
+                       {!userData.name || !userData.phone ? 'Preencher Dados e Solicitar Orçamento' : 'Solicitar Orçamento'}
                      </Button>
                    </div>
                  )}
@@ -1027,9 +1033,9 @@ export default function TenderesPage() {
               <div className="mx-auto mb-4 p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-16 h-16 flex items-center justify-center">
                 <User className="h-8 w-8 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-white mb-2">Bem-vindo(a) à TENDERES!</CardTitle>
+              <CardTitle className="text-2xl font-bold text-white mb-2">Dados para Orçamento</CardTitle>
               <CardDescription className="text-gray-300 text-base leading-relaxed">
-                Para uma melhor experiência, por favor, nos informe alguns dados.
+                Para solicitar seu orçamento, precisamos de algumas informações. Seus dados ficarão salvos para futuras solicitações.
               </CardDescription>
             </CardHeader>
             <CardContent className="px-6 pb-6 relative z-10">
@@ -1119,7 +1125,7 @@ export default function TenderesPage() {
                     ? 'É necessário ter 18 anos ou mais' 
                     : !isFormValid 
                     ? 'Preencha todos os campos' 
-                    : 'Salvar e Começar'
+                    : 'Salvar Dados e Continuar'
                   }
                 </Button>
               </form>
