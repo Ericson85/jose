@@ -24,26 +24,31 @@ export async function GET() {
 // PUT: Atualizar configurações de eventos
 export async function PUT(request) {
   try {
-                    const body = await request.json();
-                const { transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people } = body;
+    const body = await request.json();
+    const { transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people } = body;
+
+    console.log('Recebendo configurações:', body);
 
     // Verificar se já existe uma configuração
     const [existing] = await db.query('SELECT id FROM event_config LIMIT 1');
     
     if (existing.length > 0) {
-                        // Atualizar configuração existente
-                  await db.query(
-                    'UPDATE event_config SET transportation_fee = ?, bartender_base_cost = ?, extra_hour_cost = ?, max_hours_before_extra = ?, bartenders_per_50_people = ? WHERE id = ?',
-                    [transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people, existing[0].id]
-                  );
+      // Atualizar configuração existente
+      console.log('Atualizando configuração existente ID:', existing[0].id);
+      await db.query(
+        'UPDATE event_config SET transportation_fee = ?, bartender_base_cost = ?, extra_hour_cost = ?, max_hours_before_extra = ?, bartenders_per_50_people = ? WHERE id = ?',
+        [transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people, existing[0].id]
+      );
     } else {
-                        // Criar nova configuração
-                  await db.query(
-                    'INSERT INTO event_config (transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people) VALUES (?, ?, ?, ?, ?)',
-                    [transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people]
-                  );
+      // Criar nova configuração
+      console.log('Criando nova configuração');
+      await db.query(
+        'INSERT INTO event_config (transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people) VALUES (?, ?, ?, ?, ?)',
+        [transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people]
+      );
     }
 
+    console.log('Configurações salvas com sucesso');
     return NextResponse.json({ message: 'Configurações atualizadas com sucesso' });
   } catch (error) {
     console.error('Erro ao atualizar configurações de eventos:', error);

@@ -96,6 +96,7 @@ export default function AdminPage() {
   const [extraCosts, setExtraCosts] = useState<Array<{id: string, name: string, value: number}>>([]);
   const [loadingExtraCosts, setLoadingExtraCosts] = useState(false);
   const [newExtraCost, setNewExtraCost] = useState({name: '', value: 0});
+  const [editingExtraCost, setEditingExtraCost] = useState<{id: string, name: string, value: number} | null>(null);
 
   const categories = ["Coquetéis", "Cervejas", "Vinhos", "Não Alcoólicos", "Open Bar", "Caipirinha", "Caipiroska", "Clássico"]
   const eventStatuses = ["active", "inactive", "completed"]
@@ -362,6 +363,7 @@ export default function AdminPage() {
   async function saveEventConfig() {
     try {
       setLoadingEventConfig(true);
+      console.log("Salvando configurações:", eventConfig);
       const response = await fetch("/api/event-config", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -370,7 +372,11 @@ export default function AdminPage() {
       
       if (response.ok) {
         showMessage("Configurações salvas com sucesso!");
+        // Recarregar configurações para confirmar
+        await fetchEventConfig();
       } else {
+        const errorData = await response.json();
+        console.error("Erro na resposta:", errorData);
         showMessage("Erro ao salvar configurações", "error");
       }
     } catch (error) {
@@ -440,6 +446,35 @@ export default function AdminPage() {
       console.error("Erro ao remover custo extra:", error);
       showMessage("Erro ao remover custo extra", "error");
     }
+  }
+
+  async function updateExtraCost(id: string, name: string, value: number) {
+    try {
+      const response = await fetch(`/api/extra-costs/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, value })
+      });
+      
+      if (response.ok) {
+        showMessage("Custo extra atualizado com sucesso!");
+        setEditingExtraCost(null);
+        fetchExtraCosts(); // Recarregar lista
+      } else {
+        showMessage("Erro ao atualizar custo extra", "error");
+      }
+    } catch (error) {
+      console.error("Erro ao atualizar custo extra:", error);
+      showMessage("Erro ao atualizar custo extra", "error");
+    }
+  }
+
+  function startEditExtraCost(cost: {id: string, name: string, value: number}) {
+    setEditingExtraCost(cost);
+  }
+
+  function cancelEditExtraCost() {
+    setEditingExtraCost(null);
   }
 
   const showMessage = (message: string, type: "success" | "error" | "info" = "success") => {
@@ -1740,21 +1775,72 @@ export default function AdminPage() {
                   ) : (
                     <div className="space-y-2 max-h-48 overflow-y-auto">
                       {extraCosts.map((cost) => (
-                        <div key={cost.id} className="flex justify-between items-center bg-gray-700/50 p-3 rounded-lg">
-                          <div>
-                            <span className="text-gray-200 font-medium">{cost.name}</span>
-                            <div className="text-green-400 font-semibold">
-                              R$ {Number(cost.value).toFixed(2)}
+                        <div key={cost.id} className="bg-gray-700/50 p-3 rounded-lg">
+                          {editingExtraCost?.id === cost.id ? (
+                            // Modo de edição
+                            <div className="space-y-3">
+                              <div className="flex gap-2">
+                                <Input
+                                  value={editingExtraCost.name}
+                                  onChange={(e) => setEditingExtraCost(prev => prev ? {...prev, name: e.target.value} : null)}
+                                  className="border-gray-600 bg-gray-700 text-white flex-1"
+                                  placeholder="Nome do custo"
+                                />
+                                <Input
+                                  type="number"
+                                  value={editingExtraCost.value}
+                                  onChange={(e) => setEditingExtraCost(prev => prev ? {...prev, value: Number(e.target.value)} : null)}
+                                  className="border-gray-600 bg-gray-700 text-white w-24"
+                                  placeholder="Valor"
+                                />
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => updateExtraCost(editingExtraCost.id, editingExtraCost.name, editingExtraCost.value)}
+                                  size="sm"
+                                  className="bg-green-600 hover:bg-green-700"
+                                >
+                                  Salvar
+                                </Button>
+                                <Button
+                                  onClick={cancelEditExtraCost}
+                                  size="sm"
+                                  variant="outline"
+                                  className="border-gray-600 text-gray-300 hover:bg-gray-600"
+                                >
+                                  Cancelar
+                                </Button>
+                              </div>
                             </div>
-                          </div>
-                          <Button
-                            onClick={() => removeExtraCost(cost.id)}
-                            size="sm"
-                            variant="outline"
-                            className="h-8 w-8 p-0 text-red-400 border-red-400 hover:bg-red-900/50"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
+                          ) : (
+                            // Modo de visualização
+                            <div className="flex justify-between items-center">
+                              <div>
+                                <span className="text-gray-200 font-medium">{cost.name}</span>
+                                <div className="text-green-400 font-semibold">
+                                  R$ {Number(cost.value).toFixed(2)}
+                                </div>
+                              </div>
+                              <div className="flex gap-2">
+                                <Button
+                                  onClick={() => startEditExtraCost(cost)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-blue-400 border-blue-400 hover:bg-blue-900/50"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  onClick={() => removeExtraCost(cost.id)}
+                                  size="sm"
+                                  variant="outline"
+                                  className="h-8 w-8 p-0 text-red-400 border-red-400 hover:bg-red-900/50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
