@@ -297,7 +297,8 @@ export default function TenderesPage() {
             transportationFee: Number(data.transportation_fee) || 150,
             bartenderBaseCost: Number(data.bartender_base_cost) || 100,
             extraHourCost: Number(data.extra_hour_cost) || 15,
-            maxHoursBeforeExtra: Number(data.max_hours_before_extra) || 4
+            maxHoursBeforeExtra: Number(data.max_hours_before_extra) || 4,
+            bartendersPer50People: Number(data.bartenders_per_50_people) || 1
           });
         }
       } catch (error) {
@@ -377,7 +378,8 @@ export default function TenderesPage() {
     transportationFee: 150,
     bartenderBaseCost: 100,
     extraHourCost: 15,
-    maxHoursBeforeExtra: 4
+    maxHoursBeforeExtra: 4,
+    bartendersPer50People: 1
   })
   
   // Custos extras carregados do banco de dados
@@ -402,10 +404,7 @@ export default function TenderesPage() {
 
   const calculateBartenders = () => {
     if (people <= 0) return 0
-    if (people <= 50) return 1
-    if (people <= 100) return 2
-    if (people <= 150) return 3
-    return Math.ceil(people / 50)
+    return Math.ceil(people / 50) * config.bartendersPer50People
   }
 
   const budgetResult = useMemo(() => {

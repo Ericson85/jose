@@ -29,6 +29,7 @@ CREATE TABLE event_config (
     bartender_base_cost DECIMAL(10,2) NOT NULL DEFAULT 100.00,
     extra_hour_cost DECIMAL(10,2) NOT NULL DEFAULT 15.00,
     max_hours_before_extra INT NOT NULL DEFAULT 4,
+    bartenders_per_50_people INT NOT NULL DEFAULT 1,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
@@ -43,5 +44,5 @@ CREATE TABLE extra_costs (
 );
 
 -- Inserir configuração padrão
-INSERT INTO event_config (transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra) 
-VALUES (150.00, 100.00, 15.00, 4); 
+INSERT INTO event_config (transportation_fee, bartender_base_cost, extra_hour_cost, max_hours_before_extra, bartenders_per_50_people) 
+VALUES (150.00, 100.00, 15.00, 4, 1); 

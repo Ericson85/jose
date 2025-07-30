@@ -87,7 +87,8 @@ export default function AdminPage() {
     transportation_fee: 150,
     bartender_base_cost: 100,
     extra_hour_cost: 15,
-    max_hours_before_extra: 4
+    max_hours_before_extra: 4,
+    bartenders_per_50_people: 1
   });
   const [loadingEventConfig, setLoadingEventConfig] = useState(false);
 
@@ -1642,6 +1643,21 @@ export default function AdminPage() {
                       onChange={(e) => setEventConfig(prev => ({
                         ...prev,
                         max_hours_before_extra: Number(e.target.value)
+                      }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium text-gray-200">
+                      Bartenders por 50 Convidados
+                    </Label>
+                    <Input
+                      type="number"
+                      value={eventConfig.bartenders_per_50_people}
+                      onChange={(e) => setEventConfig(prev => ({
+                        ...prev,
+                        bartenders_per_50_people: Number(e.target.value)
                       }))}
                       className="border-gray-600 bg-gray-700 text-white"
                     />
