@@ -221,6 +221,7 @@ export default function TenderesPage() {
             popular: Boolean(drink.popular),
             premium: Boolean(drink.premium)
           }));
+          console.log('Drinks carregados do banco:', mappedDrinks);
           setDynamicDrinks(mappedDrinks);
         }
       } catch (error) {
@@ -849,7 +850,10 @@ export default function TenderesPage() {
                                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
                                 
                                 {/* Imagem de fundo */}
-                                {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                {(() => {
+                                  console.log(`Verificando imagem para ${drink.name}:`, drink.image);
+                                  return drink.image && drink.image !== "/placeholder.svg?height=120&width=120" && drink.image !== "/placeholder.jpg" && drink.image !== "";
+                                })() ? (
                                   <div className="absolute inset-0 rounded-2xl overflow-hidden">
                                     <img 
                                       src={drink.image} 
