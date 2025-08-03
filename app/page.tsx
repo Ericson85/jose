@@ -852,7 +852,11 @@ export default function TenderesPage() {
                                 {/* Imagem de fundo */}
                                 {(() => {
                                   console.log(`Verificando imagem para ${drink.name}:`, drink.image);
-                                  return drink.image && drink.image !== "/placeholder.svg?height=120&width=120" && drink.image !== "/placeholder.jpg" && drink.image !== "";
+                                  return drink.image && 
+                                         drink.image !== "/placeholder.svg?height=120&width=120" && 
+                                         drink.image !== "/placeholder.jpg" && 
+                                         drink.image !== "" && 
+                                         drink.image.startsWith('data:image');
                                 })() ? (
                                   <div className="absolute inset-0 rounded-2xl overflow-hidden">
                                     <img 

@@ -181,10 +181,59 @@ export default function ProprietarioPage() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && editingDrink) {
+      // Verificar tamanho do arquivo (máximo 2MB)
+      if (file.size > 2 * 1024 * 1024) {
+        showMessage("A imagem deve ter no máximo 2MB!", "error");
+        return;
+      }
+
       const reader = new FileReader()
       reader.onload = (e) => {
         const imageUrl = e.target?.result as string
-        setEditingDrink(prev => prev ? { ...prev, image: imageUrl } : null)
+        
+        // Criar uma imagem para redimensionar
+        const img = new Image()
+        img.onload = () => {
+          // Criar canvas para redimensionar
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+          
+          // Definir tamanho máximo
+          const maxWidth = 800
+          const maxHeight = 600
+          
+          let { width, height } = img
+          
+          // Calcular novas dimensões mantendo proporção
+          if (width > height) {
+            if (width > maxWidth) {
+              height = (height * maxWidth) / width
+              width = maxWidth
+            }
+          } else {
+            if (height > maxHeight) {
+              width = (width * maxHeight) / height
+              height = maxHeight
+            }
+          }
+          
+          canvas.width = width
+          canvas.height = height
+          
+          // Desenhar imagem redimensionada
+          ctx?.drawImage(img, 0, 0, width, height)
+          
+          // Converter para base64 com qualidade reduzida
+          const optimizedImageUrl = canvas.toDataURL('image/jpeg', 0.7)
+          
+          setEditingDrink(prev => prev ? { ...prev, image: optimizedImageUrl } : null)
+        }
+        
+        img.onerror = () => {
+          showMessage("Erro ao processar imagem!", "error");
+        }
+        
+        img.src = imageUrl
       }
       reader.readAsDataURL(file)
     }
