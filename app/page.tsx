@@ -46,26 +46,27 @@ interface DrinkeiraDrink {
   category: "Caipirinha" | "Caipiroska" | "Clássico"
   price: number
   description: string
+  image?: string
   popular?: boolean
   premium?: boolean
 }
 
 const drinkeiraMenu: DrinkeiraDrink[] = [
-  { id: "caip-1", name: "Caipirinha Tradicional", category: "Caipirinha", price: 12, description: "Cachaça, limão, açúcar e gelo", popular: true },
-  { id: "caip-2", name: "Caipirinha de Morango", category: "Caipirinha", price: 14, description: "Cachaça, morango fresco, açúcar e gelo", popular: true },
-  { id: "caip-3", name: "Caipirinha de Kiwi", category: "Caipirinha", price: 15, description: "Cachaça, kiwi, açúcar e gelo" },
-  { id: "caip-4", name: "Caipirinha de Maracujá", category: "Caipirinha", price: 14, description: "Cachaça, polpa de maracujá, açúcar e gelo" },
-  { id: "caip-5", name: "Caipirinha de Abacaxi", category: "Caipirinha", price: 13, description: "Cachaça, abacaxi fresco, açúcar e gelo" },
-  { id: "caip-6", name: "Caipirinha Premium", category: "Caipirinha", price: 18, description: "Cachaça premium, limão tahiti, açúcar demerara", premium: true },
-  { id: "caipiroska-1", name: "Caipiroska Tradicional", category: "Caipiroska", price: 13, description: "Vodka, limão, açúcar e gelo", popular: true },
-  { id: "caipiroska-2", name: "Caipiroska de Morango", category: "Caipiroska", price: 15, description: "Vodka, morango fresco, açúcar e gelo", popular: true },
-  { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", category: "Caipiroska", price: 16, description: "Vodka, mix de frutas vermelhas, açúcar e gelo", premium: true },
-  { id: "caipiroska-4", name: "Caipiroska de Maracujá", category: "Caipiroska", price: 15, description: "Vodka, polpa de maracujá, açúcar e gelo" },
-  { id: "caipiroska-5", name: "Caipiroska de Pêssego", category: "Caipiroska", price: 15, description: "Vodka, pêssego em calda, açúcar e gelo" },
-  { id: "caipiroska-6", name: "Caipiroska Premium", category: "Caipiroska", price: 20, description: "Vodka premium, limão siciliano, açúcar cristal", premium: true },
-  { id: "classic-1", name: "Gin Tônica", category: "Clássico", price: 20, description: "Gin, água tônica, limão e especiarias" },
-  { id: "classic-2", name: "Mojito", category: "Clássico", price: 18, description: "Rum, hortelã, limão, açúcar e água com gás" },
-  { id: "classic-3", name: "Daiquiri", category: "Clássico", price: 22, description: "Rum, suco de limão e açúcar" },
+  { id: "caip-1", name: "Caipirinha Tradicional", category: "Caipirinha", price: 12, description: "Cachaça, limão, açúcar e gelo", image: "/caipirinha.jpg", popular: true },
+  { id: "caip-2", name: "Caipirinha de Morango", category: "Caipirinha", price: 14, description: "Cachaça, morango fresco, açúcar e gelo", image: "/caipirinha.jpg", popular: true },
+  { id: "caip-3", name: "Caipirinha de Kiwi", category: "Caipirinha", price: 15, description: "Cachaça, kiwi, açúcar e gelo", image: "/caipirinha.jpg" },
+  { id: "caip-4", name: "Caipirinha de Maracujá", category: "Caipirinha", price: 14, description: "Cachaça, polpa de maracujá, açúcar e gelo", image: "/caipirinha.jpg" },
+  { id: "caip-5", name: "Caipirinha de Abacaxi", category: "Caipirinha", price: 13, description: "Cachaça, abacaxi fresco, açúcar e gelo", image: "/caipirinha.jpg" },
+  { id: "caip-6", name: "Caipirinha Premium", category: "Caipirinha", price: 18, description: "Cachaça premium, limão tahiti, açúcar demerara", image: "/caipirinha-premium.jpg", premium: true },
+  { id: "caipiroska-1", name: "Caipiroska Tradicional", category: "Caipiroska", price: 13, description: "Vodka, limão, açúcar e gelo", image: "/caipiroska.jpg", popular: true },
+  { id: "caipiroska-2", name: "Caipiroska de Morango", category: "Caipiroska", price: 15, description: "Vodka, morango fresco, açúcar e gelo", image: "/caipiroska.jpg", popular: true },
+  { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", category: "Caipiroska", price: 16, description: "Vodka, mix de frutas vermelhas, açúcar e gelo", image: "/caipiroska.jpg", premium: true },
+  { id: "caipiroska-4", name: "Caipiroska de Maracujá", category: "Caipiroska", price: 15, description: "Vodka, polpa de maracujá, açúcar e gelo", image: "/caipiroska.jpg" },
+  { id: "caipiroska-5", name: "Caipiroska de Pêssego", category: "Caipiroska", price: 15, description: "Vodka, pêssego em calda, açúcar e gelo", image: "/caipiroska.jpg" },
+  { id: "caipiroska-6", name: "Caipiroska Premium", category: "Caipiroska", price: 20, description: "Vodka premium, limão siciliano, açúcar cristal", image: "/caipiroska.jpg", premium: true },
+  { id: "classic-1", name: "Gin Tônica", category: "Clássico", price: 20, description: "Gin, água tônica, limão e especiarias", image: "/gin-tonica.jpg" },
+  { id: "classic-2", name: "Mojito", category: "Clássico", price: 18, description: "Rum, hortelã, limão, açúcar e água com gás", image: "/mojito.jpg" },
+  { id: "classic-3", name: "Daiquiri", category: "Clássico", price: 22, description: "Rum, suco de limão e açúcar", image: "/mojito.jpg" },
 ]
 
 const drinks: Drink[] = [
@@ -847,8 +848,27 @@ export default function TenderesPage() {
                                 {/* Background com gradiente sutil */}
                                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
                                 
+                                {/* Imagem de fundo */}
+                                {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                  <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                    <img 
+                                      src={drink.image} 
+                                      alt={drink.name}
+                                      className="w-full h-full object-cover"
+                                      onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        target.style.display = 'none';
+                                      }}
+                                    />
+                                    {/* Overlay escuro para melhorar legibilidade do texto */}
+                                    <div className="absolute inset-0 bg-black/40"></div>
+                                  </div>
+                                ) : (
+                                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl"></div>
+                                )}
+
                                 {/* Conteúdo do Card */}
-                                <div className="relative h-full flex flex-col">
+                                <div className="relative h-full flex flex-col z-10">
                                   {/* Header com ícone e nome no topo */}
                                   <div className="p-4 flex items-center gap-3">
                                     <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
@@ -858,38 +878,17 @@ export default function TenderesPage() {
                                       <h3 className="text-xl font-bold text-white tracking-tight">
                                         {drink.name}
                                       </h3>
-                                      <p className="text-sm text-gray-400">
+                                      <p className="text-sm text-gray-200">
                                         {drink.description}
                                       </p>
                                     </div>
                                   </div>
                                   
-                                  {/* Área central para imagem do drink */}
+                                  {/* Área central para ícone do drink */}
                                   <div className="flex-1 flex items-center justify-center p-4">
-                                    {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
-                                      <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-purple-500/30 shadow-lg">
-                                        <img 
-                                          src={drink.image} 
-                                          alt={drink.name}
-                                          className="w-full h-full object-cover"
-                                          onError={(e) => {
-                                            const target = e.target as HTMLImageElement;
-                                            target.style.display = 'none';
-                                            const nextSibling = target.nextSibling as HTMLElement;
-                                            if (nextSibling) {
-                                              nextSibling.style.display = 'flex';
-                                            }
-                                          }}
-                                        />
-                                        <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-purple-500/30" style={{display: 'none'}}>
-                                          <Wine className="h-16 w-16 text-purple-300" />
-                                        </div>
-                                      </div>
-                                    ) : (
-                                      <div className="w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-purple-500/30">
-                                        <Wine className="h-16 w-16 text-purple-300" />
-                                      </div>
-                                    )}
+                                    <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
+                                      <Wine className="h-16 w-16 text-white" />
+                                    </div>
                                   </div>
                                   
                                   {/* Preço em destaque */}
@@ -1000,25 +999,92 @@ export default function TenderesPage() {
                       <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {caipirinhas.map((drink) => (
-                          <Card
-                            key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
-                          >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                              <Wine className="h-7 w-7 text-purple-300 drop-shadow" />
-                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
-                                {drink.name}
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 rounded-full bg-purple-700/60 text-white text-lg font-bold shadow">
-                                  {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                </span>
+                          <div key={drink.id} className="relative group">
+                            {/* Card no estilo Gin Tonic */}
+                            <div className="relative bg-gradient-to-br from-gray-900 via-green-900/20 to-gray-800 border border-green-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-green-500/25 hover:border-green-500/50 h-96">
+                              {/* Background com gradiente sutil */}
+                              <div className="absolute inset-0 bg-gradient-to-br from-green-500/5 via-transparent to-green-500/5"></div>
+                              
+                              {/* Imagem de fundo */}
+                              {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                  <img 
+                                    src={drink.image} 
+                                    alt={drink.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                  {/* Overlay escuro para melhorar legibilidade do texto */}
+                                  <div className="absolute inset-0 bg-black/40"></div>
+                                </div>
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-green-500/20 to-green-500/20 rounded-2xl"></div>
+                              )}
+
+                              {/* Conteúdo do Card */}
+                              <div className="relative h-full flex flex-col z-10">
+                                {/* Header com ícone e nome no topo */}
+                                <div className="p-4 flex items-center gap-3">
+                                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <Wine className="h-6 w-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h3 className="text-xl font-bold text-white tracking-tight">
+                                      {drink.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-200">
+                                      {drink.description}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Área central para ícone do drink */}
+                                <div className="flex-1 flex items-center justify-center p-4">
+                                  <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
+                                    <Wine className="h-16 w-16 text-white" />
+                                  </div>
+                                </div>
+                                
+                                {/* Preço em destaque */}
+                                <div className="px-4 mb-4">
+                                  <div className="text-4xl font-bold text-white mb-2 text-center">
+                                    {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </div>
+                                  <div className="text-sm text-green-300 font-medium text-center">
+                                    Vendido na hora
+                                  </div>
+                                </div>
+                                
+                                {/* Gradiente em ondas na parte inferior */}
+                                <div className="relative h-16 overflow-hidden">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-green-600 via-green-600 to-green-600"></div>
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                                  
+                                  {/* Ondas decorativas */}
+                                  <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-green-800/50 to-transparent rounded-t-full"></div>
+                                  <div className="absolute bottom-1 left-0 right-0 h-3 bg-gradient-to-t from-green-800/30 to-transparent rounded-t-full"></div>
+                                </div>
+                                
+                                {/* Badges flutuantes */}
+                                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                  {drink.premium && (
+                                    <div className="px-3 py-1 bg-gradient-to-r from-green-600 to-green-700 rounded-full text-xs font-semibold text-white shadow-lg">
+                                      Premium
+                                    </div>
+                                  )}
+                                  {drink.popular && (
+                                    <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-semibold text-white shadow-lg">
+                                      <Star className="h-3 w-3 inline mr-1" />
+                                      Popular
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
-                            </CardContent>
-                          </Card>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -1031,25 +1097,92 @@ export default function TenderesPage() {
                       <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {caipiroskas.map((drink) => (
-                          <Card
-                            key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
-                          >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                              <Wine className="h-7 w-7 text-cyan-300 drop-shadow" />
-                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
-                                {drink.name}
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 rounded-full bg-blue-700/60 text-white text-lg font-bold shadow">
-                                  {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                </span>
+                          <div key={drink.id} className="relative group">
+                            {/* Card no estilo Gin Tonic */}
+                            <div className="relative bg-gradient-to-br from-gray-900 via-blue-900/20 to-gray-800 border border-blue-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-blue-500/25 hover:border-blue-500/50 h-96">
+                              {/* Background com gradiente sutil */}
+                              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-transparent to-blue-500/5"></div>
+                              
+                              {/* Imagem de fundo */}
+                              {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                  <img 
+                                    src={drink.image} 
+                                    alt={drink.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                  {/* Overlay escuro para melhorar legibilidade do texto */}
+                                  <div className="absolute inset-0 bg-black/40"></div>
+                                </div>
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-blue-500/20 rounded-2xl"></div>
+                              )}
+
+                              {/* Conteúdo do Card */}
+                              <div className="relative h-full flex flex-col z-10">
+                                {/* Header com ícone e nome no topo */}
+                                <div className="p-4 flex items-center gap-3">
+                                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <Wine className="h-6 w-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h3 className="text-xl font-bold text-white tracking-tight">
+                                      {drink.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-200">
+                                      {drink.description}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Área central para ícone do drink */}
+                                <div className="flex-1 flex items-center justify-center p-4">
+                                  <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
+                                    <Wine className="h-16 w-16 text-white" />
+                                  </div>
+                                </div>
+                                
+                                {/* Preço em destaque */}
+                                <div className="px-4 mb-4">
+                                  <div className="text-4xl font-bold text-white mb-2 text-center">
+                                    {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </div>
+                                  <div className="text-sm text-blue-300 font-medium text-center">
+                                    Vendido na hora
+                                  </div>
+                                </div>
+                                
+                                {/* Gradiente em ondas na parte inferior */}
+                                <div className="relative h-16 overflow-hidden">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-blue-600 via-blue-600 to-blue-600"></div>
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                                  
+                                  {/* Ondas decorativas */}
+                                  <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-blue-800/50 to-transparent rounded-t-full"></div>
+                                  <div className="absolute bottom-1 left-0 right-0 h-3 bg-gradient-to-t from-blue-800/30 to-transparent rounded-t-full"></div>
+                                </div>
+                                
+                                {/* Badges flutuantes */}
+                                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                  {drink.premium && (
+                                    <div className="px-3 py-1 bg-gradient-to-r from-blue-600 to-blue-700 rounded-full text-xs font-semibold text-white shadow-lg">
+                                      Premium
+                                    </div>
+                                  )}
+                                  {drink.popular && (
+                                    <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-semibold text-white shadow-lg">
+                                      <Star className="h-3 w-3 inline mr-1" />
+                                      Popular
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
-                            </CardContent>
-                          </Card>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
@@ -1062,25 +1195,92 @@ export default function TenderesPage() {
                       <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {outrosClassicos.map((drink) => (
-                          <Card
-                            key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
-                          >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                              <Wine className="h-7 w-7 text-red-300 drop-shadow" />
-                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
-                                {drink.name}
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                              <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 rounded-full bg-red-700/60 text-white text-lg font-bold shadow">
-                                  {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                </span>
+                          <div key={drink.id} className="relative group">
+                            {/* Card no estilo Gin Tonic */}
+                            <div className="relative bg-gradient-to-br from-gray-900 via-red-900/20 to-gray-800 border border-red-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-red-500/25 hover:border-red-500/50 h-96">
+                              {/* Background com gradiente sutil */}
+                              <div className="absolute inset-0 bg-gradient-to-br from-red-500/5 via-transparent to-red-500/5"></div>
+                              
+                              {/* Imagem de fundo */}
+                              {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                  <img 
+                                    src={drink.image} 
+                                    alt={drink.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                    }}
+                                  />
+                                  {/* Overlay escuro para melhorar legibilidade do texto */}
+                                  <div className="absolute inset-0 bg-black/40"></div>
+                                </div>
+                              ) : (
+                                <div className="absolute inset-0 bg-gradient-to-br from-red-500/20 to-red-500/20 rounded-2xl"></div>
+                              )}
+
+                              {/* Conteúdo do Card */}
+                              <div className="relative h-full flex flex-col z-10">
+                                {/* Header com ícone e nome no topo */}
+                                <div className="p-4 flex items-center gap-3">
+                                  <div className="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center shadow-lg">
+                                    <Wine className="h-6 w-6 text-white" />
+                                  </div>
+                                  <div>
+                                    <h3 className="text-xl font-bold text-white tracking-tight">
+                                      {drink.name}
+                                    </h3>
+                                    <p className="text-sm text-gray-200">
+                                      {drink.description}
+                                    </p>
+                                  </div>
+                                </div>
+                                
+                                {/* Área central para ícone do drink */}
+                                <div className="flex-1 flex items-center justify-center p-4">
+                                  <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
+                                    <Wine className="h-16 w-16 text-white" />
+                                  </div>
+                                </div>
+                                
+                                {/* Preço em destaque */}
+                                <div className="px-4 mb-4">
+                                  <div className="text-4xl font-bold text-white mb-2 text-center">
+                                    {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                  </div>
+                                  <div className="text-sm text-red-300 font-medium text-center">
+                                    Vendido na hora
+                                  </div>
+                                </div>
+                                
+                                {/* Gradiente em ondas na parte inferior */}
+                                <div className="relative h-16 overflow-hidden">
+                                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-red-600 to-red-600"></div>
+                                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                                  
+                                  {/* Ondas decorativas */}
+                                  <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-red-800/50 to-transparent rounded-t-full"></div>
+                                  <div className="absolute bottom-1 left-0 right-0 h-3 bg-gradient-to-t from-red-800/30 to-transparent rounded-t-full"></div>
+                                </div>
+                                
+                                {/* Badges flutuantes */}
+                                <div className="absolute top-4 right-4 flex flex-col gap-2">
+                                  {drink.premium && (
+                                    <div className="px-3 py-1 bg-gradient-to-r from-red-600 to-red-700 rounded-full text-xs font-semibold text-white shadow-lg">
+                                      Premium
+                                    </div>
+                                  )}
+                                  {drink.popular && (
+                                    <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-semibold text-white shadow-lg">
+                                      <Star className="h-3 w-3 inline mr-1" />
+                                      Popular
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
-                            </CardContent>
-                          </Card>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
