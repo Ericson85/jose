@@ -858,6 +858,10 @@ export default function TenderesPage() {
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
                                         target.style.display = 'none';
+                                        console.error('Erro ao carregar imagem:', drink.name, drink.image);
+                                      }}
+                                      onLoad={() => {
+                                        console.log('Imagem carregada com sucesso:', drink.name);
                                       }}
                                     />
                                     {/* Overlay escuro para melhorar legibilidade do texto */}

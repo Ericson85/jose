@@ -143,6 +143,8 @@ export default function ProprietarioPage() {
           image: editingDrink.image,
           price_type: editingDrink.priceType, // snake_case
           popular: editingDrink.popular,
+          description: editingDrink.description,
+          premium: editingDrink.premium,
         };
         console.log("Payload FINAL enviado para API:", JSON.stringify(payload, null, 2));
         await fetch("/api/drinks", {
