@@ -819,69 +819,117 @@ export default function TenderesPage() {
                     <p className="text-gray-300">Carregando drinks...</p>
                   </div>
                 ) : (
-                  <div className="space-y-8">
+                  <div className="space-y-12">
+                    {/* Header Elegante */}
+                    <div className="text-center mb-12">
+                      <div className="inline-flex items-center gap-3 mb-4">
+                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl">
+                          <Wine className="h-8 w-8 text-white" />
+                        </div>
+                        <h2 className="text-4xl font-bold text-white tracking-tight">TENDERES</h2>
+                      </div>
+                      <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                        Descubra nossa seleção premium de drinks artesanais para seu evento
+                      </p>
+                    </div>
+                    
                     {categories.map((category) => (
-                      <div key={category} className="space-y-4">
-                        <h3 className="text-3xl font-bold text-center mb-6 text-white">{category}</h3>
-                        <div className="grid md:grid-cols-2 gap-6">
+                      <div key={category} className="space-y-6">
+                        <div className="text-center">
+                          <h3 className="text-3xl font-bold text-white mb-2">{category}</h3>
+                          <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+                        </div>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                           {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => (
-                            <Card key={drink.id} className={`bg-gradient-to-br from-gray-800 via-purple-900/80 to-gray-900 border border-purple-600/50 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl hover:border-purple-500`}>
-                              <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                                  <Wine className="h-6 w-6 text-white" />
-                                </div>
-                                <CardTitle className="text-2xl font-bold text-white tracking-tight">
-                                  {drink.name}
-                                </CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="flex items-center justify-between mb-3">
-                                  <span className="text-2xl font-bold text-purple-300">
-                                    {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                  </span>
-                                  <div className="flex items-center space-x-2">
-                                    {drink.popular && (
-                                      <Badge className="bg-yellow-600/80 text-yellow-100 border-yellow-500/50">
-                                        <Star className="h-3 w-3 mr-1" />
-                                        Popular
-                                      </Badge>
-                                    )}
+                            <div key={drink.id} className="relative group">
+                              {/* Card no estilo Gin Tonic */}
+                              <div className="relative bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-800 border border-purple-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50 h-96">
+                                {/* Background com gradiente sutil */}
+                                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
+                                
+                                {/* Conteúdo do Card */}
+                                <div className="relative h-full flex flex-col">
+                                  {/* Header com ícone e nome no topo */}
+                                  <div className="p-4 flex items-center gap-3">
+                                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
+                                      <Wine className="h-6 w-6 text-white" />
+                                    </div>
+                                    <div>
+                                      <h3 className="text-xl font-bold text-white tracking-tight">
+                                        {drink.name}
+                                      </h3>
+                                      <p className="text-sm text-gray-400">
+                                        {drink.description}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Área central para imagem do drink (placeholder) */}
+                                  <div className="flex-1 flex items-center justify-center p-4">
+                                    <div className="w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-purple-500/30">
+                                      <Wine className="h-16 w-16 text-purple-300" />
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Preço em destaque */}
+                                  <div className="px-4 mb-4">
+                                    <div className="text-4xl font-bold text-white mb-2 text-center">
+                                      {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                    </div>
+                                    <div className="text-sm text-cyan-300 font-medium text-center">
+                                      {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Gradiente em ondas na parte inferior */}
+                                  <div className="relative h-16 overflow-hidden">
+                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+                                    
+                                    {/* Ondas decorativas */}
+                                    <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-purple-800/50 to-transparent rounded-t-full"></div>
+                                    <div className="absolute bottom-1 left-0 right-0 h-3 bg-gradient-to-t from-pink-800/30 to-transparent rounded-t-full"></div>
+                                    
+                                    {/* Controles de Quantidade sobre o gradiente */}
+                                    <div className="relative h-full flex items-center justify-center space-x-2">
+                                      <button
+                                        onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)}
+                                        className="w-8 h-8 bg-white/20 hover:bg-white/30 border border-white/30 hover:border-white/50 rounded-lg flex items-center justify-center text-white font-bold transition-colors duration-200 backdrop-blur-sm"
+                                      >
+                                        -
+                                      </button>
+                                      <span className="text-white font-semibold min-w-[2rem] text-center text-lg">
+                                        {selectedDrinks[drink.id] || 0}
+                                      </span>
+                                      <button
+                                        onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}
+                                        className="w-8 h-8 bg-white/20 hover:bg-white/30 border border-white/30 hover:border-white/50 rounded-lg flex items-center justify-center text-white font-bold transition-colors duration-200 backdrop-blur-sm"
+                                      >
+                                        +
+                                      </button>
+                                    </div>
+                                  </div>
+                                  
+                                  {/* Badges flutuantes */}
+                                  <div className="absolute top-4 right-4 flex flex-col gap-2">
                                     {drink.premium && (
-                                      <Badge className="bg-gradient-to-r from-purple-600/80 to-pink-600/80 text-purple-100 border-purple-500/50">
+                                      <div className="px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-semibold text-white shadow-lg">
                                         Premium
-                                      </Badge>
+                                      </div>
+                                    )}
+                                    {drink.popular && (
+                                      <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-semibold text-white shadow-lg">
+                                        <Star className="h-3 w-3 inline mr-1" />
+                                        Popular
+                                      </div>
                                     )}
                                   </div>
                                 </div>
-                                <p className="text-gray-300 mb-4">{drink.description}</p>
-                                <div className="flex items-center justify-between">
-                                  <span className="text-sm text-cyan-300 font-medium">
-                                    {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
-                                  </span>
-                                  <div className="flex items-center space-x-2">
-                                    <Button
-                                      onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)}
-                                      variant="outline"
-                                      size="sm"
-                                      className="border-purple-600/50 text-purple-300 hover:bg-purple-900/50 hover:border-purple-500"
-                                    >
-                                      -
-                                    </Button>
-                                    <span className="text-white font-semibold min-w-[2rem] text-center">
-                                      {selectedDrinks[drink.id] || 0}
-                                    </span>
-                                    <Button
-                                      onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}
-                                      variant="outline"
-                                      size="sm"
-                                      className="border-purple-600/50 text-purple-300 hover:bg-purple-900/50 hover:border-purple-500"
-                                    >
-                                      +
-                                    </Button>
-                                  </div>
-                                </div>
-                              </CardContent>
-                            </Card>
+                                
+                                {/* Efeito de brilho no hover */}
+                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+                              </div>
+                            </div>
                           ))}
                         </div>
                       </div>
