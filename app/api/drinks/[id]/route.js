@@ -10,10 +10,12 @@ const db = mysql.createPool({
 
 export async function PUT(request, { params }) {
   const { id } = params;
-  const { name, price, category, image, price_type, popular } = await request.json();
+  const { name, price, category, image, price_type, priceType, popular, description, premium } = await request.json();
+  const finalPriceType = price_type || priceType;
+  
   await db.query(
-    'UPDATE drinks SET name=?, price=?, category=?, image=?, price_type=?, popular=? WHERE id=?',
-    [name, price, category, image, price_type, popular, id]
+    'UPDATE drinks SET name=?, price=?, category=?, image=?, price_type=?, popular=?, description=?, premium=? WHERE id=?',
+    [name, price, category, image, finalPriceType, popular ? 1 : 0, description || null, premium ? 1 : 0, id]
   );
   return NextResponse.json({ message: 'Drink atualizado!' });
 }

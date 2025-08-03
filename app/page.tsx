@@ -864,11 +864,32 @@ export default function TenderesPage() {
                                     </div>
                                   </div>
                                   
-                                  {/* Área central para imagem do drink (placeholder) */}
+                                  {/* Área central para imagem do drink */}
                                   <div className="flex-1 flex items-center justify-center p-4">
-                                    <div className="w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-purple-500/30">
-                                      <Wine className="h-16 w-16 text-purple-300" />
-                                    </div>
+                                    {drink.image && drink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                      <div className="w-32 h-32 rounded-full overflow-hidden border-2 border-purple-500/30 shadow-lg">
+                                        <img 
+                                          src={drink.image} 
+                                          alt={drink.name}
+                                          className="w-full h-full object-cover"
+                                          onError={(e) => {
+                                            const target = e.target as HTMLImageElement;
+                                            target.style.display = 'none';
+                                            const nextSibling = target.nextSibling as HTMLElement;
+                                            if (nextSibling) {
+                                              nextSibling.style.display = 'flex';
+                                            }
+                                          }}
+                                        />
+                                        <div className="w-full h-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-purple-500/30" style={{display: 'none'}}>
+                                          <Wine className="h-16 w-16 text-purple-300" />
+                                        </div>
+                                      </div>
+                                    ) : (
+                                      <div className="w-32 h-32 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-full flex items-center justify-center border-2 border-purple-500/30">
+                                        <Wine className="h-16 w-16 text-purple-300" />
+                                      </div>
+                                    )}
                                   </div>
                                   
                                   {/* Preço em destaque */}

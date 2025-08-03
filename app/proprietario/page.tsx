@@ -15,11 +15,13 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 export interface Drink {
   id: string
   name: string
+  description: string
   price: number
   category: string
   image: string
   priceType: "per_person" | "per_unit"
   popular?: boolean
+  premium?: boolean
 }
 
 export default function ProprietarioPage() {
@@ -87,11 +89,13 @@ export default function ProprietarioPage() {
     console.log("handleAddNew chamado");
     const newDrink: Omit<Drink, 'id'> = {
       name: "",
+      description: "",
       price: 0,
       category: "Coquetéis",
       image: "/placeholder.svg?height=120&width=120",
       priceType: "per_person",
-      popular: false
+      popular: false,
+      premium: false
     };
     setEditingDrink(newDrink as Drink);
     setIsAddingNew(true);
@@ -338,6 +342,18 @@ export default function ProprietarioPage() {
 
                     <div className="space-y-2">
                       <Label className="text-sm font-medium text-gray-200">
+                        Descrição
+                      </Label>
+                      <Input
+                        value={editingDrink.description}
+                        onChange={(e) => setEditingDrink(prev => prev ? { ...prev, description: e.target.value } : null)}
+                        placeholder="Ex: Tradicional caipirinha brasileira"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
                         Categoria
                       </Label>
                       <Select
@@ -428,6 +444,16 @@ export default function ProprietarioPage() {
                       />
                       <Label className="text-sm font-medium text-gray-200">
                         Marcar como Popular
+                      </Label>
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Switch
+                        checked={editingDrink.premium}
+                        onCheckedChange={(checked) => setEditingDrink(prev => prev ? { ...prev, premium: checked } : null)}
+                      />
+                      <Label className="text-sm font-medium text-gray-200">
+                        Marcar como Premium
                       </Label>
                     </div>
 
