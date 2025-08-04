@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
+import sharp from 'sharp';
 
 export async function POST(request) {
   try {
@@ -23,11 +24,6 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Arquivo deve ser uma imagem' }, { status: 400 });
     }
 
-    // Verificar tamanho (máximo 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'Imagem deve ter no máximo 5MB' }, { status: 400 });
-    }
-
     // Criar diretório se não existir
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadDir, { recursive: true });
@@ -39,10 +35,36 @@ export async function POST(request) {
     const fileName = `${timestamp}_${randomString}.${extension}`;
     const filePath = path.join(uploadDir, fileName);
 
-    // Converter para buffer e salvar
+    // Converter para buffer
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(bytes);
-    await writeFile(filePath, buffer);
+
+    // Redimensionar e otimizar a imagem automaticamente
+    try {
+      const optimizedBuffer = await sharp(buffer)
+        .resize(800, 600, {
+          fit: 'cover', // Mantém proporção e corta se necessário
+          position: 'center' // Centraliza o corte
+        })
+        .jpeg({ 
+          quality: 80, // Qualidade otimizada
+          progressive: true // Carregamento progressivo
+        })
+        .toBuffer();
+
+      // Salvar imagem otimizada
+      await writeFile(filePath, optimizedBuffer);
+      
+      console.log('Imagem redimensionada e otimizada:', {
+        originalSize: buffer.length,
+        optimizedSize: optimizedBuffer.length,
+        reduction: `${((1 - optimizedBuffer.length / buffer.length) * 100).toFixed(1)}%`
+      });
+    } catch (error) {
+      console.error('Erro ao processar imagem:', error);
+      // Se falhar o processamento, salvar original
+      await writeFile(filePath, buffer);
+    }
 
     // Retornar URL da imagem
     const imageUrl = `/uploads/${fileName}`;
