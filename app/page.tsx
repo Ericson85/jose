@@ -856,7 +856,7 @@ export default function TenderesPage() {
                                          drink.image !== "/placeholder.svg?height=120&width=120" && 
                                          drink.image !== "/placeholder.jpg" && 
                                          drink.image !== "" && 
-                                         drink.image.startsWith('data:image');
+                                         (drink.image.startsWith('data:image') || drink.image.startsWith('/uploads/'));
                                 })() ? (
                                   <div className="absolute inset-0 rounded-2xl overflow-hidden">
                                     <img 
