@@ -20,7 +20,7 @@ export async function POST(request) {
     const finalPriceType = price_type || priceType;
 
     // Validação básica dos campos obrigatórios
-    if (!name || !price || !category || !image || !finalPriceType) {
+    if (!name || !price || !category || !finalPriceType) {
       return NextResponse.json({ error: 'Preencha todos os campos obrigatórios.' }, { status: 400 });
     }
 

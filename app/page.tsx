@@ -222,6 +222,7 @@ export default function TenderesPage() {
             premium: Boolean(drink.premium)
           }));
           console.log('Drinks carregados do banco:', mappedDrinks);
+          console.log('Dados brutos da API:', data);
           setDynamicDrinks(mappedDrinks);
         }
       } catch (error) {
@@ -851,12 +852,20 @@ export default function TenderesPage() {
                                 
                                 {/* Imagem de fundo */}
                                 {(() => {
-                                  console.log(`Verificando imagem para ${drink.name}:`, drink.image);
-                                  return drink.image && 
+                                  const hasValidImage = drink.image && 
                                          drink.image !== "/placeholder.svg?height=120&width=120" && 
                                          drink.image !== "/placeholder.jpg" && 
                                          drink.image !== "" && 
                                          (drink.image.startsWith('data:image') || drink.image.startsWith('/uploads/'));
+                                  
+                                  console.log(`Verificando imagem para ${drink.name}:`, {
+                                    image: drink.image,
+                                    hasValidImage: hasValidImage,
+                                    startsWithData: drink.image?.startsWith('data:image'),
+                                    startsWithUploads: drink.image?.startsWith('/uploads/')
+                                  });
+                                  
+                                  return hasValidImage;
                                 })() ? (
                                   <div className="absolute inset-0 rounded-2xl overflow-hidden">
                                     <img 
