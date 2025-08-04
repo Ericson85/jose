@@ -181,35 +181,79 @@ export default function ProprietarioPage() {
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && editingDrink) {
-      // Verificar tamanho do arquivo (máximo 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        showMessage("A imagem deve ter no máximo 5MB!", "error");
+      // Verificar formato do arquivo
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+      if (!allowedTypes.includes(file.type)) {
+        showMessage("Formato não suportado! Use apenas JPG, PNG ou WebP.", "error");
         return;
       }
 
-      try {
-        // Criar FormData para upload
-        const formData = new FormData();
-        formData.append('image', file);
-
-        // Fazer upload da imagem
-        const response = await fetch('/api/upload-image', {
-          method: 'POST',
-          body: formData
-        });
-
-        const result = await response.json();
-
-        if (result.success) {
-          setEditingDrink(prev => prev ? { ...prev, image: result.imageUrl } : null);
-          showMessage("Imagem enviada com sucesso!", "success");
-        } else {
-          showMessage(result.error || "Erro ao enviar imagem!", "error");
-        }
-      } catch (error) {
-        console.error('Erro no upload:', error);
-        showMessage("Erro ao enviar imagem!", "error");
+      // Verificar tamanho do arquivo (máximo 2MB)
+      const maxSize = 2 * 1024 * 1024; // 2MB
+      if (file.size > maxSize) {
+        showMessage(`A imagem deve ter no máximo 2MB! Tamanho atual: ${(file.size / 1024 / 1024).toFixed(2)}MB`, "error");
+        return;
       }
+
+      // Verificar dimensões da imagem
+      const img = new Image();
+      const objectUrl = URL.createObjectURL(file);
+      
+      img.onload = () => {
+        URL.revokeObjectURL(objectUrl);
+        
+        // Verificar dimensões mínimas e máximas
+        const minWidth = 400;
+        const minHeight = 300;
+        const maxWidth = 2000;
+        const maxHeight = 2000;
+        
+        if (img.width < minWidth || img.height < minHeight) {
+          showMessage(`Dimensões muito pequenas! Mínimo: ${minWidth}x${minHeight}px. Atual: ${img.width}x${img.height}px`, "error");
+          return;
+        }
+        
+        if (img.width > maxWidth || img.height > maxHeight) {
+          showMessage(`Dimensões muito grandes! Máximo: ${maxWidth}x${maxHeight}px. Atual: ${img.width}x${img.height}px`, "error");
+          return;
+        }
+
+        // Se passou por todas as validações, fazer upload
+        uploadImage(file);
+      };
+      
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        showMessage("Erro ao verificar imagem!", "error");
+      };
+      
+      img.src = objectUrl;
+    }
+  }
+
+  const uploadImage = async (file: File) => {
+    try {
+      // Criar FormData para upload
+      const formData = new FormData();
+      formData.append('image', file);
+
+      // Fazer upload da imagem
+      const response = await fetch('/api/upload-image', {
+        method: 'POST',
+        body: formData
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setEditingDrink(prev => prev ? { ...prev, image: result.imageUrl } : null);
+        showMessage("Imagem enviada com sucesso!", "success");
+      } else {
+        showMessage(result.error || "Erro ao enviar imagem!", "error");
+      }
+    } catch (error) {
+      console.error('Erro no upload:', error);
+      showMessage("Erro ao enviar imagem!", "error");
     }
   }
 
@@ -439,6 +483,13 @@ export default function ProprietarioPage() {
                       <Label className="text-sm font-medium text-gray-200">
                         Imagem do Drink
                       </Label>
+                      <div className="text-xs text-gray-400 mb-2 p-2 bg-gray-800/50 rounded border border-gray-600">
+                        <strong>Requisitos da imagem:</strong><br/>
+                        • Formatos: JPG, PNG ou WebP<br/>
+                        • Tamanho máximo: 2MB<br/>
+                        • Dimensões: 400x300px a 2000x2000px<br/>
+                        • Proporção recomendada: 16:9 ou 4:3
+                      </div>
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden">
                           {editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" ? (
