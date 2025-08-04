@@ -4,8 +4,15 @@ import path from 'path';
 
 export async function POST(request) {
   try {
+    console.log('API de upload chamada');
     const formData = await request.formData();
     const file = formData.get('image');
+    
+    console.log('Arquivo recebido:', file ? {
+      name: file.name,
+      size: file.size,
+      type: file.type
+    } : 'Nenhum arquivo');
     
     if (!file) {
       return NextResponse.json({ error: 'Nenhuma imagem enviada' }, { status: 400 });
@@ -39,6 +46,12 @@ export async function POST(request) {
 
     // Retornar URL da imagem
     const imageUrl = `/uploads/${fileName}`;
+    
+    console.log('Imagem salva com sucesso:', {
+      fileName: fileName,
+      imageUrl: imageUrl,
+      filePath: filePath
+    });
     
     return NextResponse.json({ 
       success: true, 

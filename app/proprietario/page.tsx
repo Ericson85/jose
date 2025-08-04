@@ -233,6 +233,8 @@ export default function ProprietarioPage() {
 
   const uploadImage = async (file: File) => {
     try {
+      console.log('Iniciando upload da imagem:', file.name, file.size, file.type);
+      
       // Criar FormData para upload
       const formData = new FormData();
       formData.append('image', file);
@@ -244,11 +246,14 @@ export default function ProprietarioPage() {
       });
 
       const result = await response.json();
+      console.log('Resposta do upload:', result);
 
       if (result.success) {
+        console.log('Imagem salva com URL:', result.imageUrl);
         setEditingDrink(prev => prev ? { ...prev, image: result.imageUrl } : null);
         showMessage("Imagem enviada com sucesso!", "success");
       } else {
+        console.error('Erro no upload:', result.error);
         showMessage(result.error || "Erro ao enviar imagem!", "error");
       }
     } catch (error) {
