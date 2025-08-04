@@ -1060,7 +1060,8 @@ export default function TenderesPage() {
                                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                               </div>
                             </div>
-                          ))}
+                          );
+                        })}
                         </div>
                       </div>
                     ))}
