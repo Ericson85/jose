@@ -961,12 +961,8 @@ export default function TenderesPage() {
                                   </div>
                                 </div>
                                   
-                                  {/* Área central para ícone do drink */}
-                                  <div className="flex-1 flex items-center justify-center p-4">
-                                    <div className="w-32 h-32 bg-white/10 backdrop-blur-sm rounded-full flex items-center justify-center border-2 border-white/20 shadow-lg">
-                                      <Wine className="h-16 w-16 text-white" />
-                                    </div>
-                                  </div>
+                                  {/* Área central vazia - removida a taça */}
+                                  <div className="flex-1"></div>
                                   
                                   {/* Preço em destaque */}
                                   <div className="px-4 mb-4">
