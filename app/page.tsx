@@ -875,11 +875,19 @@ export default function TenderesPage() {
                                         }
                                       };
 
-                                      // Sempre usar imagem da categoria para garantir que todos tenham imagem
-                                      const backgroundImage = getImageByCategory(drink.category);
+                                      // Priorizar imagem personalizada, depois imagem da categoria
+                                      const hasCustomImage = drink.image && 
+                                             drink.image !== "/placeholder.svg?height=120&width=120" && 
+                                             drink.image !== "/placeholder.jpg" && 
+                                             drink.image !== "" && 
+                                             (drink.image.startsWith('data:image') || drink.image.startsWith('/uploads/'));
+                                      
+                                      const backgroundImage = hasCustomImage ? drink.image : getImageByCategory(drink.category);
                                       
                                       console.log(`Imagem para ${drink.name}:`, {
                                         category: drink.category,
+                                        customImage: drink.image,
+                                        hasCustomImage: hasCustomImage,
                                         backgroundImage: backgroundImage
                                       });
                                       
