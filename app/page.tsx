@@ -936,10 +936,6 @@ export default function TenderesPage() {
                                       // Se tudo falhar, esconder a imagem
                                       target.style.display = 'none';
                                     }}
-                                      
-                                      // Se tudo falhar, esconder a imagem
-                                      target.style.display = 'none';
-                                    }}
                                     onLoad={() => {
                                       console.log('Imagem carregada com sucesso:', drink.name);
                                     }}
