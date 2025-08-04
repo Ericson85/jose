@@ -888,7 +888,11 @@ export default function TenderesPage() {
                                         category: drink.category,
                                         customImage: drink.image,
                                         hasCustomImage: hasCustomImage,
-                                        backgroundImage: backgroundImage
+                                        backgroundImage: backgroundImage,
+                                        imageExists: drink.image && drink.image !== "",
+                                        isPlaceholder: drink.image === "/placeholder.svg?height=120&width=120" || drink.image === "/placeholder.jpg",
+                                        startsWithData: drink.image && drink.image.startsWith('data:image'),
+                                        startsWithUploads: drink.image && drink.image.startsWith('/uploads/')
                                       });
                                       
                                       return backgroundImage;
@@ -897,8 +901,44 @@ export default function TenderesPage() {
                                     className="w-full h-full object-cover"
                                     onError={(e) => {
                                       const target = e.target as HTMLImageElement;
+                                      console.error('Erro ao carregar imagem:', drink.name, 'URL:', target.src);
+                                      
+                                      // Se a imagem personalizada falhou, tentar usar a imagem da categoria
+                                      if (target.src.includes('/uploads/') || target.src.startsWith('data:image')) {
+                                        const getImageByCategory = (category: string) => {
+                                          switch (category.toLowerCase()) {
+                                            case 'caipirinha':
+                                              return '/caipirinha.jpg';
+                                            case 'caipiroska':
+                                              return '/caipiroska.jpg';
+                                            case 'cocktails':
+                                            case 'coquetéis':
+                                              return '/gin-tonica.jpg';
+                                            case 'especiais':
+                                              return '/cupa-livre.jpg';
+                                            case 'aperol':
+                                              return '/Aperol-Spritz.jpg';
+                                            case 'mojito':
+                                              return '/mojito.jpg';
+                                            default:
+                                              return '/gin-tonica.jpg';
+                                          }
+                                        };
+                                        
+                                        const categoryImage = getImageByCategory(drink.category);
+                                        if (categoryImage && categoryImage !== target.src) {
+                                          console.log('Tentando imagem da categoria:', categoryImage);
+                                          target.src = categoryImage;
+                                          return;
+                                        }
+                                      }
+                                      
+                                      // Se tudo falhar, esconder a imagem
                                       target.style.display = 'none';
-                                      console.error('Erro ao carregar imagem:', drink.name);
+                                    }}
+                                      
+                                      // Se tudo falhar, esconder a imagem
+                                      target.style.display = 'none';
                                     }}
                                     onLoad={() => {
                                       console.log('Imagem carregada com sucesso:', drink.name);
