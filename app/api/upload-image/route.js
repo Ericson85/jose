@@ -24,6 +24,11 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Arquivo deve ser uma imagem' }, { status: 400 });
     }
 
+    // Verificar tamanho (máximo 50MB - será redimensionado automaticamente)
+    if (file.size > 50 * 1024 * 1024) {
+      return NextResponse.json({ error: 'Imagem deve ter no máximo 50MB' }, { status: 400 });
+    }
+
     // Criar diretório se não existir
     const uploadDir = path.join(process.cwd(), 'public', 'uploads');
     await mkdir(uploadDir, { recursive: true });

@@ -188,10 +188,10 @@ export default function ProprietarioPage() {
         return;
       }
 
-      // Verificar tamanho do arquivo (máximo 10MB - será redimensionado automaticamente)
-      const maxSize = 10 * 1024 * 1024; // 10MB
+      // Verificar tamanho do arquivo (máximo 50MB - será redimensionado automaticamente)
+      const maxSize = 50 * 1024 * 1024; // 50MB
       if (file.size > maxSize) {
-        showMessage(`A imagem deve ter no máximo 10MB! Tamanho atual: ${(file.size / 1024 / 1024).toFixed(2)}MB`, "error");
+        showMessage(`A imagem deve ter no máximo 50MB! Tamanho atual: ${(file.size / 1024 / 1024).toFixed(2)}MB`, "error");
         return;
       }
 
@@ -460,9 +460,10 @@ export default function ProprietarioPage() {
                       <div className="text-xs text-gray-400 mb-2 p-2 bg-gray-800/50 rounded border border-gray-600">
                         <strong>Requisitos da imagem:</strong><br/>
                         • Formatos: JPG, PNG ou WebP<br/>
-                        • Tamanho máximo: 10MB (será otimizado automaticamente)<br/>
+                        • Tamanho máximo: 50MB (será otimizado automaticamente)<br/>
                         • Dimensões: Qualquer tamanho (será redimensionado para 800x600px)<br/>
-                        • Proporção: Qualquer (será ajustada automaticamente)
+                        • Proporção: Qualquer (será ajustada automaticamente)<br/>
+                        • <strong>✅ Suporte total a qualquer imagem!</strong>
                       </div>
                       <div className="flex items-center space-x-4">
                         <div className="w-16 h-16 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden">
