@@ -843,8 +843,30 @@ export default function TenderesPage() {
                           <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
                         </div>
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                          {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => (
-                            <div key={drink.id} className="relative group">
+                          {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => {
+                            // Função para obter imagem baseada na categoria
+                            const getImageByCategory = (category: string) => {
+                              switch (category.toLowerCase()) {
+                                case 'caipirinha':
+                                  return '/caipirinha.jpg';
+                                case 'caipiroska':
+                                  return '/caipiroska.jpg';
+                                case 'cocktails':
+                                case 'coquetéis':
+                                  return '/gin-tonica.jpg';
+                                case 'especiais':
+                                  return '/cupa-livre.jpg';
+                                case 'aperol':
+                                  return '/Aperol-Spritz.jpg';
+                                case 'mojito':
+                                  return '/mojito.jpg';
+                                default:
+                                  return '/gin-tonica.jpg';
+                              }
+                            };
+
+                            return (
+                              <div key={drink.id} className="relative group">
                               {/* Card no estilo Gin Tonic */}
                               <div className="relative bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-800 border border-purple-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50 h-96">
                                 {/* Background com gradiente sutil */}
@@ -875,13 +897,17 @@ export default function TenderesPage() {
                                         }
                                       };
 
-                                      // Priorizar imagem personalizada, depois imagem da categoria
+                                      // Verificar se tem imagem personalizada válida
                                       const hasCustomImage = drink.image && 
                                              drink.image !== "/placeholder.svg?height=120&width=120" && 
                                              drink.image !== "/placeholder.jpg" && 
                                              drink.image !== "" && 
-                                             (drink.image.startsWith('data:image') || drink.image.startsWith('/uploads/'));
+                                             drink.image !== null &&
+                                             (drink.image.startsWith('data:image') || 
+                                              drink.image.startsWith('/uploads/') || 
+                                              drink.image.startsWith('http'));
                                       
+                                      // Se não tem imagem personalizada, usar imagem da categoria
                                       const backgroundImage = hasCustomImage ? drink.image : getImageByCategory(drink.category);
                                       
                                       console.log(`Imagem para ${drink.name}:`, {
@@ -892,50 +918,61 @@ export default function TenderesPage() {
                                         imageExists: drink.image && drink.image !== "",
                                         isPlaceholder: drink.image === "/placeholder.svg?height=120&width=120" || drink.image === "/placeholder.jpg",
                                         startsWithData: drink.image && drink.image.startsWith('data:image'),
-                                        startsWithUploads: drink.image && drink.image.startsWith('/uploads/')
+                                        startsWithUploads: drink.image && drink.image.startsWith('/uploads/'),
+                                        startsWithHttp: drink.image && drink.image.startsWith('http'),
+                                        finalImage: backgroundImage
                                       });
                                       
                                       return backgroundImage;
                                     })()}
                                     alt={drink.name}
                                     className="w-full h-full object-cover"
-                                    onError={(e) => {
-                                      const target = e.target as HTMLImageElement;
-                                      console.error('Erro ao carregar imagem:', drink.name, 'URL:', target.src);
-                                      
-                                      // Se a imagem personalizada falhou, tentar usar a imagem da categoria
-                                      if (target.src.includes('/uploads/') || target.src.startsWith('data:image')) {
-                                        const getImageByCategory = (category: string) => {
-                                          switch (category.toLowerCase()) {
-                                            case 'caipirinha':
-                                              return '/caipirinha.jpg';
-                                            case 'caipiroska':
-                                              return '/caipiroska.jpg';
-                                            case 'cocktails':
-                                            case 'coquetéis':
-                                              return '/gin-tonica.jpg';
-                                            case 'especiais':
-                                              return '/cupa-livre.jpg';
-                                            case 'aperol':
-                                              return '/Aperol-Spritz.jpg';
-                                            case 'mojito':
-                                              return '/mojito.jpg';
-                                            default:
-                                              return '/gin-tonica.jpg';
-                                          }
-                                        };
+                                                                          onError={(e) => {
+                                        const target = e.target as HTMLImageElement;
+                                        console.error('Erro ao carregar imagem:', drink.name, 'URL:', target.src);
                                         
-                                        const categoryImage = getImageByCategory(drink.category);
-                                        if (categoryImage && categoryImage !== target.src) {
-                                          console.log('Tentando imagem da categoria:', categoryImage);
-                                          target.src = categoryImage;
+                                        // Se a imagem personalizada falhou, tentar usar a imagem da categoria
+                                        if (target.src.includes('/uploads/') || target.src.startsWith('data:image') || target.src.startsWith('http')) {
+                                          const getImageByCategory = (category: string) => {
+                                            switch (category.toLowerCase()) {
+                                              case 'caipirinha':
+                                                return '/caipirinha.jpg';
+                                              case 'caipiroska':
+                                                return '/caipiroska.jpg';
+                                              case 'cocktails':
+                                              case 'coquetéis':
+                                                return '/gin-tonica.jpg';
+                                              case 'especiais':
+                                                return '/cupa-livre.jpg';
+                                              case 'aperol':
+                                                return '/Aperol-Spritz.jpg';
+                                              case 'mojito':
+                                                return '/mojito.jpg';
+                                              default:
+                                                return '/gin-tonica.jpg';
+                                            }
+                                          };
+                                          
+                                          const categoryImage = getImageByCategory(drink.category);
+                                          if (categoryImage && categoryImage !== target.src) {
+                                            console.log('Tentando imagem da categoria:', categoryImage);
+                                            target.src = categoryImage;
+                                            return;
+                                          }
+                                        }
+                                        
+                                        // Se tudo falhar, usar imagem padrão da categoria
+                                        const fallbackImage = getImageByCategory(drink.category);
+                                        if (fallbackImage && fallbackImage !== target.src) {
+                                          console.log('Usando imagem de fallback:', fallbackImage);
+                                          target.src = fallbackImage;
                                           return;
                                         }
-                                      }
-                                      
-                                      // Se tudo falhar, esconder a imagem
-                                      target.style.display = 'none';
-                                    }}
+                                        
+                                        // Último recurso: esconder a imagem
+                                        console.log('Escondendo imagem para:', drink.name);
+                                        target.style.display = 'none';
+                                      }}
                                     onLoad={() => {
                                       console.log('Imagem carregada com sucesso:', drink.name);
                                     }}
