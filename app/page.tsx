@@ -851,42 +851,62 @@ export default function TenderesPage() {
                                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
                                 
                                 {/* Imagem de fundo */}
-                                {(() => {
-                                  const hasValidImage = drink.image && 
-                                         drink.image !== "/placeholder.svg?height=120&width=120" && 
-                                         drink.image !== "/placeholder.jpg" && 
-                                         drink.image !== "" && 
-                                         (drink.image.startsWith('data:image') || drink.image.startsWith('/uploads/'));
-                                  
-                                  console.log(`Verificando imagem para ${drink.name}:`, {
-                                    image: drink.image,
-                                    hasValidImage: hasValidImage,
-                                    startsWithData: drink.image?.startsWith('data:image'),
-                                    startsWithUploads: drink.image?.startsWith('/uploads/')
-                                  });
-                                  
-                                  return hasValidImage;
-                                })() ? (
-                                  <div className="absolute inset-0 rounded-2xl overflow-hidden">
-                                    <img 
-                                      src={drink.image} 
-                                      alt={drink.name}
-                                      className="w-full h-full object-cover"
-                                      onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        target.style.display = 'none';
-                                        console.error('Erro ao carregar imagem:', drink.name, drink.image);
-                                      }}
-                                      onLoad={() => {
-                                        console.log('Imagem carregada com sucesso:', drink.name);
-                                      }}
-                                    />
-                                    {/* Overlay escuro para melhorar legibilidade do texto */}
-                                    <div className="absolute inset-0 bg-black/40"></div>
-                                  </div>
-                                ) : (
-                                  <div className="absolute inset-0 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-2xl"></div>
-                                )}
+                                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                  <img 
+                                    src={(() => {
+                                      // Função para obter imagem baseada na categoria
+                                      const getImageByCategory = (category: string) => {
+                                        switch (category.toLowerCase()) {
+                                          case 'caipirinha':
+                                            return '/caipirinha.jpg';
+                                          case 'caipiroska':
+                                            return '/caipiroska.jpg';
+                                          case 'cocktails':
+                                          case 'coquetéis':
+                                            return '/gin-tonica.jpg';
+                                          case 'especiais':
+                                            return '/cupa-livre.jpg';
+                                          case 'aperol':
+                                            return '/Aperol-Spritz.jpg';
+                                          case 'mojito':
+                                            return '/mojito.jpg';
+                                          default:
+                                            return '/gin-tonica.jpg';
+                                        }
+                                      };
+
+                                      // Priorizar imagem personalizada, depois imagem da categoria
+                                      const hasCustomImage = drink.image && 
+                                             drink.image !== "/placeholder.svg?height=120&width=120" && 
+                                             drink.image !== "/placeholder.jpg" && 
+                                             drink.image !== "" && 
+                                             (drink.image.startsWith('data:image') || drink.image.startsWith('/uploads/'));
+                                      
+                                      const backgroundImage = hasCustomImage ? drink.image : getImageByCategory(drink.category);
+                                      
+                                      console.log(`Verificando imagem para ${drink.name}:`, {
+                                        category: drink.category,
+                                        customImage: drink.image,
+                                        hasCustomImage: hasCustomImage,
+                                        backgroundImage: backgroundImage
+                                      });
+                                      
+                                      return backgroundImage;
+                                    })()}
+                                    alt={drink.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      target.style.display = 'none';
+                                      console.error('Erro ao carregar imagem:', drink.name);
+                                    }}
+                                    onLoad={() => {
+                                      console.log('Imagem carregada com sucesso:', drink.name);
+                                    }}
+                                  />
+                                  {/* Overlay escuro para melhorar legibilidade do texto */}
+                                  <div className="absolute inset-0 bg-black/40"></div>
+                                </div>
 
                                 {/* Conteúdo do Card */}
                                 <div className="relative h-full flex flex-col z-10">
