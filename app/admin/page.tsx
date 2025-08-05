@@ -658,26 +658,26 @@ export default function AdminPage() {
       { id: "10", name: "Água", description: "Água mineral", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1502741338009-cac2772e18bc?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
       { id: "11", name: "Refrigerante", description: "Refrigerante variados", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
       { id: "12", name: "Suco Natural", description: "Suco natural de frutas", price: 12, category: "Não Alcoólicos", image: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
-      // Drinks da drinkeira
-      { id: "caip-1", name: "Caipirinha Tradicional", description: "Cachaça, limão, açúcar e gelo", price: 12, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
-      { id: "caip-2", name: "Caipirinha de Morango", description: "Cachaça, morango fresco, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit", popular: true },
-      { id: "caip-3", name: "Caipirinha de Kiwi", description: "Cachaça, kiwi, açúcar e gelo", price: 15, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caip-4", name: "Caipirinha de Maracujá", description: "Cachaça, polpa de maracujá, açúcar e gelo", price: 14, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caip-5", name: "Caipirinha de Abacaxi", description: "Cachaça, abacaxi fresco, açúcar e gelo", price: 13, category: "Caipirinha", image: "/caipirinha.jpg", priceType: "per_unit" },
-      { id: "caip-6", name: "Caipirinha Premium", description: "Cachaça premium, limão tahiti, açúcar demerara", price: 18, category: "Caipirinha", image: "/caipirinha-premium.jpg", priceType: "per_unit", premium: true },
-      { id: "caipiroska-1", name: "Caipiroska Tradicional", description: "Vodka, limão, açúcar e gelo", price: 13, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
-      { id: "caipiroska-2", name: "Caipiroska de Morango", description: "Vodka, morango fresco, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", popular: true },
-      { id: "caipiroska-3", name: "Caipiroska de Frutas Vermelhas", description: "Vodka, mix de frutas vermelhas, açúcar e gelo", price: 16, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
-      { id: "caipiroska-4", name: "Caipiroska de Maracujá", description: "Vodka, polpa de maracujá, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
-      { id: "caipiroska-5", name: "Caipiroska de Pêssego", description: "Vodka, pêssego em calda, açúcar e gelo", price: 15, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit" },
-      { id: "caipiroska-6", name: "Caipiroska Premium", description: "Vodka premium, limão siciliano, açúcar cristal", price: 20, category: "Caipiroska", image: "/caipiroska.jpg", priceType: "per_unit", premium: true },
-      { id: "classic-1", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 20, category: "Clássico", image: "/gin-tonica.jpg", priceType: "per_unit" },
-      { id: "classic-2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 18, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
-      { id: "classic-3", name: "Daiquiri", description: "Rum, suco de limão e açúcar", price: 22, category: "Clássico", image: "/mojito.jpg", priceType: "per_unit" },
     ]
     
-    // saveDrinks(defaultDrinks) // This line is removed as per the edit hint
+    // Limpar drinks existentes e adicionar os padrões
+    setDrinks(defaultDrinks);
     showMessage("Drinks resetados para os padrões originais!", "success")
+  }
+
+  const handleClearImages = async () => {
+    try {
+      // Limpar imagens de todos os drinks existentes
+      const updatedDrinks = drinks.map(drink => ({
+        ...drink,
+        image: "" // Limpar imagem
+      }));
+      
+      setDrinks(updatedDrinks);
+      showMessage("Imagens limpas com sucesso!", "success");
+    } catch (error) {
+      showMessage("Erro ao limpar imagens!", "error");
+    }
   }
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -715,8 +715,11 @@ export default function AdminPage() {
         console.log('Resultado do upload:', uploadResult);
         
         if (uploadResult.success) {
-          // Atualizar o drink com a nova URL da imagem
-          setEditingDrink(prev => prev ? { ...prev, image: uploadResult.imageUrl } : null)
+          // Limpar imagem antiga e atualizar com a nova
+          setEditingDrink(prev => prev ? { 
+            ...prev, 
+            image: uploadResult.imageUrl 
+          } : null)
           showMessage("Imagem enviada com sucesso!", "success")
           console.log('Imagem atualizada no drink:', uploadResult.imageUrl);
         } else {
@@ -729,8 +732,6 @@ export default function AdminPage() {
       }
     }
   }
-
-  // Remover saveDrinks e uso de localStorage para drinks
 
   // Login Screen
   if (!isLoggedIn) {
