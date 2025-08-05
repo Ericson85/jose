@@ -684,6 +684,12 @@ export default function AdminPage() {
     const file = e.target.files?.[0]
     if (file && editingDrink) {
       try {
+        console.log('Iniciando upload de imagem:', {
+          fileName: file.name,
+          fileSize: file.size,
+          fileType: file.type
+        });
+
         // Criar FormData para enviar o arquivo
         const formData = new FormData()
         formData.append('image', file)
@@ -694,22 +700,32 @@ export default function AdminPage() {
           body: formData
         })
 
+        console.log('Resposta do upload:', {
+          status: uploadResponse.status,
+          ok: uploadResponse.ok
+        });
+
         if (!uploadResponse.ok) {
-          throw new Error('Erro no upload da imagem')
+          const errorText = await uploadResponse.text();
+          console.error('Erro na resposta:', errorText);
+          throw new Error(`Erro no upload da imagem: ${uploadResponse.status} - ${errorText}`);
         }
 
         const uploadResult = await uploadResponse.json()
+        console.log('Resultado do upload:', uploadResult);
         
         if (uploadResult.success) {
           // Atualizar o drink com a nova URL da imagem
           setEditingDrink(prev => prev ? { ...prev, image: uploadResult.imageUrl } : null)
           showMessage("Imagem enviada com sucesso!", "success")
+          console.log('Imagem atualizada no drink:', uploadResult.imageUrl);
         } else {
           throw new Error(uploadResult.error || 'Erro no upload')
         }
       } catch (error) {
-        console.error('Erro no upload:', error)
-        showMessage("Erro ao enviar imagem. Tente novamente.", "error")
+        console.error('Erro detalhado no upload:', error)
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido no upload';
+        showMessage(`Erro ao enviar imagem: ${errorMessage}`, "error")
       }
     }
   }

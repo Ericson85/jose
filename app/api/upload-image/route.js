@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
-import sharp from 'sharp';
 
 export async function POST(request) {
   try {
@@ -24,7 +23,7 @@ export async function POST(request) {
       return NextResponse.json({ error: 'Arquivo deve ser uma imagem' }, { status: 400 });
     }
 
-    // Verificar tamanho (máximo 50MB - será redimensionado automaticamente)
+    // Verificar tamanho (máximo 50MB)
     if (file.size > 50 * 1024 * 1024) {
       return NextResponse.json({ error: 'Imagem deve ter no máximo 50MB' }, { status: 400 });
     }
@@ -59,41 +58,13 @@ export async function POST(request) {
 
     console.log('Buffer criado, tamanho:', buffer.length);
 
-    // Redimensionar e otimizar a imagem automaticamente
+    // Salvar imagem original (sem processamento por enquanto)
     try {
-      console.log('Iniciando processamento com Sharp...');
-      const optimizedBuffer = await sharp(buffer)
-        .resize(800, 600, {
-          fit: 'cover', // Mantém proporção e corta se necessário
-          position: 'center' // Centraliza o corte
-        })
-        .jpeg({ 
-          quality: 80, // Qualidade otimizada
-          progressive: true // Carregamento progressivo
-        })
-        .toBuffer();
-
-      console.log('Imagem processada com sucesso:', {
-        originalSize: buffer.length,
-        optimizedSize: optimizedBuffer.length,
-        reduction: `${((1 - optimizedBuffer.length / buffer.length) * 100).toFixed(1)}%`
-      });
-
-      // Salvar imagem otimizada
-      await writeFile(filePath, optimizedBuffer);
+      await writeFile(filePath, buffer);
       console.log('Imagem salva no sistema de arquivos:', filePath);
-      
-    } catch (sharpError) {
-      console.error('Erro ao processar imagem com Sharp:', sharpError);
-      
-      // Se falhar o processamento, tentar salvar original
-      try {
-        await writeFile(filePath, buffer);
-        console.log('Imagem original salva como fallback:', filePath);
-      } catch (writeError) {
-        console.error('Erro ao salvar imagem original:', writeError);
-        return NextResponse.json({ error: 'Erro ao salvar imagem' }, { status: 500 });
-      }
+    } catch (writeError) {
+      console.error('Erro ao salvar imagem:', writeError);
+      return NextResponse.json({ error: 'Erro ao salvar imagem' }, { status: 500 });
     }
 
     // Retornar URL da imagem
