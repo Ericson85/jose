@@ -680,15 +680,37 @@ export default function AdminPage() {
     showMessage("Drinks resetados para os padrões originais!", "success")
   }
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file && editingDrink) {
-      const reader = new FileReader()
-      reader.onload = (e) => {
-        const imageUrl = e.target?.result as string
-        setEditingDrink(prev => prev ? { ...prev, image: imageUrl } : null)
+      try {
+        // Criar FormData para enviar o arquivo
+        const formData = new FormData()
+        formData.append('image', file)
+
+        // Fazer upload da imagem
+        const uploadResponse = await fetch('/api/upload-image', {
+          method: 'POST',
+          body: formData
+        })
+
+        if (!uploadResponse.ok) {
+          throw new Error('Erro no upload da imagem')
+        }
+
+        const uploadResult = await uploadResponse.json()
+        
+        if (uploadResult.success) {
+          // Atualizar o drink com a nova URL da imagem
+          setEditingDrink(prev => prev ? { ...prev, image: uploadResult.imageUrl } : null)
+          showMessage("Imagem enviada com sucesso!", "success")
+        } else {
+          throw new Error(uploadResult.error || 'Erro no upload')
+        }
+      } catch (error) {
+        console.error('Erro no upload:', error)
+        showMessage("Erro ao enviar imagem. Tente novamente.", "error")
       }
-      reader.readAsDataURL(file)
     }
   }
 
@@ -1431,24 +1453,45 @@ export default function AdminPage() {
                         Imagem do Drink
                       </Label>
                       <div className="flex items-center space-x-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden">
+                        <div className="w-20 h-20 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-500/30">
                           {editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" ? (
                             <img 
                               src={editingDrink.image} 
                               alt={editingDrink.name}
                               className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                target.nextElementSibling?.classList.remove('hidden');
+                              }}
                             />
-                          ) : (
-                            <ImageIcon className="h-6 w-6 text-purple-300" />
-                          )}
+                          ) : null}
+                          <ImageIcon className={`h-8 w-8 text-purple-300 ${editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" ? 'hidden' : ''}`} />
                         </div>
-                        <div className="flex-1">
+                        <div className="flex-1 space-y-2">
                           <Input
                             type="file"
                             accept="image/*"
                             onChange={handleImageUpload}
                             className="border-gray-600 bg-gray-700 text-white file:bg-purple-600 file:border-0 file:text-white file:rounded file:px-3 file:py-1 text-xs"
                           />
+                          <p className="text-xs text-gray-400">
+                            Formatos aceitos: JPG, PNG, GIF. Máximo: 50MB
+                          </p>
+                          {editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" && (
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs text-green-400">✓ Imagem carregada</span>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setEditingDrink(prev => prev ? { ...prev, image: "" } : null)}
+                                className="text-xs text-red-400 hover:text-red-300"
+                              >
+                                Remover
+                              </Button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>

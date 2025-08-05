@@ -10,6 +10,8 @@ CREATE TABLE drinks (
     image VARCHAR(255),
     price_type ENUM('per_person', 'per_unit') NOT NULL,
     popular BOOLEAN DEFAULT FALSE,
+    description TEXT,
+    premium BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
