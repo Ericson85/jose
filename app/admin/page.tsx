@@ -724,8 +724,8 @@ export default function AdminPage() {
     const file = e.target.files?.[0]
     if (file && editingDrink) {
       try {
-        console.log('=== INICIANDO UPLOAD DE IMAGEM ===');
-        console.log('Arquivo:', {
+        console.log('=== UPLOAD DE ARQUIVO INICIADO ===');
+        console.log('Arquivo selecionado:', {
           name: file.name,
           size: file.size,
           type: file.type
@@ -733,52 +733,59 @@ export default function AdminPage() {
 
         // Validar tipo de arquivo
         if (!file.type.startsWith('image/')) {
-          showMessage("Por favor, selecione apenas arquivos de imagem", "error");
+          showMessage("Por favor, selecione apenas arquivos de imagem (JPG, PNG, etc.)", "error");
           return;
         }
 
-        // Validar tamanho (máximo 2MB para base64)
-        if (file.size > 2 * 1024 * 1024) {
-          showMessage("Imagem deve ter no máximo 2MB", "error");
+        // Validar tamanho (máximo 1MB para evitar problemas)
+        if (file.size > 1 * 1024 * 1024) {
+          showMessage("Imagem deve ter no máximo 1MB", "error");
           return;
         }
 
-        // MÉTODO SIMPLIFICADO: Converter para base64 diretamente
+        // MÉTODO SUPER SIMPLES: Converter para base64
         const reader = new FileReader();
+        
         reader.onload = (event) => {
-          const imageUrl = event.target?.result as string;
+          const result = event.target?.result;
+          console.log('Resultado do FileReader:', typeof result);
           
-          // Validar se o base64 foi gerado corretamente
-          if (imageUrl && imageUrl.startsWith('data:image/')) {
-            console.log('Imagem convertida para base64 com sucesso:', {
-              type: imageUrl.split(';')[0],
-              length: imageUrl.length
+          if (result && typeof result === 'string') {
+            console.log('Base64 gerado com sucesso! Tamanho:', result.length);
+            console.log('Início do base64:', result.substring(0, 50) + '...');
+            
+            // Atualizar o drink imediatamente
+            setEditingDrink(prev => {
+              if (prev) {
+                const updated = { ...prev, image: result };
+                console.log('Drink atualizado com nova imagem:', updated.name);
+                return updated;
+              }
+              return null;
             });
             
-            setEditingDrink(prev => prev ? { 
-              ...prev, 
-              image: imageUrl 
-            } : null);
-            
-            showMessage("Imagem carregada com sucesso!", "success");
-            console.log('Drink atualizado com imagem:', editingDrink?.name);
+            showMessage("✅ Imagem carregada com sucesso!", "success");
           } else {
-            console.error('Erro: base64 inválido gerado');
-            showMessage("Erro ao processar imagem", "error");
+            console.error('Erro: resultado inválido do FileReader');
+            showMessage("❌ Erro ao processar imagem", "error");
           }
         };
         
-        reader.onerror = () => {
-          console.error('Erro ao ler arquivo');
-          showMessage("Erro ao carregar imagem", "error");
+        reader.onerror = (error) => {
+          console.error('Erro no FileReader:', error);
+          showMessage("❌ Erro ao ler arquivo", "error");
         };
         
+        // Iniciar a leitura
+        console.log('Iniciando leitura do arquivo...');
         reader.readAsDataURL(file);
         
       } catch (error) {
-        console.error('Erro no upload:', error);
-        showMessage("Erro ao carregar imagem", "error");
+        console.error('Erro geral no upload:', error);
+        showMessage("❌ Erro inesperado ao carregar imagem", "error");
       }
+    } else {
+      console.log('Nenhum arquivo selecionado ou drink não encontrado');
     }
   }
 
@@ -1227,19 +1234,25 @@ export default function AdminPage() {
                           <div className="space-y-4">
                             {/* Preview da imagem */}
                             <div className="w-32 h-32 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-500/30">
-                              {editingDrinkeiraDrink.image && editingDrinkeiraDrink.image !== "/placeholder.svg?height=120&width=120" ? (
-                                <img 
-                                  src={editingDrinkeiraDrink.image} 
-                                  alt={editingDrinkeiraDrink.name}
-                                  className="w-full h-full object-cover"
-                                  onError={(e) => {
-                                    const target = e.target as HTMLImageElement;
-                                    target.style.display = 'none';
-                                    target.nextElementSibling?.classList.remove('hidden');
-                                  }}
-                                />
-                              ) : null}
-                              <ImageIcon className={`h-8 w-8 text-purple-300 ${editingDrinkeiraDrink.image && editingDrinkeiraDrink.image !== "/placeholder.svg?height=120&width=120" ? 'hidden' : ''}`} />
+                                                             {editingDrink?.image && 
+                                editingDrink.image !== "/placeholder.svg?height=120&width=120" && 
+                                editingDrink.image !== "" ? (
+                                 <img
+                                   src={editingDrink.image}
+                                   alt={editingDrink.name || "Preview"}
+                                   className="w-full h-full object-cover"
+                                   onError={(e) => {
+                                     console.error('Erro no preview da imagem:', editingDrink?.image);
+                                     const target = e.target as HTMLImageElement;
+                                     target.style.display = 'none';
+                                     target.nextElementSibling?.classList.remove('hidden');
+                                   }}
+                                   onLoad={() => {
+                                     console.log('Preview da imagem carregado com sucesso:', editingDrink?.image?.substring(0, 50) + '...');
+                                   }}
+                                 />
+                               ) : null}
+                               <ImageIcon className={`h-8 w-8 text-purple-300 ${editingDrink?.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" && editingDrink.image !== "" ? 'hidden' : ''}`} />
                             </div>
 
                             {/* Opção 1: Colar URL da imagem */}
