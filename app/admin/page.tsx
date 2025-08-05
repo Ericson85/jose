@@ -731,19 +731,41 @@ export default function AdminPage() {
           type: file.type
         });
 
+        // Validar tipo de arquivo
+        if (!file.type.startsWith('image/')) {
+          showMessage("Por favor, selecione apenas arquivos de imagem", "error");
+          return;
+        }
+
+        // Validar tamanho (máximo 2MB para base64)
+        if (file.size > 2 * 1024 * 1024) {
+          showMessage("Imagem deve ter no máximo 2MB", "error");
+          return;
+        }
+
         // MÉTODO SIMPLIFICADO: Converter para base64 diretamente
         const reader = new FileReader();
         reader.onload = (event) => {
           const imageUrl = event.target?.result as string;
-          console.log('Imagem convertida para base64:', imageUrl.substring(0, 50) + '...');
           
-          setEditingDrink(prev => prev ? { 
-            ...prev, 
-            image: imageUrl 
-          } : null);
-          
-          showMessage("Imagem carregada com sucesso!", "success");
-          console.log('Drink atualizado com imagem:', editingDrink?.name);
+          // Validar se o base64 foi gerado corretamente
+          if (imageUrl && imageUrl.startsWith('data:image/')) {
+            console.log('Imagem convertida para base64 com sucesso:', {
+              type: imageUrl.split(';')[0],
+              length: imageUrl.length
+            });
+            
+            setEditingDrink(prev => prev ? { 
+              ...prev, 
+              image: imageUrl 
+            } : null);
+            
+            showMessage("Imagem carregada com sucesso!", "success");
+            console.log('Drink atualizado com imagem:', editingDrink?.name);
+          } else {
+            console.error('Erro: base64 inválido gerado');
+            showMessage("Erro ao processar imagem", "error");
+          }
         };
         
         reader.onerror = () => {
