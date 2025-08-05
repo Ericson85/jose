@@ -733,6 +733,31 @@ export default function AdminPage() {
     }
   }
 
+  const handlePasteImage = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const items = e.clipboardData?.items;
+    
+    if (!items) return;
+    
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i];
+      if (item.type.indexOf('image') !== -1) {
+        const file = item.getAsFile();
+        if (file && editingDrink) {
+          // Criar uma URL temporária para a imagem colada
+          const imageUrl = URL.createObjectURL(file);
+          setEditingDrink(prev => prev ? { 
+            ...prev, 
+            image: imageUrl 
+          } : null);
+          showMessage("Imagem colada com sucesso!", "success");
+          console.log('Imagem colada:', imageUrl);
+        }
+        break;
+      }
+    }
+  }
+
   // Login Screen
   if (!isLoggedIn) {
     return (
@@ -1146,7 +1171,88 @@ export default function AdminPage() {
                             </SelectItem>
                           </SelectContent>
                         </Select>
-                        <Input value={editingDrinkeiraDrink.image} onChange={e => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: e.target.value } : null)} placeholder="URL da Imagem" className="border-gray-600 bg-gray-700 text-white" />
+                        <div className="space-y-2">
+                          <Label className="text-sm font-medium text-gray-200">
+                            Imagem do Drink
+                          </Label>
+                          <div className="space-y-4">
+                            {/* Preview da imagem */}
+                            <div className="w-32 h-32 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-500/30">
+                              {editingDrinkeiraDrink.image && editingDrinkeiraDrink.image !== "/placeholder.svg?height=120&width=120" ? (
+                                <img 
+                                  src={editingDrinkeiraDrink.image} 
+                                  alt={editingDrinkeiraDrink.name}
+                                  className="w-full h-full object-cover"
+                                  onError={(e) => {
+                                    const target = e.target as HTMLImageElement;
+                                    target.style.display = 'none';
+                                    target.nextElementSibling?.classList.remove('hidden');
+                                  }}
+                                />
+                              ) : null}
+                              <ImageIcon className={`h-8 w-8 text-purple-300 ${editingDrinkeiraDrink.image && editingDrinkeiraDrink.image !== "/placeholder.svg?height=120&width=120" ? 'hidden' : ''}`} />
+                            </div>
+
+                            {/* Opção 1: Colar URL da imagem */}
+                            <div className="space-y-2">
+                              <Label className="text-xs text-gray-400">Opção 1: Cole a URL da imagem</Label>
+                              <div className="flex space-x-2">
+                                <Input
+                                  type="text"
+                                  placeholder="Cole aqui a URL da imagem (ex: https://exemplo.com/imagem.jpg)"
+                                  value={editingDrinkeiraDrink.image || ""}
+                                  onChange={(e) => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: e.target.value } : null)}
+                                  className="flex-1 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 text-sm"
+                                />
+                                <Button
+                                  type="button"
+                                  onClick={() => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: "" } : null)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                                >
+                                  Limpar
+                                </Button>
+                              </div>
+                            </div>
+
+                            {/* Opção 2: Upload de arquivo */}
+                            <div className="space-y-2">
+                              <Label className="text-xs text-gray-400">Opção 2: Upload de arquivo</Label>
+                              <Input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleImageUpload}
+                                className="border-gray-600 bg-gray-700 text-white file:bg-purple-600 file:border-0 file:text-white file:rounded file:px-3 file:py-1 text-xs"
+                              />
+                            </div>
+
+                            {/* Opção 3: Colar imagem diretamente */}
+                            <div className="space-y-2">
+                              <Label className="text-xs text-gray-400">Opção 3: Cole a imagem diretamente (Ctrl+V)</Label>
+                              <div
+                                className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center cursor-pointer hover:border-purple-400 transition-colors"
+                                onPaste={handlePasteImage}
+                                tabIndex={0}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+                                    e.preventDefault();
+                                    handlePasteImage(e as any);
+                                  }
+                                }}
+                              >
+                                <ImageIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                                <p className="text-sm text-gray-400">
+                                  Clique aqui e cole a imagem (Ctrl+V)
+                                </p>
+                              </div>
+                            </div>
+
+                            <p className="text-xs text-gray-400">
+                              💡 Dica: Você pode usar sites como Imgur, Google Drive, ou qualquer URL de imagem
+                            </p>
+                          </div>
+                        </div>
                         <Select
                           value={editingDrinkeiraDrink.priceType}
                           onValueChange={(value: "per_person" | "per_unit") => setEditingDrinkeiraDrink(prev => prev ? { ...prev, priceType: value } : null)}
@@ -1469,8 +1575,9 @@ export default function AdminPage() {
                       <Label className="text-sm font-medium text-gray-200">
                         Imagem do Drink
                       </Label>
-                      <div className="flex items-center space-x-4">
-                        <div className="w-20 h-20 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-500/30">
+                      <div className="space-y-4">
+                        {/* Preview da imagem */}
+                        <div className="w-32 h-32 bg-gradient-to-br from-purple-900/50 to-pink-900/50 rounded-lg flex items-center justify-center overflow-hidden border-2 border-purple-500/30">
                           {editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" ? (
                             <img 
                               src={editingDrink.image} 
@@ -1485,31 +1592,65 @@ export default function AdminPage() {
                           ) : null}
                           <ImageIcon className={`h-8 w-8 text-purple-300 ${editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" ? 'hidden' : ''}`} />
                         </div>
-                        <div className="flex-1 space-y-2">
+
+                        {/* Opção 1: Colar URL da imagem */}
+                        <div className="space-y-2">
+                          <Label className="text-xs text-gray-400">Opção 1: Cole a URL da imagem</Label>
+                          <div className="flex space-x-2">
+                            <Input
+                              type="text"
+                              placeholder="Cole aqui a URL da imagem (ex: https://exemplo.com/imagem.jpg)"
+                              value={editingDrink.image || ""}
+                              onChange={(e) => setEditingDrink(prev => prev ? { ...prev, image: e.target.value } : null)}
+                              className="flex-1 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 text-sm"
+                            />
+                            <Button
+                              type="button"
+                              onClick={() => setEditingDrink(prev => prev ? { ...prev, image: "" } : null)}
+                              variant="outline"
+                              size="sm"
+                              className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                            >
+                              Limpar
+                            </Button>
+                          </div>
+                        </div>
+
+                        {/* Opção 2: Upload de arquivo */}
+                        <div className="space-y-2">
+                          <Label className="text-xs text-gray-400">Opção 2: Upload de arquivo</Label>
                           <Input
                             type="file"
                             accept="image/*"
                             onChange={handleImageUpload}
                             className="border-gray-600 bg-gray-700 text-white file:bg-purple-600 file:border-0 file:text-white file:rounded file:px-3 file:py-1 text-xs"
                           />
-                          <p className="text-xs text-gray-400">
-                            Formatos aceitos: JPG, PNG, GIF. Máximo: 50MB
-                          </p>
-                          {editingDrink.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" && (
-                            <div className="flex items-center space-x-2">
-                              <span className="text-xs text-green-400">✓ Imagem carregada</span>
-                              <Button
-                                type="button"
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setEditingDrink(prev => prev ? { ...prev, image: "" } : null)}
-                                className="text-xs text-red-400 hover:text-red-300"
-                              >
-                                Remover
-                              </Button>
-                            </div>
-                          )}
                         </div>
+
+                        {/* Opção 3: Colar imagem diretamente */}
+                        <div className="space-y-2">
+                          <Label className="text-xs text-gray-400">Opção 3: Cole a imagem diretamente (Ctrl+V)</Label>
+                          <div
+                            className="border-2 border-dashed border-gray-600 rounded-lg p-4 text-center cursor-pointer hover:border-purple-400 transition-colors"
+                            onPaste={handlePasteImage}
+                            tabIndex={0}
+                            onKeyDown={(e) => {
+                              if (e.key === 'v' && (e.ctrlKey || e.metaKey)) {
+                                e.preventDefault();
+                                handlePasteImage(e as any);
+                              }
+                            }}
+                          >
+                            <ImageIcon className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                            <p className="text-sm text-gray-400">
+                              Clique aqui e cole a imagem (Ctrl+V)
+                            </p>
+                          </div>
+                        </div>
+
+                        <p className="text-xs text-gray-400">
+                          💡 Dica: Você pode usar sites como Imgur, Google Drive, ou qualquer URL de imagem
+                        </p>
                       </div>
                     </div>
 
