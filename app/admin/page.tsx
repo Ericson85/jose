@@ -649,7 +649,7 @@ export default function AdminPage() {
       { id: "2", name: "Mojito", description: "Rum, hortelã, limão, açúcar e água com gás", price: 12, category: "Coquetéis", image: "/mojito.jpg", priceType: "per_person" },
       { id: "3", name: "Cuba Libre", description: "Rum, cola, limão e gelo", price: 12, category: "Coquetéis", image: "/cupa-livre.jpg", priceType: "per_person" },
       { id: "aperol-spritz", name: "Aperol Spritz", description: "Aperol, prosecco, água com gás e laranja", price: 12, category: "Coquetéis", image: "/aperol-spritz.jpg", priceType: "per_person" },
-      { id: "4", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 12, category: "Coquetéis", image: "/gin-tonica.jpg", priceType: "per_person" },
+      { id: "4", name: "Gin Tônica", description: "Gin, água tônica, limão e especiarias", price: 12, category: "Coquetéis", image: "/placeholder.jpg", priceType: "per_person" },
       { id: "5", name: "Cerveja Artesanal", description: "Cerveja artesanal premium", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1509228468518-180dd4864904?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
       { id: "6", name: "Cerveja Premium", description: "Cerveja premium importada", price: 12, category: "Cervejas", image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },
       { id: "7", name: "Vinho Tinto", description: "Vinho tinto seco premium", price: 12, category: "Vinhos", image: "https://images.unsplash.com/photo-1510626176961-4b57d4fbad04?w=200&h=200&fit=crop&crop=center", priceType: "per_person" },

@@ -64,7 +64,7 @@ const drinkeiraMenu: DrinkeiraDrink[] = [
   { id: "caipiroska-4", name: "Caipiroska de Maracujá", category: "Caipiroska", price: 15, description: "Vodka, polpa de maracujá, açúcar e gelo", image: "/caipiroska.jpg" },
   { id: "caipiroska-5", name: "Caipiroska de Pêssego", category: "Caipiroska", price: 15, description: "Vodka, pêssego em calda, açúcar e gelo", image: "/caipiroska.jpg" },
   { id: "caipiroska-6", name: "Caipiroska Premium", category: "Caipiroska", price: 20, description: "Vodka premium, limão siciliano, açúcar cristal", image: "/caipiroska.jpg", premium: true },
-  { id: "classic-1", name: "Gin Tônica", category: "Clássico", price: 20, description: "Gin, água tônica, limão e especiarias", image: "/gin-tonica.jpg" },
+  { id: "classic-1", name: "Gin Tônica", category: "Clássico", price: 20, description: "Gin, água tônica, limão e especiarias", image: "/placeholder.jpg" },
   { id: "classic-2", name: "Mojito", category: "Clássico", price: 18, description: "Rum, hortelã, limão, açúcar e água com gás", image: "/mojito.jpg" },
   { id: "classic-3", name: "Daiquiri", category: "Clássico", price: 22, description: "Rum, suco de limão e açúcar", image: "/mojito.jpg" },
 ]
@@ -114,7 +114,7 @@ const drinks: Drink[] = [
     description: "Gin tônica clássica com gim premium e água tônica",
     price: 22,
     category: "Cocktails",
-    image: "/gin-tonica.jpg",
+    image: "/placeholder.jpg",
     priceType: "per_person",
     popular: true
   },
@@ -896,7 +896,7 @@ export default function TenderesPage() {
                                   return '/caipiroska.jpg';
                                 case 'cocktails':
                                 case 'coquetéis':
-                                  return '/gin-tonica.jpg';
+                                  return '/placeholder.jpg';
                                 case 'especiais':
                                   return '/cupa-livre.jpg';
                                 case 'aperol':
@@ -904,7 +904,7 @@ export default function TenderesPage() {
                                 case 'mojito':
                                   return '/mojito.jpg';
                                 default:
-                                  return '/gin-tonica.jpg';
+                                  return '/placeholder.jpg';
                               }
                             };
 
@@ -957,7 +957,7 @@ export default function TenderesPage() {
                                                 return '/caipiroska.jpg';
                                               case 'cocktails':
                                               case 'coquetéis':
-                                                return '/gin-tonica.jpg';
+                                                return '/placeholder.jpg';
                                               case 'especiais':
                                                 return '/cupa-livre.jpg';
                                               case 'aperol':
@@ -965,7 +965,7 @@ export default function TenderesPage() {
                                               case 'mojito':
                                                 return '/mojito.jpg';
                                               default:
-                                                return '/gin-tonica.jpg';
+                                                return '/placeholder.jpg';
                                             }
                                           };
                                           
