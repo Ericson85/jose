@@ -915,82 +915,59 @@ export default function TenderesPage() {
                                 {/* Background com gradiente sutil */}
                                 <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
                                 
-                                {/* Imagem de fundo */}
+                                {/* Imagem de fundo - MÉTODO NOVO */}
                                 <div className="absolute inset-0 rounded-2xl overflow-hidden">
                                   <img 
                                     src={(() => {
-                                      // Verificar se tem imagem personalizada válida
-                                      const hasCustomImage = drink.image && 
-                                             drink.image !== "/placeholder.svg?height=120&width=120" && 
-                                             drink.image !== "/placeholder.jpg" && 
-                                             drink.image !== "" && 
-                                             drink.image !== null;
-                                      
-                                      // Priorizar sempre a imagem personalizada se existir
-                                      const backgroundImage = hasCustomImage ? drink.image : getImageByCategory(drink.category);
-                                      
-                                      console.log(`Imagem para ${drink.name}:`, {
-                                        category: drink.category,
-                                        customImage: drink.image,
-                                        hasCustomImage: hasCustomImage,
-                                        backgroundImage: backgroundImage,
-                                        imageLength: drink.image ? drink.image.length : 0,
+                                      // MÉTODO NOVO: Lógica simplificada para imagens
+                                      console.log(`Processando imagem para ${drink.name}:`, {
+                                        drinkImage: drink.image,
+                                        hasImage: drink.image && drink.image !== "",
                                         isBase64: drink.image && drink.image.startsWith('data:image'),
-                                        finalImage: backgroundImage
+                                        isUrl: drink.image && (drink.image.startsWith('http') || drink.image.startsWith('/')),
+                                        category: drink.category
                                       });
-                                      
-                                      return backgroundImage;
+
+                                      // 1. Se tem imagem personalizada, usa ela
+                                      if (drink.image && drink.image !== "" && drink.image !== "/placeholder.jpg") {
+                                        console.log(`Usando imagem personalizada para ${drink.name}:`, drink.image);
+                                        return drink.image;
+                                      }
+
+                                      // 2. Se não tem imagem, usa placeholder baseado na categoria
+                                      const getCategoryImage = (category: string) => {
+                                        switch (category.toLowerCase()) {
+                                          case 'caipirinha':
+                                            return '/placeholder.jpg';
+                                          case 'caipiroska':
+                                            return '/placeholder.jpg';
+                                          case 'cocktails':
+                                          case 'coquetéis':
+                                            return '/placeholder.jpg';
+                                          case 'especiais':
+                                            return '/placeholder.jpg';
+                                          case 'aperol':
+                                            return '/placeholder.jpg';
+                                          case 'mojito':
+                                            return '/placeholder.jpg';
+                                          default:
+                                            return '/placeholder.jpg';
+                                        }
+                                      };
+
+                                      const fallbackImage = getCategoryImage(drink.category);
+                                      console.log(`Usando imagem de fallback para ${drink.name}:`, fallbackImage);
+                                      return fallbackImage;
                                     })()}
                                     alt={drink.name}
                                     className="w-full h-full object-cover"
-                                                                          onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        console.error('Erro ao carregar imagem:', drink.name, 'URL:', target.src);
-                                        
-                                        // Se a imagem personalizada falhou, tentar usar a imagem da categoria
-                                        if (target.src.includes('/uploads/') || target.src.startsWith('data:image') || target.src.startsWith('http')) {
-                                          const getImageByCategory = (category: string) => {
-                                            switch (category.toLowerCase()) {
-                                              case 'caipirinha':
-                                                return '/caipirinha.jpg';
-                                              case 'caipiroska':
-                                                return '/caipiroska.jpg';
-                                              case 'cocktails':
-                                              case 'coquetéis':
-                                                return '/placeholder.jpg';
-                                              case 'especiais':
-                                                return '/cupa-livre.jpg';
-                                              case 'aperol':
-                                                return '/Aperol-Spritz.jpg';
-                                              case 'mojito':
-                                                return '/mojito.jpg';
-                                              default:
-                                                return '/placeholder.jpg';
-                                            }
-                                          };
-                                          
-                                          const categoryImage = getImageByCategory(drink.category);
-                                          if (categoryImage && categoryImage !== target.src) {
-                                            console.log('Tentando imagem da categoria:', categoryImage);
-                                            target.src = categoryImage;
-                                            return;
-                                          }
-                                        }
-                                        
-                                        // Se tudo falhar, usar imagem padrão da categoria
-                                        const fallbackImage = getImageByCategory(drink.category);
-                                        if (fallbackImage && fallbackImage !== target.src) {
-                                          console.log('Usando imagem de fallback:', fallbackImage);
-                                          target.src = fallbackImage;
-                                          return;
-                                        }
-                                        
-                                        // Último recurso: esconder a imagem
-                                        console.log('Escondendo imagem para:', drink.name);
-                                        target.style.display = 'none';
-                                      }}
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      console.error(`Erro ao carregar imagem para ${drink.name}:`, target.src);
+                                      target.src = '/placeholder.jpg';
+                                    }}
                                     onLoad={() => {
-                                      console.log('Imagem carregada com sucesso:', drink.name);
+                                      console.log(`Imagem carregada com sucesso para ${drink.name}`);
                                     }}
                                   />
                                   {/* Overlay escuro para melhorar legibilidade do texto */}

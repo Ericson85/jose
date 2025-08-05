@@ -580,58 +580,98 @@ export default function AdminPage() {
 
   const handleSave = async () => {
     if (activeTab === 'drinks' && editingDrink) {
-    if (!editingDrink.name.trim() || editingDrink.price <= 0) {
-      showMessage("Preencha todos os campos obrigatórios!", "error");
-      return;
-    }
-    try {
-      if (isAddingNew) {
-        // Não envie o campo id ao adicionar
-        const { id, ...payload } = editingDrink;
-        await fetch("/api/drinks", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-        showMessage("Drink adicionado com sucesso!", "success");
-      } else {
-        await fetch(`/api/drinks/${editingDrink.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(editingDrink)
-        });
-        showMessage("Drink atualizado com sucesso!", "success");
+      if (!editingDrink.name.trim() || editingDrink.price <= 0) {
+        showMessage("Preencha todos os campos obrigatórios!", "error");
+        return;
       }
-      // Recarregar lista de drinks
-      const response = await fetch("/api/drinks");
-      const data = await response.json();
-      setDrinks(data);
-      setEditingDrink(null);
+      try {
+        console.log('=== SALVANDO DRINK ===');
+        console.log('Drink completo:', editingDrink);
+        console.log('Imagem do drink:', editingDrink.image ? editingDrink.image.substring(0, 50) + '...' : 'Sem imagem');
+        
+        if (isAddingNew) {
+          // Não envie o campo id ao adicionar
+          const { id, ...payload } = editingDrink;
+          console.log('Payload para criar:', {
+            ...payload,
+            image: payload.image ? payload.image.substring(0, 50) + '...' : 'Sem imagem'
+          });
+          
+          const response = await fetch("/api/drinks", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erro ao criar drink: ${response.status} - ${errorText}`);
+          }
+          
+          const result = await response.json();
+          console.log('Drink criado com sucesso:', result);
+          showMessage("Drink adicionado com sucesso!", "success");
+        } else {
+          console.log('Payload para atualizar:', {
+            ...editingDrink,
+            image: editingDrink.image ? editingDrink.image.substring(0, 50) + '...' : 'Sem imagem'
+          });
+          
+          const response = await fetch(`/api/drinks/${editingDrink.id}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(editingDrink)
+          });
+          
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Erro ao atualizar drink: ${response.status} - ${errorText}`);
+          }
+          
+          const result = await response.json();
+          console.log('Drink atualizado com sucesso:', result);
+          showMessage("Drink atualizado com sucesso!", "success");
+        }
+        
+        // Recarregar lista de drinks
+        console.log('Recarregando drinks do banco...');
+        const response = await fetch("/api/drinks");
+        if (!response.ok) {
+          throw new Error(`Erro ao recarregar drinks: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Drinks recarregados do banco:', data.length, 'drinks');
+        setDrinks(data);
+        setEditingDrink(null);
+        setIsAddingNew(false);
+        
+      } catch (error) {
+        console.error('Erro ao salvar drink:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido';
+        showMessage(`Erro ao salvar drink: ${errorMessage}`, "error");
+      }
+    } else if (activeTab === 'events' && editingEvent) {
+      if (!editingEvent.name.trim() || !editingEvent.date || !editingEvent.location) {
+        showMessage("Preencha todos os campos obrigatórios!", "error");
+        return;
+      }
+      let updatedEvents: Event[];
+      if (isAddingNew) {
+        updatedEvents = [...events, editingEvent];
+      } else {
+        updatedEvents = events.map(event => event.id === editingEvent.id ? editingEvent : event);
+      }
+      setEvents(updatedEvents);
+      localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents));
+      setEditingEvent(null);
       setIsAddingNew(false);
-    } catch (error) {
-      showMessage("Erro ao salvar drink!", "error");
+      showMessage(
+        isAddingNew ? "Evento adicionado com sucesso!" : "Evento atualizado com sucesso!",
+        "success"
+      );
     }
-  } else if (activeTab === 'events' && editingEvent) {
-    if (!editingEvent.name.trim() || !editingEvent.date || !editingEvent.location) {
-      showMessage("Preencha todos os campos obrigatórios!", "error");
-      return;
-    }
-    let updatedEvents: Event[];
-    if (isAddingNew) {
-      updatedEvents = [...events, editingEvent];
-    } else {
-      updatedEvents = events.map(event => event.id === editingEvent.id ? editingEvent : event);
-    }
-    setEvents(updatedEvents);
-    localStorage.setItem("tenderes_events", JSON.stringify(updatedEvents));
-    setEditingEvent(null);
-    setIsAddingNew(false);
-    showMessage(
-      isAddingNew ? "Evento adicionado com sucesso!" : "Evento atualizado com sucesso!",
-      "success"
-    );
-  }
-};
+  };
 
   const handleCancel = () => {
     setEditingDrink(null)
@@ -684,51 +724,38 @@ export default function AdminPage() {
     const file = e.target.files?.[0]
     if (file && editingDrink) {
       try {
-        console.log('Iniciando upload de imagem:', {
-          fileName: file.name,
-          fileSize: file.size,
-          fileType: file.type
+        console.log('=== INICIANDO UPLOAD DE IMAGEM ===');
+        console.log('Arquivo:', {
+          name: file.name,
+          size: file.size,
+          type: file.type
         });
 
-        // Criar FormData para enviar o arquivo
-        const formData = new FormData()
-        formData.append('image', file)
-
-        // Fazer upload da imagem
-        const uploadResponse = await fetch('/api/upload-image', {
-          method: 'POST',
-          body: formData
-        })
-
-        console.log('Resposta do upload:', {
-          status: uploadResponse.status,
-          ok: uploadResponse.ok
-        });
-
-        if (!uploadResponse.ok) {
-          const errorText = await uploadResponse.text();
-          console.error('Erro na resposta:', errorText);
-          throw new Error(`Erro no upload da imagem: ${uploadResponse.status} - ${errorText}`);
-        }
-
-        const uploadResult = await uploadResponse.json()
-        console.log('Resultado do upload:', uploadResult);
-        
-        if (uploadResult.success) {
-          // Limpar imagem antiga e atualizar com a nova
+        // MÉTODO SIMPLIFICADO: Converter para base64 diretamente
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const imageUrl = event.target?.result as string;
+          console.log('Imagem convertida para base64:', imageUrl.substring(0, 50) + '...');
+          
           setEditingDrink(prev => prev ? { 
             ...prev, 
-            image: uploadResult.imageUrl 
-          } : null)
-          showMessage("Imagem enviada com sucesso!", "success")
-          console.log('Imagem atualizada no drink:', uploadResult.imageUrl);
-        } else {
-          throw new Error(uploadResult.error || 'Erro no upload')
-        }
+            image: imageUrl 
+          } : null);
+          
+          showMessage("Imagem carregada com sucesso!", "success");
+          console.log('Drink atualizado com imagem:', editingDrink?.name);
+        };
+        
+        reader.onerror = () => {
+          console.error('Erro ao ler arquivo');
+          showMessage("Erro ao carregar imagem", "error");
+        };
+        
+        reader.readAsDataURL(file);
+        
       } catch (error) {
-        console.error('Erro detalhado no upload:', error)
-        const errorMessage = error instanceof Error ? error.message : 'Erro desconhecido no upload';
-        showMessage(`Erro ao enviar imagem: ${errorMessage}`, "error")
+        console.error('Erro no upload:', error);
+        showMessage("Erro ao carregar imagem", "error");
       }
     }
   }
