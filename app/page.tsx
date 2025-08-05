@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Wine, Users, Clock, Calculator, Star, CheckCircle, Sparkles, Heart, Award, Moon, Sun, MapPin, Phone, Mail, MessageCircle, User } from "lucide-react"
+import { Wine, Users, Clock, Calculator, Star, CheckCircle, Sparkles, Heart, Award, Moon, Sun, MapPin, Phone, Mail, MessageCircle, User, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -238,6 +238,35 @@ export default function TenderesPage() {
       isMounted = false;
     };
   }, []);
+
+  // Função para recarregar drinks (forçar atualização)
+  const reloadDrinks = async () => {
+    setIsLoadingDrinks(true);
+    try {
+      const response = await fetch("/api/drinks");
+      const data = await response.json();
+      
+      const mappedDrinks = data.map((drink: any) => ({
+        id: drink.id.toString(),
+        name: drink.name,
+        description: drink.description || '',
+        price: Number(drink.price) || 0,
+        category: drink.category || '',
+        image: drink.image || '/placeholder.jpg',
+        priceType: drink.price_type || drink.priceType || 'per_unit',
+        popular: Boolean(drink.popular),
+        premium: Boolean(drink.premium)
+      }));
+      
+      console.log('Drinks recarregados:', mappedDrinks);
+      setDynamicDrinks(mappedDrinks);
+      showToast("Drinks atualizados!", "success");
+    } catch (error) {
+      console.error("Erro ao recarregar drinks:", error);
+      showToast("Erro ao atualizar drinks", "error");
+    }
+    setIsLoadingDrinks(false);
+  };
 
   // Carregar drinks do modo drinkeira do banco de dados
   useEffect(() => {
@@ -814,7 +843,21 @@ export default function TenderesPage() {
             )}
             {mode === 'detalhado' && (
               <div className="space-y-8">
-                <h2 className="text-3xl font-bold text-center text-white mb-8">Orçamento Detalhado</h2>
+                <div className="flex items-center justify-between">
+                  <h2 className="text-3xl font-bold text-white">Orçamento Detalhado</h2>
+                  <Button
+                    onClick={reloadDrinks}
+                    disabled={isLoadingDrinks}
+                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    {isLoadingDrinks ? (
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    ) : (
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                    )}
+                    Atualizar Drinks
+                  </Button>
+                </div>
                 
                 {isLoadingDrinks ? (
                   <div className="text-center py-12">
@@ -876,38 +919,14 @@ export default function TenderesPage() {
                                 <div className="absolute inset-0 rounded-2xl overflow-hidden">
                                   <img 
                                     src={(() => {
-                                      // Função para obter imagem baseada na categoria
-                                      const getImageByCategory = (category: string) => {
-                                        switch (category.toLowerCase()) {
-                                          case 'caipirinha':
-                                            return '/caipirinha.jpg';
-                                          case 'caipiroska':
-                                            return '/caipiroska.jpg';
-                                          case 'cocktails':
-                                          case 'coquetéis':
-                                            return '/gin-tonica.jpg';
-                                          case 'especiais':
-                                            return '/cupa-livre.jpg';
-                                          case 'aperol':
-                                            return '/Aperol-Spritz.jpg';
-                                          case 'mojito':
-                                            return '/mojito.jpg';
-                                          default:
-                                            return '/gin-tonica.jpg';
-                                        }
-                                      };
-
                                       // Verificar se tem imagem personalizada válida
                                       const hasCustomImage = drink.image && 
                                              drink.image !== "/placeholder.svg?height=120&width=120" && 
                                              drink.image !== "/placeholder.jpg" && 
                                              drink.image !== "" && 
-                                             drink.image !== null &&
-                                             (drink.image.startsWith('data:image') || 
-                                              drink.image.startsWith('/uploads/') || 
-                                              drink.image.startsWith('http'));
+                                             drink.image !== null;
                                       
-                                      // Se não tem imagem personalizada, usar imagem da categoria
+                                      // Priorizar sempre a imagem personalizada se existir
                                       const backgroundImage = hasCustomImage ? drink.image : getImageByCategory(drink.category);
                                       
                                       console.log(`Imagem para ${drink.name}:`, {
@@ -915,11 +934,8 @@ export default function TenderesPage() {
                                         customImage: drink.image,
                                         hasCustomImage: hasCustomImage,
                                         backgroundImage: backgroundImage,
-                                        imageExists: drink.image && drink.image !== "",
-                                        isPlaceholder: drink.image === "/placeholder.svg?height=120&width=120" || drink.image === "/placeholder.jpg",
-                                        startsWithData: drink.image && drink.image.startsWith('data:image'),
-                                        startsWithUploads: drink.image && drink.image.startsWith('/uploads/'),
-                                        startsWithHttp: drink.image && drink.image.startsWith('http'),
+                                        imageLength: drink.image ? drink.image.length : 0,
+                                        isBase64: drink.image && drink.image.startsWith('data:image'),
                                         finalImage: backgroundImage
                                       });
                                       
