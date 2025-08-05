@@ -737,48 +737,32 @@ export default function AdminPage() {
           return;
         }
 
-        // Validar tamanho (máximo 1MB para evitar problemas)
-        if (file.size > 1 * 1024 * 1024) {
-          showMessage("Imagem deve ter no máximo 1MB", "error");
+        // Validar tamanho (máximo 500KB para evitar problemas)
+        if (file.size > 500 * 1024) {
+          showMessage("Imagem deve ter no máximo 500KB", "error");
           return;
         }
 
-        // MÉTODO SUPER SIMPLES: Converter para base64
-        const reader = new FileReader();
+        // MÉTODO ALTERNATIVO: Usar URL temporária para preview
+        const imageUrl = URL.createObjectURL(file);
+        console.log('URL temporária criada:', imageUrl);
         
-        reader.onload = (event) => {
-          const result = event.target?.result;
-          console.log('Resultado do FileReader:', typeof result);
-          
-          if (result && typeof result === 'string') {
-            console.log('Base64 gerado com sucesso! Tamanho:', result.length);
-            console.log('Início do base64:', result.substring(0, 50) + '...');
-            
-            // Atualizar o drink imediatamente
-            setEditingDrink(prev => {
-              if (prev) {
-                const updated = { ...prev, image: result };
-                console.log('Drink atualizado com nova imagem:', updated.name);
-                return updated;
-              }
-              return null;
-            });
-            
-            showMessage("✅ Imagem carregada com sucesso!", "success");
-          } else {
-            console.error('Erro: resultado inválido do FileReader');
-            showMessage("❌ Erro ao processar imagem", "error");
+        // Atualizar o drink com a URL temporária
+        setEditingDrink(prev => {
+          if (prev) {
+            const updated = { ...prev, image: imageUrl };
+            console.log('Drink atualizado com URL temporária:', updated.name);
+            return updated;
           }
-        };
+          return null;
+        });
         
-        reader.onerror = (error) => {
-          console.error('Erro no FileReader:', error);
-          showMessage("❌ Erro ao ler arquivo", "error");
-        };
+        showMessage("✅ Imagem carregada com sucesso! (URL temporária)", "success");
         
-        // Iniciar a leitura
-        console.log('Iniciando leitura do arquivo...');
-        reader.readAsDataURL(file);
+        // Limpar a URL quando o componente for desmontado
+        return () => {
+          URL.revokeObjectURL(imageUrl);
+        };
         
       } catch (error) {
         console.error('Erro geral no upload:', error);
@@ -1255,20 +1239,20 @@ export default function AdminPage() {
                                <ImageIcon className={`h-8 w-8 text-purple-300 ${editingDrink?.image && editingDrink.image !== "/placeholder.svg?height=120&width=120" && editingDrink.image !== "" ? 'hidden' : ''}`} />
                             </div>
 
-                            {/* Opção 1: Colar URL da imagem */}
+                            {/* Opção 1: Colar URL da imagem (RECOMENDADO) */}
                             <div className="space-y-2">
-                              <Label className="text-xs text-gray-400">Opção 1: Cole a URL da imagem</Label>
+                              <Label className="text-xs text-gray-400">Opção 1: Cole a URL da imagem (RECOMENDADO)</Label>
                               <div className="flex space-x-2">
                                 <Input
                                   type="text"
                                   placeholder="Cole aqui a URL da imagem (ex: https://exemplo.com/imagem.jpg)"
-                                  value={editingDrinkeiraDrink.image || ""}
-                                  onChange={(e) => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: e.target.value } : null)}
+                                  value={editingDrink?.image || ""}
+                                  onChange={(e) => setEditingDrink(prev => prev ? { ...prev, image: e.target.value } : null)}
                                   className="flex-1 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 text-sm"
                                 />
                                 <Button
                                   type="button"
-                                  onClick={() => setEditingDrinkeiraDrink(prev => prev ? { ...prev, image: "" } : null)}
+                                  onClick={() => setEditingDrink(prev => prev ? { ...prev, image: "" } : null)}
                                   variant="outline"
                                   size="sm"
                                   className="border-gray-600 text-gray-300 hover:bg-gray-700"
@@ -1276,17 +1260,23 @@ export default function AdminPage() {
                                   Limpar
                                 </Button>
                               </div>
+                              <p className="text-xs text-gray-500">
+                                💡 Dica: Use sites como Imgur, Google Drive, ou qualquer URL de imagem pública
+                              </p>
                             </div>
 
-                            {/* Opção 2: Upload de arquivo */}
+                            {/* Opção 2: Upload de arquivo (EXPERIMENTAL) */}
                             <div className="space-y-2">
-                              <Label className="text-xs text-gray-400">Opção 2: Upload de arquivo</Label>
+                              <Label className="text-xs text-gray-400">Opção 2: Upload de arquivo (EXPERIMENTAL)</Label>
                               <Input
                                 type="file"
                                 accept="image/*"
                                 onChange={handleImageUpload}
                                 className="border-gray-600 bg-gray-700 text-white file:bg-purple-600 file:border-0 file:text-white file:rounded file:px-3 file:py-1 text-xs"
                               />
+                              <p className="text-xs text-gray-500">
+                                ⚠️ Esta opção pode não funcionar em todos os navegadores
+                              </p>
                             </div>
 
                             {/* Opção 3: Colar imagem diretamente */}
@@ -1657,12 +1647,12 @@ export default function AdminPage() {
 
                         {/* Opção 1: Colar URL da imagem */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-gray-400">Opção 1: Cole a URL da imagem</Label>
+                          <Label className="text-xs text-gray-400">Opção 1: Cole a URL da imagem (RECOMENDADO)</Label>
                           <div className="flex space-x-2">
                             <Input
                               type="text"
                               placeholder="Cole aqui a URL da imagem (ex: https://exemplo.com/imagem.jpg)"
-                              value={editingDrink.image || ""}
+                              value={editingDrink?.image || ""}
                               onChange={(e) => setEditingDrink(prev => prev ? { ...prev, image: e.target.value } : null)}
                               className="flex-1 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 text-sm"
                             />
@@ -1676,17 +1666,23 @@ export default function AdminPage() {
                               Limpar
                             </Button>
                           </div>
+                          <p className="text-xs text-gray-500">
+                            💡 Dica: Use sites como Imgur, Google Drive, ou qualquer URL de imagem pública
+                          </p>
                         </div>
 
-                        {/* Opção 2: Upload de arquivo */}
+                        {/* Opção 2: Upload de arquivo (EXPERIMENTAL) */}
                         <div className="space-y-2">
-                          <Label className="text-xs text-gray-400">Opção 2: Upload de arquivo</Label>
+                          <Label className="text-xs text-gray-400">Opção 2: Upload de arquivo (EXPERIMENTAL)</Label>
                           <Input
                             type="file"
                             accept="image/*"
                             onChange={handleImageUpload}
                             className="border-gray-600 bg-gray-700 text-white file:bg-purple-600 file:border-0 file:text-white file:rounded file:px-3 file:py-1 text-xs"
                           />
+                          <p className="text-xs text-gray-500">
+                            ⚠️ Esta opção pode não funcionar em todos os navegadores
+                          </p>
                         </div>
 
                         {/* Opção 3: Colar imagem diretamente */}
