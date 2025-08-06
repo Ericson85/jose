@@ -630,36 +630,36 @@ export default function TenderesPage() {
       </div>
       
       {/* Hero Section */}
-      <section className="py-8 lg:py-12 xl:py-20 text-center relative overflow-hidden">
+      <section className="py-4 lg:py-6 xl:py-8 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 animate-pulse"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl lg:text-4xl xl:text-7xl font-bold text-white mb-4 lg:mb-6 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-3 lg:mb-4 leading-tight">
               Drinks <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Perfeitos</span>
               <br className="hidden lg:block"/>para Seu Evento
             </h2>
-            <p className="text-base lg:text-lg xl:text-2xl text-gray-300 mb-6 lg:mb-10 xl:mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base lg:text-lg xl:text-xl text-gray-300 mb-4 lg:mb-6 max-w-3xl mx-auto leading-relaxed">
                Monte seu pacote personalizado de drinks premium e receba um orçamento instantâneo. Transforme seu evento em uma experiência inesquecível.
             </p>
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 lg:gap-4 xl:gap-8 text-sm text-gray-300">
-               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 lg:px-6 py-2 lg:py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-4 w-4 lg:h-5 lg:w-5 text-green-400" /> <span className="font-medium text-sm lg:text-base">Drinks Premium</span></div>
-               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 lg:px-6 py-2 lg:py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-4 w-4 lg:h-5 lg:w-5 text-blue-400" /> <span className="font-medium text-sm lg:text-base">Serviço Profissional</span></div>
-               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 lg:px-6 py-2 lg:py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-purple-400" /> <span className="font-medium text-sm lg:text-base">Orçamento Instantâneo</span></div>
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-2 lg:gap-3 xl:gap-4 text-sm text-gray-300">
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-4 w-4 lg:h-5 lg:w-5 text-green-400" /> <span className="font-medium text-sm lg:text-base">Drinks Premium</span></div>
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-4 w-4 lg:h-5 lg:w-5 text-blue-400" /> <span className="font-medium text-sm lg:text-base">Serviço Profissional</span></div>
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-purple-400" /> <span className="font-medium text-sm lg:text-base">Orçamento Instantâneo</span></div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 pb-20">
+      <div className="container mx-auto px-4 pb-12">
         {/* Layout responsivo: em mobile fica em coluna única, em desktop fica em grid */}
-        <div className="flex flex-col lg:grid lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
+        <div className="flex flex-col lg:grid lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-4">
           
           {/* Sidebar - em mobile fica no topo */}
           <div className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
              <Card className="rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden border border-gray-700">
                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
-               <CardHeader className="relative z-10 pb-4">
+               <CardHeader className="relative z-10 pb-3">
                  <CardTitle className="font-semibold tracking-tight flex items-center space-x-3 text-lg lg:text-xl text-white">
                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
                       <Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
@@ -668,8 +668,8 @@ export default function TenderesPage() {
                  </CardTitle>
                  <CardDescription className="text-sm text-gray-300">Defina os detalhes do seu evento especial</CardDescription>
                </CardHeader>
-               <CardContent className="p-4 lg:p-6 pt-0 space-y-4 lg:space-y-6 relative z-10">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 lg:mb-6 p-3 lg:p-4 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
+               <CardContent className="p-3 lg:p-4 pt-0 space-y-3 lg:space-y-4 relative z-10">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 lg:mb-4 p-2 lg:p-3 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
                      <div className="mb-2 sm:mb-0">
                         <h4 className="font-semibold text-green-300 text-sm lg:text-base">Modo Drinkeira</h4>
                         <p className="text-xs lg:text-sm text-green-400">Bartender vende drinks na hora</p>
@@ -711,7 +711,7 @@ export default function TenderesPage() {
 
                  {/* Resumo do Orçamento */}
                  {(people > 0 || hours > 0) && (
-                   <div className="mt-4 lg:mt-6 space-y-3 lg:space-y-4">
+                   <div className="mt-3 lg:mt-4 space-y-2 lg:space-y-3">
                      <h3 className="text-lg lg:text-xl font-bold text-white flex items-center gap-2">
                        <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-300" />
                        Resumo do Orçamento
@@ -754,16 +754,16 @@ export default function TenderesPage() {
           </div>
 
           {/* Drink Selection - em mobile fica embaixo */}
-          <div className="lg:col-span-3 xl:col-span-4 order-2 lg:order-2 space-y-4 lg:space-y-6">
+          <div className="lg:col-span-3 xl:col-span-4 order-2 lg:order-2 space-y-3 lg:space-y-4">
             
              <Card className="rounded-lg text-card-foreground bg-gray-800/80 backdrop-blur-md shadow-xl border-0 border-gray-700">
                 <CardContent className="p-3 lg:p-4">
-                   <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-4 lg:p-8 border border-purple-500/30 shadow-2xl mb-6 lg:mb-8">
-                     <h3 className="text-xl lg:text-3xl font-bold text-center text-white mb-4 lg:mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
+                   <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-3 lg:p-6 border border-purple-500/30 shadow-2xl mb-4 lg:mb-6">
+                     <h3 className="text-lg lg:text-2xl font-bold text-center text-white mb-3 lg:mb-4 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                        <Button 
                          onClick={() => setMode('planos')}
-                         className={`h-20 lg:h-24 text-base lg:text-xl font-bold transition-all duration-300 ${
+                         className={`h-16 lg:h-20 text-base lg:text-lg font-bold transition-all duration-300 ${
                            mode === 'planos' 
                              ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-xl shadow-purple-500/40 scale-105 border-2 border-purple-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20'
@@ -777,7 +777,7 @@ export default function TenderesPage() {
                        </Button>
                        <Button 
                          onClick={() => setMode('detalhado')}
-                         className={`h-20 lg:h-24 text-base lg:text-xl font-bold transition-all duration-300 ${
+                         className={`h-16 lg:h-20 text-base lg:text-lg font-bold transition-all duration-300 ${
                            mode === 'detalhado' 
                              ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 shadow-xl shadow-blue-500/40 scale-105 border-2 border-blue-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20'
@@ -791,7 +791,7 @@ export default function TenderesPage() {
                        </Button>
                        <Button 
                          onClick={() => setMode('drinkeira')}
-                         className={`h-20 lg:h-24 text-base lg:text-xl font-bold transition-all duration-300 sm:col-span-2 lg:col-span-1 ${
+                         className={`h-16 lg:h-20 text-base lg:text-lg font-bold transition-all duration-300 sm:col-span-2 lg:col-span-1 ${
                            mode === 'drinkeira' 
                              ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-lime-500 shadow-xl shadow-green-500/40 scale-105 border-2 border-green-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/20'
@@ -1334,9 +1334,9 @@ export default function TenderesPage() {
       )}
 
       {/* Footer */}
-      <footer className="bg-gray-800/80 backdrop-blur-md border-t border-gray-700 py-8 lg:py-12">
+      <footer className="bg-gray-800/80 backdrop-blur-md border-t border-gray-700 py-6 lg:py-8">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
             <div className="text-center sm:text-left">
               <div className="flex items-center justify-center sm:justify-start space-x-3 mb-4">
                 <Wine className="h-6 w-6 lg:h-8 lg:w-8 text-purple-400" />
