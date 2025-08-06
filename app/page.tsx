@@ -1017,11 +1017,11 @@ export default function TenderesPage() {
                                 </div>
 
                                 {/* PEQUENOS CARDS EMBAIXO DA IMAGEM */}
-                                <div className="p-3 space-y-2">
+                                <div className="p-2 space-y-1">
                                   {/* Card do Preço */}
-                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-2">
+                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-1">
                                     <div className="flex flex-col items-center">
-                                      <div className="text-lg font-bold text-white">
+                                      <div className="text-base font-bold text-white">
                                         R$ {drink.price.toFixed(2).replace('.', ',')}
                                       </div>
                                       <div className="text-xs text-purple-200 font-medium">
@@ -1031,26 +1031,26 @@ export default function TenderesPage() {
                                   </div>
 
                                   {/* Card da Quantidade */}
-                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-2">
-                                    <div className="flex items-center justify-center space-x-3">
+                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-1">
+                                    <div className="flex items-center justify-center space-x-2">
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, -1)}
-                                        className="w-8 h-8 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-6 h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
-                                        <span className="text-white text-sm font-bold">-</span>
+                                        <span className="text-white text-xs font-bold">-</span>
                                       </button>
                                       
-                                      <div className="min-w-[40px] text-center">
-                                        <span className="text-lg font-bold text-white">
+                                      <div className="min-w-[30px] text-center">
+                                        <span className="text-sm font-bold text-white">
                                           {selectedDrinks[drink.id] || 0}
                                         </span>
                                       </div>
                                       
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, 1)}
-                                        className="w-8 h-8 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-6 h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
-                                        <span className="text-white text-sm font-bold">+</span>
+                                        <span className="text-white text-xs font-bold">+</span>
                                       </button>
                                     </div>
                                   </div>
