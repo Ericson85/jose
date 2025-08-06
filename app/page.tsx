@@ -405,6 +405,7 @@ export default function TenderesPage() {
   const [hours, setHours] = useState<number>(0)
   const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
   const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
+  const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [drinkeiraTab, setDrinkeiraTab] = useState<'caipirinhas' | 'caipiroskas' | 'classicos'>('caipirinhas')
   const [drinkeiraDrinks, setDrinkeiraDrinks] = useState<DrinkeiraDrink[]>([])
   const [loadingDrinkeiraDrinks, setLoadingDrinkeiraDrinks] = useState(false)
@@ -457,7 +458,19 @@ export default function TenderesPage() {
   const budgetResult = useMemo(() => {
     const bartenders = calculateBartenders()
 
-    if (isDrinkeiraMode) {
+    if (mode === 'planos' && selectedPlan) {
+      const selectedPlanData = completePlans.find(plan => plan.id === selectedPlan)
+      const planSubtotal = (selectedPlanData?.price || 0) * people
+      const extraCostsTotal = extraCosts.reduce((sum, cost) => sum + cost.value, 0)
+      const total = planSubtotal + config.transportationFee + extraCostsTotal
+      return { 
+        total, 
+        transportFee: config.transportationFee, 
+        subtotal: planSubtotal, 
+        bartenders,
+        extraCosts: extraCostsTotal
+      }
+    } else if (isDrinkeiraMode) {
       let bartenderCost = bartenders * config.bartenderBaseCost
       let extraHours = 0
       
@@ -503,7 +516,7 @@ export default function TenderesPage() {
       bartenders,
       extraCosts: extraCostsTotal
     }
-  }, [isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks, config, extraCosts])
+  }, [mode, selectedPlan, completePlans, isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks, config, extraCosts])
 
   const sendToWhatsApp = () => {
     // Verificar se o usuário já preencheu os dados
@@ -522,7 +535,24 @@ export default function TenderesPage() {
     message += `⏰ Duração: ${hours} horas\n`
     message += `👨‍🍳 Bartenders: ${budgetResult.bartenders}\n\n`
 
-    if (isDrinkeiraMode) {
+    if (mode === 'planos' && selectedPlan) {
+        const selectedPlanData = completePlans.find(plan => plan.id === selectedPlan)
+        message += `--- PLANO COMPLETO SELECIONADO ---\n`
+        message += `📋 Plano: ${selectedPlanData?.name || 'Plano Selecionado'}\n`
+        message += `💰 Valor por pessoa: ${selectedPlanData?.price?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) || 'R$ 0,00'}\n`
+        message += `👥 Total para ${people} pessoas: ${((selectedPlanData?.price || 0) * people).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        message += `${config.transportationFeeName}: ${config.transportationFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        if (budgetResult.extraCosts > 0) {
+            message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+            extraCosts.forEach(cost => {
+                message += `  - ${cost.name}: ${cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+            })
+        }
+        message += `\nDrinks Inclusos no Plano:\n`
+        selectedPlanData?.drinks.forEach(drink => {
+            message += `- ${drink}\n`
+        })
+    } else if (isDrinkeiraMode) {
         message += `--- MODO DRINKEIRA ---\n`
         message += `${config.bartenderBaseCostName}: ${budgetResult.bartenderCost?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
         message += `${config.transportationFeeName}: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
@@ -710,7 +740,7 @@ export default function TenderesPage() {
                  </div>
 
                  {/* Resumo do Orçamento */}
-                 {(people > 0 || hours > 0) && (
+                 {((people > 0 || hours > 0) || (mode === 'planos' && selectedPlan) || (mode === 'drinkeira' && isDrinkeiraMode)) && (
                    <div className="mt-3 lg:mt-4 space-y-2 lg:space-y-3">
                      <h3 className="text-lg lg:text-xl font-bold text-white flex items-center gap-2">
                        <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-300" />
@@ -719,7 +749,7 @@ export default function TenderesPage() {
                      <div className="space-y-2 text-gray-200 text-sm lg:text-lg">
                        <div className="flex justify-between items-center">
                          <span>
-                            {isDrinkeiraMode ? "Custo Bartenders" : "Custo Drinks"}
+                            {mode === 'planos' && selectedPlan ? "Custo do Plano" : isDrinkeiraMode ? "Custo Bartenders" : "Custo Drinks"}
                          </span>
                          <span className="font-semibold">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
@@ -838,6 +868,28 @@ export default function TenderesPage() {
                                 <li key={idx}>{drink}</li>
                               ))}
                             </ul>
+                          </div>
+                          <div className="mt-4 lg:mt-6">
+                            <Button 
+                              onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
+                              className={`w-full ${
+                                selectedPlan === plan.id 
+                                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+                              } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg`}
+                            >
+                              {selectedPlan === plan.id ? (
+                                <>
+                                  <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                                  Plano Selecionado
+                                </>
+                              ) : (
+                                <>
+                                  <Star className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                                  Selecionar Plano
+                                </>
+                              )}
+                            </Button>
                           </div>
                         </CardContent>
                       </Card>
