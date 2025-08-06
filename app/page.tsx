@@ -401,8 +401,8 @@ export default function TenderesPage() {
   }
 
   const [selectedDrinks, setSelectedDrinks] = useState<{ [key: string]: number }>({})
-  const [people, setPeople] = useState<number>(0)
-  const [hours, setHours] = useState<number>(0)
+  const [people, setPeople] = useState<number | ''>('')
+  const [hours, setHours] = useState<number | ''>('')
   const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
   const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
@@ -451,16 +451,19 @@ export default function TenderesPage() {
 
 
   const calculateBartenders = () => {
-    if (people <= 0) return 0
-    return Math.ceil(people / 50) * config.bartendersPer50People
+    const peopleNum = typeof people === 'number' ? people : 0
+    if (peopleNum <= 0) return 0
+    return Math.ceil(peopleNum / 50) * config.bartendersPer50People
   }
 
   const budgetResult = useMemo(() => {
     const bartenders = calculateBartenders()
+    const peopleNum = typeof people === 'number' ? people : 0
+    const hoursNum = typeof hours === 'number' ? hours : 0
 
     if (mode === 'planos' && selectedPlan) {
       const selectedPlanData = completePlans.find(plan => plan.id === selectedPlan)
-      const planSubtotal = (selectedPlanData?.price || 0) * people
+      const planSubtotal = (selectedPlanData?.price || 0) * peopleNum
       const extraCostsTotal = extraCosts.reduce((sum, cost) => sum + cost.value, 0)
       const total = planSubtotal + config.transportationFee + extraCostsTotal
       return { 
@@ -474,8 +477,8 @@ export default function TenderesPage() {
       let bartenderCost = bartenders * config.bartenderBaseCost
       let extraHours = 0
       
-      if (hours > config.maxHoursBeforeExtra) {
-        extraHours = hours - config.maxHoursBeforeExtra
+      if (hoursNum > config.maxHoursBeforeExtra) {
+        extraHours = hoursNum - config.maxHoursBeforeExtra
         const extraCost = bartenders * extraHours * config.extraHourCost
         bartenderCost += extraCost
       }
@@ -499,7 +502,7 @@ export default function TenderesPage() {
       const drink = dynamicDrinks.find((d) => d.id === drinkId)
       if (drink) {
         if (drink.priceType === 'per_person') {
-          const drinkCost = drink.price * quantity * people
+          const drinkCost = drink.price * quantity * peopleNum
           subtotal += drinkCost
         } else {
           const drinkCost = drink.price * quantity
@@ -527,12 +530,15 @@ export default function TenderesPage() {
       return
     }
 
+    const peopleNum = typeof people === 'number' ? people : 0
+    const hoursNum = typeof hours === 'number' ? hours : 0
+
     let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
     message += `*Cliente:* ${userData.name || "Não informado"}\n`
     message += `*Contato:* ${userData.phone || "Não informado"}\n\n`
     message += `--- DETALHES DO EVENTO ---\n`
-    message += `👥 Convidados: ${people}\n`
-    message += `⏰ Duração: ${hours} horas\n`
+    message += `👥 Convidados: ${peopleNum}\n`
+    message += `⏰ Duração: ${hoursNum} horas\n`
     message += `👨‍🍳 Bartenders: ${budgetResult.bartenders}\n\n`
 
     if (mode === 'planos' && selectedPlan) {
@@ -540,7 +546,7 @@ export default function TenderesPage() {
         message += `--- PLANO COMPLETO SELECIONADO ---\n`
         message += `📋 Plano: ${selectedPlanData?.name || 'Plano Selecionado'}\n`
         message += `💰 Valor por pessoa: ${selectedPlanData?.price?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) || 'R$ 0,00'}\n`
-        message += `👥 Total para ${people} pessoas: ${((selectedPlanData?.price || 0) * people).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+        message += `👥 Total para ${peopleNum} pessoas: ${((selectedPlanData?.price || 0) * peopleNum).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
         message += `${config.transportationFeeName}: ${config.transportationFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
         if (budgetResult.extraCosts > 0) {
             message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
@@ -722,7 +728,10 @@ export default function TenderesPage() {
                      id="people"
                      type="number"
                      value={people}
-                     onChange={(e) => setPeople(Number(e.target.value))}
+                     onChange={(e) => {
+                       const value = e.target.value
+                       setPeople(value === '' ? '' : Number(value))
+                     }}
                      className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                      placeholder="Ex: 50"
                    />
@@ -733,14 +742,17 @@ export default function TenderesPage() {
                      id="hours"
                      type="number"
                      value={hours}
-                     onChange={(e) => setHours(Number(e.target.value))}
+                     onChange={(e) => {
+                       const value = e.target.value
+                       setHours(value === '' ? '' : Number(value))
+                     }}
                      className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                      placeholder="Ex: 4"
                    />
                  </div>
 
                  {/* Resumo do Orçamento */}
-                 {((people > 0 || hours > 0) || (mode === 'planos' && selectedPlan) || (mode === 'drinkeira' && isDrinkeiraMode)) && (
+                 {(((typeof people === 'number' && people > 0) || (typeof hours === 'number' && hours > 0)) || (mode === 'planos' && selectedPlan) || (mode === 'drinkeira' && isDrinkeiraMode)) && (
                    <div className="mt-3 lg:mt-4 space-y-2 lg:space-y-3">
                      <h3 className="text-lg lg:text-xl font-bold text-white flex items-center gap-2">
                        <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-300" />
