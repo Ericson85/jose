@@ -427,17 +427,22 @@ export default function TenderesPage() {
   // Custos extras carregados do banco de dados
   const [extraCosts, setExtraCosts] = useState<Array<{id: string, name: string, value: number}>>([])
 
-  const handleDrinkQuantityChange = (drinkId: string, quantity: number) => {
-    if (quantity <= 0) {
-      const newSelected = { ...selectedDrinks }
-      delete newSelected[drinkId]
-      setSelectedDrinks(newSelected)
-    } else {
-      setSelectedDrinks((prev) => ({
-        ...prev,
-        [drinkId]: quantity,
-      }))
-    }
+  const handleDrinkQuantityChange = (drinkId: string, change: number) => {
+    setSelectedDrinks((prev) => {
+      const currentQuantity = prev[drinkId] || 0
+      const newQuantity = currentQuantity + change
+      
+      if (newQuantity <= 0) {
+        const newSelected = { ...prev }
+        delete newSelected[drinkId]
+        return newSelected
+      } else {
+        return {
+          ...prev,
+          [drinkId]: newQuantity,
+        }
+      }
+    })
   }
 
 
