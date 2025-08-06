@@ -933,161 +933,129 @@ export default function TenderesPage() {
                                           drink.image !== "" && 
                                           drink.image !== "/placeholder.jpg" &&
                                           drink.image !== "/placeholder.svg?height=120&width=120") {
-                                          
-                                          // Validar se é base64 válido
-                                          if (drink.image.startsWith('data:image')) {
-                                            // Verificar se o base64 não está corrompido
-                                            try {
-                                              const base64Data = drink.image.split(',')[1];
-                                              if (base64Data && base64Data.length > 100) {
-                                                console.log(`Usando imagem base64 para ${drink.name}`);
-                                                return drink.image;
-                                              } else {
-                                                console.log(`Base64 inválido para ${drink.name}, usando fallback`);
-                                                return '/placeholder.jpg';
-                                              }
-                                            } catch (error) {
-                                              console.log(`Erro ao validar base64 para ${drink.name}:`, error);
+                                        
+                                        // Validar se é base64 válido
+                                        if (drink.image.startsWith('data:image')) {
+                                          // Verificar se o base64 não está corrompido
+                                          try {
+                                            const base64Data = drink.image.split(',')[1];
+                                            if (base64Data && base64Data.length > 100) {
+                                              console.log(`Usando imagem base64 para ${drink.name}`);
+                                              return drink.image;
+                                            } else {
+                                              console.log(`Base64 inválido para ${drink.name}, usando fallback`);
                                               return '/placeholder.jpg';
                                             }
+                                          } catch (error) {
+                                            console.log(`Erro ao validar base64 para ${drink.name}:`, error);
+                                            return '/placeholder.jpg';
                                           }
-                                          
-                                          // Se é URL válida
-                                          if (drink.image.startsWith('http') || drink.image.startsWith('/')) {
-                                            console.log(`Usando imagem URL para ${drink.name}:`, drink.image);
-                                            return drink.image;
-                                          }
-                                          
-                                          console.log(`Imagem inválida para ${drink.name}, usando fallback`);
-                                          return '/placeholder.jpg';
                                         }
-
-                                        // 2. Se não tem imagem, usa placeholder baseado na categoria
-                                        const getCategoryImage = (category: string) => {
-                                          switch (category.toLowerCase()) {
-                                            case 'caipirinha':
-                                              return '/placeholder.jpg';
-                                            case 'caipiroska':
-                                              return '/placeholder.jpg';
-                                            case 'cocktails':
-                                            case 'coquetéis':
-                                              return '/placeholder.jpg';
-                                            case 'especiais':
-                                              return '/placeholder.jpg';
-                                            case 'aperol':
-                                              return '/placeholder.jpg';
-                                            case 'mojito':
-                                              return '/placeholder.jpg';
-                                            default:
-                                              return '/placeholder.jpg';
-                                          }
-                                        };
-
-                                        const fallbackImage = getCategoryImage(drink.category);
-                                        console.log(`Usando imagem de fallback para ${drink.name}:`, fallbackImage);
-                                        return fallbackImage;
-                                      })()}
-                                      alt={drink.name}
-                                      className="w-full h-full object-cover"
-                                      onError={(e) => {
-                                        const target = e.target as HTMLImageElement;
-                                        console.error(`Erro ao carregar imagem para ${drink.name}:`, target.src);
                                         
-                                        // Se a imagem personalizada falhou, tentar placeholder
-                                        if (target.src !== '/placeholder.jpg') {
-                                          console.log(`Tentando placeholder para ${drink.name}`);
-                                          target.src = '/placeholder.jpg';
-                                        } else {
-                                          // Se placeholder também falhou, esconder imagem
-                                          console.log(`Escondendo imagem para ${drink.name}`);
-                                          target.style.display = 'none';
+                                        // Se é URL válida
+                                        if (drink.image.startsWith('http') || drink.image.startsWith('/')) {
+                                          console.log(`Usando imagem URL para ${drink.name}:`, drink.image);
+                                          return drink.image;
                                         }
-                                      }}
-                                      onLoad={() => {
-                                        console.log(`Imagem carregada com sucesso para ${drink.name}`);
-                                      }}
-                                    />
+                                        
+                                        console.log(`Imagem inválida para ${drink.name}, usando fallback`);
+                                        return '/placeholder.jpg';
+                                      }
+
+                                      // 2. Se não tem imagem, usa placeholder baseado na categoria
+                                      const getCategoryImage = (category: string) => {
+                                        switch (category.toLowerCase()) {
+                                          case 'caipirinha':
+                                            return '/placeholder.jpg';
+                                          case 'caipiroska':
+                                            return '/placeholder.jpg';
+                                          case 'cocktails':
+                                          case 'coquetéis':
+                                            return '/placeholder.jpg';
+                                          case 'especiais':
+                                            return '/placeholder.jpg';
+                                          case 'aperol':
+                                            return '/placeholder.jpg';
+                                          case 'mojito':
+                                            return '/placeholder.jpg';
+                                          default:
+                                            return '/placeholder.jpg';
+                                        }
+                                      };
+
+                                      const fallbackImage = getCategoryImage(drink.category);
+                                      console.log(`Usando imagem de fallback para ${drink.name}:`, fallbackImage);
+                                      return fallbackImage;
+                                    })()}
+                                    alt={drink.name}
+                                    className="w-full h-full object-cover"
+                                    onError={(e) => {
+                                      const target = e.target as HTMLImageElement;
+                                      console.error(`Erro ao carregar imagem para ${drink.name}:`, target.src);
+                                      
+                                      // Se a imagem personalizada falhou, tentar placeholder
+                                      if (target.src !== '/placeholder.jpg') {
+                                        console.log(`Tentando placeholder para ${drink.name}`);
+                                        target.src = '/placeholder.jpg';
+                                      } else {
+                                        // Se placeholder também falhou, esconder imagem
+                                        console.log(`Escondendo imagem para ${drink.name}`);
+                                        target.style.display = 'none';
+                                      }
+                                    }}
+                                    onLoad={() => {
+                                      console.log(`Imagem carregada com sucesso para ${drink.name}`);
+                                    }}
+                                  />
                                   {/* Overlay escuro para melhorar legibilidade do texto */}
                                   <div className="absolute inset-0 bg-black/40"></div>
                                 </div>
 
-                                {/* Conteúdo do Card */}
-                                <div className="relative h-full flex flex-col z-10">
-                                  {/* Header com ícone e nome no topo */}
-                                  <div className="p-4 flex items-center gap-3">
-                                    <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg">
-                                  <Wine className="h-6 w-6 text-white" />
-                                </div>
-                                    <div>
-                                      <h3 className="text-xl font-bold text-white tracking-tight">
-                                  {drink.name}
-                                      </h3>
-                                      <p className="text-sm text-gray-200">
-                                        {drink.description}
-                                      </p>
+                                {/* Conteúdo do card - SEÇÃO FIXA E RESPONSIVA */}
+                                <div className="relative z-10 flex flex-col h-full">
+                                  {/* Nome do drink - parte superior */}
+                                  <div className="flex-1 flex items-start justify-center pt-4 px-4">
+                                    <h3 className="text-xl md:text-2xl font-bold text-white text-center leading-tight">
+                                      {drink.name}
+                                    </h3>
                                   </div>
-                                </div>
-                                  
-                                  {/* Área central vazia - removida a taça */}
-                                  <div className="flex-1"></div>
-                                  
-                                  {/* Preço em destaque */}
-                                  <div className="px-4 mb-4">
-                                    <div className="text-4xl font-bold text-white mb-2 text-center">
-                                      {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                                    </div>
-                                    <div className="text-sm text-cyan-300 font-medium text-center">
-                                    {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
-                                    </div>
-                                  </div>
-                                  
-                                  {/* Gradiente em ondas na parte inferior */}
-                                  <div className="relative h-16 overflow-hidden">
-                                    <div className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-600 to-purple-600"></div>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
-                                    
-                                    {/* Ondas decorativas */}
-                                    <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-purple-800/50 to-transparent rounded-t-full"></div>
-                                    <div className="absolute bottom-1 left-0 right-0 h-3 bg-gradient-to-t from-pink-800/30 to-transparent rounded-t-full"></div>
-                                    
-                                    {/* Controles de Quantidade sobre o gradiente */}
-                                    <div className="relative h-full flex items-center justify-center space-x-2">
-                                      <button
-                                      onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) - 1)}
-                                        className="w-8 h-8 bg-white/20 hover:bg-white/30 border border-white/30 hover:border-white/50 rounded-lg flex items-center justify-center text-white font-bold transition-colors duration-200 backdrop-blur-sm"
-                                    >
-                                      -
-                                      </button>
-                                      <span className="text-white font-semibold min-w-[2rem] text-center text-lg">
-                                      {selectedDrinks[drink.id] || 0}
-                                    </span>
-                                      <button
-                                      onClick={() => handleDrinkQuantityChange(drink.id, (selectedDrinks[drink.id] || 0) + 1)}
-                                        className="w-8 h-8 bg-white/20 hover:bg-white/30 border border-white/30 hover:border-white/50 rounded-lg flex items-center justify-center text-white font-bold transition-colors duration-200 backdrop-blur-sm"
-                                    >
-                                      +
-                                      </button>
-                                  </div>
-                                </div>
-                                  
-                                  {/* Badges flutuantes */}
-                                  <div className="absolute top-4 right-4 flex flex-col gap-2">
-                                    {drink.premium && (
-                                      <div className="px-3 py-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full text-xs font-semibold text-white shadow-lg">
-                                        Premium
+
+                                  {/* SEÇÃO FIXA: Preço e Quantidade - parte inferior */}
+                                  <div className="bg-gradient-to-r from-purple-600/90 to-pink-600/90 backdrop-blur-sm border-t border-purple-400/30 p-4 rounded-b-2xl">
+                                    {/* Preço e tipo */}
+                                    <div className="flex flex-col items-center mb-3">
+                                      <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                                        R$ {drink.price.toFixed(2).replace('.', ',')}
                                       </div>
-                                    )}
-                                    {drink.popular && (
-                                      <div className="px-3 py-1 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-full text-xs font-semibold text-white shadow-lg">
-                                        <Star className="h-3 w-3 inline mr-1" />
-                                        Popular
+                                      <div className="text-sm text-purple-200 font-medium">
+                                        {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
                                       </div>
-                                    )}
+                                    </div>
+
+                                    {/* Seletor de quantidade - RESPONSIVO */}
+                                    <div className="flex items-center justify-center space-x-3">
+                                      <button
+                                        onClick={() => handleDrinkQuantityChange(drink.id, -1)}
+                                        className="w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-white/30 border border-white/30 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                      >
+                                        <span className="text-white text-lg md:text-xl font-bold">-</span>
+                                      </button>
+                                      
+                                      <div className="min-w-[60px] md:min-w-[80px] text-center">
+                                        <span className="text-2xl md:text-3xl font-bold text-white">
+                                          {selectedDrinks[drink.id] || 0}
+                                        </span>
+                                      </div>
+                                      
+                                      <button
+                                        onClick={() => handleDrinkQuantityChange(drink.id, 1)}
+                                        className="w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-white/30 border border-white/30 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                      >
+                                        <span className="text-white text-lg md:text-xl font-bold">+</span>
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
-                                
-                                {/* Efeito de brilho no hover */}
-                                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
                               </div>
                             </div>
                           );
