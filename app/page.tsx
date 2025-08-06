@@ -588,28 +588,28 @@ export default function TenderesPage() {
 
       {/* Header */}
       <header className="relative z-10 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/30">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-3 lg:py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-3">
-              <Wine className="h-8 w-8 text-purple-400" />
-              <h1 className="text-2xl font-bold text-white">Tenderes</h1>
+            <div className="flex items-center space-x-2 lg:space-x-3">
+              <Wine className="h-6 w-6 lg:h-8 lg:w-8 text-purple-400" />
+              <h1 className="text-xl lg:text-2xl font-bold text-white">Tenderes</h1>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-2 lg:space-x-4">
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-gray-300 hover:text-white"
+                className="text-gray-300 hover:text-white p-2 lg:p-3"
               >
-                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                {theme === "dark" ? <Sun className="h-4 w-4 lg:h-5 lg:w-5" /> : <Moon className="h-4 w-4 lg:h-5 lg:w-5" />}
               </Button>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowWelcomeModal(true)}
-                className="border-purple-500 text-purple-300 hover:bg-purple-900/50"
+                className="border-purple-500 text-purple-300 hover:bg-purple-900/50 text-xs lg:text-sm"
               >
-                <User className="h-4 w-4 mr-2" />
+                <User className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
                 Perfil
               </Button>
             </div>
@@ -618,33 +618,33 @@ export default function TenderesPage() {
       </header>
 
       {/* Marquee */}
-      <div className="bg-gray-800/50 py-3 text-center text-sm font-bold tracking-wider text-gray-300 overflow-hidden relative h-8">
+      <div className="bg-gray-800/50 py-2 lg:py-3 text-center text-xs lg:text-sm font-bold tracking-wider text-gray-300 overflow-hidden relative h-6 lg:h-8">
         <div className="animate-marquee-infinite whitespace-nowrap">
-          <span className="mx-8">&quot;UM BOM DRINK É COMO UMA POESIA ENGARRAFADA.&quot;</span>
-          <span className="mx-8">&quot;A VIDA É MUITO CURTA PARA BEBER DRINKS RUINS.&quot;</span>
-          <span className="mx-8">&quot;O MELHOR DRINK É AQUELE COMPARTILHADO COM AMIGOS.&quot;</span>
-          <span className="mx-8">&quot;A ALEGRIA VEM EM TAÇAS.&quot;</span>
-          <span className="mx-8">&quot;CELEBRE CADA MOMENTO COM UM BRINDE ESPECIAL.&quot;</span>
-          <span className="mx-8">&quot;DRINKS BONS, HISTÓRIAS MELHORES.&quot;</span>
+          <span className="mx-4 lg:mx-8">&quot;UM BOM DRINK É COMO UMA POESIA ENGARRAFADA.&quot;</span>
+          <span className="mx-4 lg:mx-8">&quot;A VIDA É MUITO CURTA PARA BEBER DRINKS RUINS.&quot;</span>
+          <span className="mx-4 lg:mx-8">&quot;O MELHOR DRINK É AQUELE COMPARTILHADO COM AMIGOS.&quot;</span>
+          <span className="mx-4 lg:mx-8">&quot;A ALEGRIA VEM EM TAÇAS.&quot;</span>
+          <span className="mx-4 lg:mx-8">&quot;CELEBRE CADA MOMENTO COM UM BRINDE ESPECIAL.&quot;</span>
+          <span className="mx-4 lg:mx-8">&quot;DRINKS BONS, HISTÓRIAS MELHORES.&quot;</span>
         </div>
       </div>
       
       {/* Hero Section */}
-      <section className="py-12 md:py-20 text-center relative overflow-hidden">
+      <section className="py-8 lg:py-12 xl:py-20 text-center relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 animate-pulse"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-4xl md:text-7xl font-bold text-white mb-6 leading-tight">
+            <h2 className="text-3xl lg:text-4xl xl:text-7xl font-bold text-white mb-4 lg:mb-6 leading-tight">
               Drinks <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Perfeitos</span>
-              <br className="hidden md:block"/>para Seu Evento
+              <br className="hidden lg:block"/>para Seu Evento
             </h2>
-            <p className="text-lg md:text-2xl text-gray-300 mb-10 md:mb-12 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-base lg:text-lg xl:text-2xl text-gray-300 mb-6 lg:mb-10 xl:mb-12 max-w-3xl mx-auto leading-relaxed">
                Monte seu pacote personalizado de drinks premium e receba um orçamento instantâneo. Transforme seu evento em uma experiência inesquecível.
             </p>
-            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-4 md:gap-8 text-sm text-gray-300">
-               <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-5 w-5 text-green-400" /> <span className="font-medium">Drinks Premium</span></div>
-               <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-5 w-5 text-blue-400" /> <span className="font-medium">Serviço Profissional</span></div>
-               <div className="flex items-center space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-5 w-5 text-purple-400" /> <span className="font-medium">Orçamento Instantâneo</span></div>
+            <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-3 lg:gap-4 xl:gap-8 text-sm text-gray-300">
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 lg:px-6 py-2 lg:py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-4 w-4 lg:h-5 lg:w-5 text-green-400" /> <span className="font-medium text-sm lg:text-base">Drinks Premium</span></div>
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 lg:px-6 py-2 lg:py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-4 w-4 lg:h-5 lg:w-5 text-blue-400" /> <span className="font-medium text-sm lg:text-base">Serviço Profissional</span></div>
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-4 lg:px-6 py-2 lg:py-3 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-purple-400" /> <span className="font-medium text-sm lg:text-base">Orçamento Instantâneo</span></div>
             </div>
           </div>
         </div>
@@ -652,26 +652,27 @@ export default function TenderesPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 pb-20">
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4 lg:gap-6">
+        {/* Layout responsivo: em mobile fica em coluna única, em desktop fica em grid */}
+        <div className="flex flex-col lg:grid lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-6">
           
-          {/* Sidebar */}
-          <div className="lg:col-span-1 xl:col-span-1">
+          {/* Sidebar - em mobile fica no topo */}
+          <div className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
              <Card className="rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden border border-gray-700">
                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
                <CardHeader className="relative z-10 pb-4">
-                 <CardTitle className="font-semibold tracking-tight flex items-center space-x-3 text-xl text-white">
+                 <CardTitle className="font-semibold tracking-tight flex items-center space-x-3 text-lg lg:text-xl text-white">
                    <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
-                      <Calculator className="h-5 w-5 text-white" />
+                      <Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
                    </div>
                    <span>Configuração do Evento</span>
                  </CardTitle>
                  <CardDescription className="text-sm text-gray-300">Defina os detalhes do seu evento especial</CardDescription>
                </CardHeader>
-               <CardContent className="p-6 pt-0 space-y-6 relative z-10">
-                  <div className="flex items-center justify-between mb-6 p-4 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
-                     <div>
-                        <h4 className="font-semibold text-green-300">Modo Drinkeira</h4>
-                        <p className="text-sm text-green-400">Bartender vende drinks na hora</p>
+               <CardContent className="p-4 lg:p-6 pt-0 space-y-4 lg:space-y-6 relative z-10">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 lg:mb-6 p-3 lg:p-4 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
+                     <div className="mb-2 sm:mb-0">
+                        <h4 className="font-semibold text-green-300 text-sm lg:text-base">Modo Drinkeira</h4>
+                        <p className="text-xs lg:text-sm text-green-400">Bartender vende drinks na hora</p>
                      </div>
                      <Button 
                         onClick={() => {
@@ -679,73 +680,72 @@ export default function TenderesPage() {
                           setMode(isDrinkeiraMode ? 'planos' : 'drinkeira');
                         }}
                         variant={isDrinkeiraMode ? "default" : "outline"}
-                        className={isDrinkeiraMode ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-400 text-green-300 hover:bg-green-900"}
+                        size="sm"
+                        className={`text-xs lg:text-sm ${isDrinkeiraMode ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-400 text-green-300 hover:bg-green-900"}`}
                       >
                         {isDrinkeiraMode ? "Ativado" : "Ativar"}
                      </Button>
                   </div>
-                 <div className="space-y-3">
-                   <Label htmlFor="people" className="text-gray-300">Número de Convidados</Label>
+                 <div className="space-y-2 lg:space-y-3">
+                   <Label htmlFor="people" className="text-gray-300 text-sm lg:text-base">Número de Convidados</Label>
                    <Input
                      id="people"
                      type="number"
                      value={people}
                      onChange={(e) => setPeople(Number(e.target.value))}
-                     className="bg-gray-700 border-gray-600 text-white"
+                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12"
                      placeholder="Ex: 50"
                    />
                  </div>
-                 <div className="space-y-3">
-                   <Label htmlFor="hours" className="text-gray-300">Duração do Evento (horas)</Label>
+                 <div className="space-y-2 lg:space-y-3">
+                   <Label htmlFor="hours" className="text-gray-300 text-sm lg:text-base">Duração do Evento (horas)</Label>
                    <Input
                      id="hours"
                      type="number"
                      value={hours}
                      onChange={(e) => setHours(Number(e.target.value))}
-                     className="bg-gray-700 border-gray-600 text-white"
+                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12"
                      placeholder="Ex: 4"
                    />
                  </div>
 
-
-                 
                  {/* Resumo do Orçamento */}
                  {(people > 0 || hours > 0) && (
-                   <div className="mt-6 space-y-4">
-                     <h3 className="text-xl font-bold text-white flex items-center gap-2">
-                       <Sparkles className="h-6 w-6 text-yellow-300" />
+                   <div className="mt-4 lg:mt-6 space-y-3 lg:space-y-4">
+                     <h3 className="text-lg lg:text-xl font-bold text-white flex items-center gap-2">
+                       <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-300" />
                        Resumo do Orçamento
                      </h3>
-                     <div className="space-y-2 text-gray-200 text-lg">
+                     <div className="space-y-2 text-gray-200 text-sm lg:text-lg">
                        <div className="flex justify-between items-center">
                          <span>
                             {isDrinkeiraMode ? "Custo Bartenders" : "Custo Drinks"}
                          </span>
                          <span className="font-semibold">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
-                       <div className="flex justify-between items-center bg-purple-500/10 p-3 rounded-lg">
-                         <span>{config.transportationFeeName}</span>
-                         <span className="font-semibold">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                       <div className="flex justify-between items-center bg-purple-500/10 p-2 lg:p-3 rounded-lg">
+                         <span className="text-xs lg:text-sm">{config.transportationFeeName}</span>
+                         <span className="font-semibold text-sm lg:text-base">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                        </div>
                        {extraCosts.map((cost) => (
-                         <div key={cost.id} className="flex justify-between items-center bg-orange-500/10 p-3 rounded-lg">
-                           <span>{cost.name}</span>
-                           <span className="font-semibold text-orange-300">{cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                         <div key={cost.id} className="flex justify-between items-center bg-orange-500/10 p-2 lg:p-3 rounded-lg">
+                           <span className="text-xs lg:text-sm">{cost.name}</span>
+                           <span className="font-semibold text-orange-300 text-sm lg:text-base">{cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
                          </div>
                        ))}
                      </div>
-                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-4 flex justify-between items-center mt-4">
-                       <span className="text-2xl font-bold text-white">Total</span>
-                       <span className="text-3xl font-bold text-white">
+                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-3 lg:p-4 flex justify-between items-center mt-3 lg:mt-4">
+                       <span className="text-lg lg:text-2xl font-bold text-white">Total</span>
+                       <span className="text-xl lg:text-3xl font-bold text-white">
                          {(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
                        </span>
                      </div>
                      <Button 
                        onClick={sendToWhatsApp}
-                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-lg h-14 rounded-xl shadow-lg mt-4"
+                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-sm lg:text-lg h-12 lg:h-14 rounded-xl shadow-lg mt-3 lg:mt-4"
                      >
-                       <MessageCircle className="mr-2 h-5 w-5" />
-                                               Finalizar Contrato
+                       <MessageCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                       Finalizar Contrato
                      </Button>
                    </div>
                  )}
@@ -753,54 +753,54 @@ export default function TenderesPage() {
              </Card>
           </div>
 
-          {/* Drink Selection */}
-          <div className="lg:col-span-2 xl:col-span-3 space-y-6">
+          {/* Drink Selection - em mobile fica embaixo */}
+          <div className="lg:col-span-3 xl:col-span-4 order-2 lg:order-2 space-y-4 lg:space-y-6">
             
              <Card className="rounded-lg text-card-foreground bg-gray-800/80 backdrop-blur-md shadow-xl border-0 border-gray-700">
-                <CardContent className="p-4">
-                   <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-8 border border-purple-500/30 shadow-2xl mb-8">
-                     <h3 className="text-3xl font-bold text-center text-white mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
-                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
+                <CardContent className="p-3 lg:p-4">
+                   <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-4 lg:p-8 border border-purple-500/30 shadow-2xl mb-6 lg:mb-8">
+                     <h3 className="text-xl lg:text-3xl font-bold text-center text-white mb-4 lg:mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
+                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 lg:gap-4">
                        <Button 
                          onClick={() => setMode('planos')}
-                         className={`h-24 text-xl font-bold transition-all duration-300 ${
+                         className={`h-20 lg:h-24 text-base lg:text-xl font-bold transition-all duration-300 ${
                            mode === 'planos' 
                              ? 'bg-gradient-to-r from-violet-500 via-purple-500 to-fuchsia-500 shadow-xl shadow-purple-500/40 scale-105 border-2 border-purple-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-purple-400 hover:shadow-lg hover:shadow-purple-500/20'
                          }`}
                        >
-                         <div className="flex flex-col items-center gap-2">
-                           <Sparkles className="h-8 w-8 text-yellow-300" />
-                           <span className="text-white">Planos Completos</span>
-                           <p className="text-sm text-purple-200">Pacotes prontos</p>
+                         <div className="flex flex-col items-center gap-1 lg:gap-2">
+                           <Sparkles className="h-6 w-6 lg:h-8 lg:w-8 text-yellow-300" />
+                           <span className="text-white text-sm lg:text-base">Planos Completos</span>
+                           <p className="text-xs lg:text-sm text-purple-200">Pacotes prontos</p>
                          </div>
                        </Button>
                        <Button 
                          onClick={() => setMode('detalhado')}
-                         className={`h-24 text-xl font-bold transition-all duration-300 ${
+                         className={`h-20 lg:h-24 text-base lg:text-xl font-bold transition-all duration-300 ${
                            mode === 'detalhado' 
                              ? 'bg-gradient-to-r from-cyan-500 via-blue-500 to-indigo-500 shadow-xl shadow-blue-500/40 scale-105 border-2 border-blue-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-blue-400 hover:shadow-lg hover:shadow-blue-500/20'
                          }`}
                        >
-                         <div className="flex flex-col items-center gap-2">
-                           <Calculator className="h-8 w-8 text-cyan-300" />
-                           <span className="text-white">Orçamento Detalhado</span>
-                           <p className="text-sm text-cyan-200">Monte seu plano</p>
+                         <div className="flex flex-col items-center gap-1 lg:gap-2">
+                           <Calculator className="h-6 w-6 lg:h-8 lg:w-8 text-cyan-300" />
+                           <span className="text-white text-sm lg:text-base">Orçamento Detalhado</span>
+                           <p className="text-xs lg:text-sm text-cyan-200">Monte seu plano</p>
                          </div>
                        </Button>
                        <Button 
                          onClick={() => setMode('drinkeira')}
-                         className={`h-24 text-xl font-bold transition-all duration-300 ${
+                         className={`h-20 lg:h-24 text-base lg:text-xl font-bold transition-all duration-300 sm:col-span-2 lg:col-span-1 ${
                            mode === 'drinkeira' 
                              ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-lime-500 shadow-xl shadow-green-500/40 scale-105 border-2 border-green-300' 
                              : 'bg-gradient-to-r from-gray-700 to-gray-800 hover:from-gray-600 hover:to-gray-700 border-2 border-gray-600 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/20'
                          }`}
                        >
-                         <div className="flex flex-col items-center gap-2">
-                           <Wine className="h-8 w-8 text-green-300" />
-                           <span className="text-white">Modo Drinkeira</span>
-                           <p className="text-sm text-green-200">Bartender vende drinks na hora</p>
+                         <div className="flex flex-col items-center gap-1 lg:gap-2">
+                           <Wine className="h-6 w-6 lg:h-8 lg:w-8 text-green-300" />
+                           <span className="text-white text-sm lg:text-base">Modo Drinkeira</span>
+                           <p className="text-xs lg:text-sm text-green-200">Bartender vende drinks na hora</p>
                          </div>
                        </Button>
                      </div>
@@ -810,30 +810,30 @@ export default function TenderesPage() {
 
             {/* Conteúdo dinâmico baseado no modo */}
             {mode === 'planos' && (
-              <div className="space-y-8">
-                <h2 className="text-3xl font-bold text-center text-white mb-8">Planos Completos</h2>
+              <div className="space-y-6 lg:space-y-8">
+                <h2 className="text-2xl lg:text-3xl font-bold text-center text-white mb-6 lg:mb-8">Planos Completos</h2>
                 {isLoadingPlans ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                    <p className="text-gray-300">Carregando planos...</p>
+                  <div className="text-center py-8 lg:py-12">
+                    <div className="animate-spin rounded-full h-10 w-10 lg:h-12 lg:w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                    <p className="text-gray-300 text-sm lg:text-base">Carregando planos...</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
                     {completePlans.map((plan) => (
                       <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
-                        <CardHeader>
-                          <CardTitle className="text-2xl text-white flex items-center gap-2">
-                            {plan.popular && <Star className="h-5 w-5 text-yellow-400" />} {plan.name}
+                        <CardHeader className="pb-3">
+                          <CardTitle className="text-lg lg:text-2xl text-white flex items-center gap-2">
+                            {plan.popular && <Star className="h-4 w-4 lg:h-5 lg:w-5 text-yellow-400" />} {plan.name}
                           </CardTitle>
-                          <CardDescription className="text-lg text-purple-200 font-bold mb-2">
+                          <CardDescription className="text-base lg:text-lg text-purple-200 font-bold mb-2">
                             {Number(plan.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} por pessoa
                           </CardDescription>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-gray-300 mb-4">{plan.description}</p>
+                          <p className="text-gray-300 mb-3 lg:mb-4 text-sm lg:text-base">{plan.description}</p>
                           <div>
-                            <span className="font-semibold text-white">Drinks inclusos:</span>
-                            <ul className="list-disc list-inside text-gray-200 mt-2">
+                            <span className="font-semibold text-white text-sm lg:text-base">Drinks inclusos:</span>
+                            <ul className="list-disc list-inside text-gray-200 mt-2 text-sm lg:text-base">
                               {plan.drinks && plan.drinks.map((drink, idx) => (
                                 <li key={idx}>{drink}</li>
                               ))}
@@ -847,50 +847,50 @@ export default function TenderesPage() {
               </div>
             )}
             {mode === 'detalhado' && (
-              <div className="space-y-8">
-                <div className="flex items-center justify-between">
-                  <h2 className="text-3xl font-bold text-white">Orçamento Detalhado</h2>
+              <div className="space-y-6 lg:space-y-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                  <h2 className="text-2xl lg:text-3xl font-bold text-white">Orçamento Detalhado</h2>
                   <Button
                     onClick={reloadDrinks}
                     disabled={isLoadingDrinks}
-                    className="bg-purple-600 hover:bg-purple-700 text-white"
+                    className="bg-purple-600 hover:bg-purple-700 text-white text-sm lg:text-base"
                   >
                     {isLoadingDrinks ? (
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      <div className="animate-spin rounded-full h-3 w-3 lg:h-4 lg:w-4 border-b-2 border-white mr-2"></div>
                     ) : (
-                      <RefreshCw className="h-4 w-4 mr-2" />
+                      <RefreshCw className="h-3 w-3 lg:h-4 lg:w-4 mr-2" />
                     )}
                     Atualizar Drinks
                   </Button>
                 </div>
                 
                 {isLoadingDrinks ? (
-                  <div className="text-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
-                    <p className="text-gray-300">Carregando drinks...</p>
+                  <div className="text-center py-8 lg:py-12">
+                    <div className="animate-spin rounded-full h-10 w-10 lg:h-12 lg:w-12 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                    <p className="text-gray-300 text-sm lg:text-base">Carregando drinks...</p>
                   </div>
                 ) : (
-                  <div className="space-y-12">
+                  <div className="space-y-8 lg:space-y-12">
                     {/* Header Elegante */}
-                    <div className="text-center mb-12">
-                      <div className="inline-flex items-center gap-3 mb-4">
-                        <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl">
-                          <Wine className="h-8 w-8 text-white" />
+                    <div className="text-center mb-8 lg:mb-12">
+                      <div className="inline-flex items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                        <div className="w-12 h-12 lg:w-16 lg:h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-2xl">
+                          <Wine className="h-6 w-6 lg:h-8 lg:w-8 text-white" />
                         </div>
-                        <h2 className="text-4xl font-bold text-white tracking-tight">TENDERES</h2>
+                        <h2 className="text-2xl lg:text-4xl font-bold text-white tracking-tight">TENDERES</h2>
                       </div>
-                      <p className="text-xl text-gray-300 max-w-2xl mx-auto">
+                      <p className="text-base lg:text-xl text-gray-300 max-w-2xl mx-auto">
                         Descubra nossa seleção premium de drinks artesanais para seu evento
                       </p>
                     </div>
                     
                     {categories.map((category) => (
-                      <div key={category} className="space-y-6">
+                      <div key={category} className="space-y-4 lg:space-y-6">
                         <div className="text-center">
-                          <h3 className="text-3xl font-bold text-white mb-2">{category}</h3>
-                          <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
+                          <h3 className="text-2xl lg:text-3xl font-bold text-white mb-2">{category}</h3>
+                          <div className="w-16 lg:w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
                         </div>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 lg:gap-4">
                           {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => {
                             // Função para obter imagem baseada na categoria
                             const getImageByCategory = (category: string) => {
@@ -916,10 +916,10 @@ export default function TenderesPage() {
                             return (
                               <div key={drink.id} className="relative group">
                               {/* Card principal */}
-                              <div className="relative border border-purple-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50">
+                              <div className="relative border border-purple-600/30 shadow-2xl rounded-xl lg:rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50">
                                 
                                 {/* Imagem ocupando todo o espaço */}
-                                <div className="h-48 md:h-64 lg:h-80 relative">
+                                <div className="h-32 sm:h-40 lg:h-48 xl:h-64 relative">
                                   <img 
                                     src={(() => {
                                       // MÉTODO NOVO: Lógica simplificada para imagens
@@ -1014,19 +1014,19 @@ export default function TenderesPage() {
                                   <div className="absolute inset-0 bg-black/10"></div>
                                   
                                   {/* Nome do drink sobre a imagem */}
-                                  <div className="absolute top-1 md:top-2 lg:top-3 left-1 md:left-2 lg:left-3 right-1 md:right-2 lg:right-3">
-                                    <h3 className="text-xs md:text-sm lg:text-lg font-bold text-white text-center leading-tight drop-shadow-lg bg-black/30 px-1 md:px-2 lg:px-3 py-0.5 md:py-1 rounded-lg">
+                                  <div className="absolute top-1 left-1 right-1">
+                                    <h3 className="text-xs lg:text-sm font-bold text-white text-center leading-tight drop-shadow-lg bg-black/30 px-1 lg:px-2 py-0.5 lg:py-1 rounded-lg">
                                       {drink.name}
                                     </h3>
                                   </div>
                                 </div>
 
                                 {/* PEQUENOS CARDS EMBAIXO DA IMAGEM */}
-                                <div className="p-0.5 md:p-1 lg:p-2 space-y-0.5 md:space-y-1">
+                                <div className="p-1 lg:p-2 space-y-1">
                                   {/* Card do Preço */}
-                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-0.5 md:p-1">
+                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-1">
                                     <div className="flex flex-col items-center">
-                                      <div className="text-xs md:text-sm lg:text-base font-bold text-white">
+                                      <div className="text-xs lg:text-sm font-bold text-white">
                                         R$ {drink.price.toFixed(2).replace('.', ',')}
                                       </div>
                                       <div className="text-xs text-purple-200 font-medium">
@@ -1036,24 +1036,24 @@ export default function TenderesPage() {
                                   </div>
 
                                   {/* Card da Quantidade */}
-                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-0.5 md:p-1">
-                                    <div className="flex items-center justify-center space-x-1 md:space-x-2">
+                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-1">
+                                    <div className="flex items-center justify-center space-x-1 lg:space-x-2">
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, -1)}
-                                        className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-4 h-4 lg:w-5 lg:h-5 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
                                         <span className="text-white text-xs font-bold">-</span>
                                       </button>
                                       
-                                      <div className="min-w-[20px] md:min-w-[25px] lg:min-w-[30px] text-center">
-                                        <span className="text-xs md:text-sm lg:text-sm font-bold text-white">
+                                      <div className="min-w-[16px] lg:min-w-[20px] text-center">
+                                        <span className="text-xs lg:text-sm font-bold text-white">
                                           {selectedDrinks[drink.id] || 0}
                                         </span>
                                       </div>
                                       
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, 1)}
-                                        className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-4 h-4 lg:w-5 lg:h-5 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
                                         <span className="text-white text-xs font-bold">+</span>
                                       </button>
@@ -1072,32 +1072,32 @@ export default function TenderesPage() {
               </div>
             )}
             {mode === 'drinkeira' && (
-              <div className="space-y-8 bg-gray-900 p-8 rounded-xl border border-gray-700">
+              <div className="space-y-6 lg:space-y-8 bg-gray-900 p-4 lg:p-8 rounded-xl border border-gray-700">
                 {/* Abas de Navegação */}
-                <div className="flex justify-center gap-4 mb-8">
-                  <Button variant={drinkeiraTab === 'caipirinhas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipirinhas')} className="text-lg font-semibold text-green-400 hover:bg-green-500/10 hover:text-green-300">Caipirinhas</Button>
-                  <Button variant={drinkeiraTab === 'caipiroskas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipiroskas')} className="text-lg font-semibold text-blue-400 hover:bg-blue-500/10 hover:text-blue-300">Caipiroskas</Button>
-                  <Button variant={drinkeiraTab === 'classicos' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('classicos')} className="text-lg font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300">Clássicos</Button>
+                <div className="flex flex-col sm:flex-row justify-center gap-2 lg:gap-4 mb-6 lg:mb-8">
+                  <Button variant={drinkeiraTab === 'caipirinhas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipirinhas')} className="text-sm lg:text-lg font-semibold text-green-400 hover:bg-green-500/10 hover:text-green-300">Caipirinhas</Button>
+                  <Button variant={drinkeiraTab === 'caipiroskas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipiroskas')} className="text-sm lg:text-lg font-semibold text-blue-400 hover:bg-blue-500/10 hover:text-blue-300">Caipiroskas</Button>
+                  <Button variant={drinkeiraTab === 'classicos' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('classicos')} className="text-sm lg:text-lg font-semibold text-red-400 hover:bg-red-500/10 hover:text-red-300">Clássicos</Button>
                 </div>
                 {/* Bloco informativo do modelo Drinkeira */}
-                <section className="container mx-auto px-4 my-8">
-                  <div className="bg-gray-800 p-8 rounded-lg border border-gray-700">
-                    <h2 className="text-3xl font-bold text-yellow-400 text-center mb-8">Como Funciona o Modo Drinkeira</h2>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6 text-center">
+                <section className="container mx-auto px-2 lg:px-4 my-6 lg:my-8">
+                  <div className="bg-gray-800 p-4 lg:p-8 rounded-lg border border-gray-700">
+                    <h2 className="text-xl lg:text-3xl font-bold text-yellow-400 text-center mb-6 lg:mb-8">Como Funciona o Modo Drinkeira</h2>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6 text-center">
                       <div>
-                        <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">1</div>
-                        <h4 className="text-xl font-bold text-gray-100 mb-2">Contratação</h4>
-                        <p className="text-gray-400">Você paga apenas pelos bartenders e taxa de locomoção</p>
+                        <div className="inline-block bg-yellow-500 text-white text-xl lg:text-2xl font-bold w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full mb-3 lg:mb-4 mx-auto">1</div>
+                        <h4 className="text-lg lg:text-xl font-bold text-gray-100 mb-2">Contratação</h4>
+                        <p className="text-sm lg:text-base text-gray-400">Você paga apenas pelos bartenders e taxa de locomoção</p>
                       </div>
                       <div>
-                        <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">2</div>
-                        <h4 className="text-xl font-bold text-gray-100 mb-2">No Evento</h4>
-                        <p className="text-gray-400">Bartender monta a drinkeira com todos os sabores disponíveis</p>
+                        <div className="inline-block bg-yellow-500 text-white text-xl lg:text-2xl font-bold w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full mb-3 lg:mb-4 mx-auto">2</div>
+                        <h4 className="text-lg lg:text-xl font-bold text-gray-100 mb-2">No Evento</h4>
+                        <p className="text-sm lg:text-base text-gray-400">Bartender monta a drinkeira com todos os sabores disponíveis</p>
                       </div>
-                      <div>
-                        <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">3</div>
-                        <h4 className="text-xl font-bold text-gray-100 mb-2">Venda Direta</h4>
-                        <p className="text-gray-400">Convidados escolhem sabores e pagam preços diferenciados</p>
+                      <div className="sm:col-span-2 lg:col-span-1">
+                        <div className="inline-block bg-yellow-500 text-white text-xl lg:text-2xl font-bold w-10 h-10 lg:w-12 lg:h-12 flex items-center justify-center rounded-full mb-3 lg:mb-4 mx-auto">3</div>
+                        <h4 className="text-lg lg:text-xl font-bold text-gray-100 mb-2">Venda Direta</h4>
+                        <p className="text-sm lg:text-base text-gray-400">Convidados escolhem sabores e pagam preços diferenciados</p>
                       </div>
                     </div>
                   </div>
@@ -1107,28 +1107,28 @@ export default function TenderesPage() {
                   {drinkeiraTab === 'caipirinhas' && (
                     <div
                       key="caipirinhas"
-                      className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl"
+                      className="p-4 lg:p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl"
                     >
-                      <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
+                      <h3 className="text-xl lg:text-3xl font-bold text-green-400 mb-4 lg:mb-6 flex items-center"><Wine className="mr-2 lg:mr-3 h-6 w-6 lg:h-8 lg:w-8"/>Caipirinhas Especiais</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
                         {caipirinhas.map((drink) => (
                           <Card
                             key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-xl lg:rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
                           >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                              <Wine className="h-7 w-7 text-purple-300 drop-shadow" />
-                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                            <CardHeader className="pb-2 flex flex-row items-center gap-2 lg:gap-3">
+                              <Wine className="h-5 w-5 lg:h-7 lg:w-7 text-purple-300 drop-shadow" />
+                              <CardTitle className="text-lg lg:text-2xl font-bold text-white tracking-tight">
                                 {drink.name}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 rounded-full bg-purple-700/60 text-white text-lg font-bold shadow">
+                                <span className="inline-block px-2 lg:px-3 py-1 rounded-full bg-purple-700/60 text-white text-sm lg:text-lg font-bold shadow">
                                   {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>
                               </div>
-                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
+                              <p className="text-gray-100 text-sm lg:text-base leading-relaxed">{drink.description}</p>
                             </CardContent>
                           </Card>
                         ))}
@@ -1138,28 +1138,28 @@ export default function TenderesPage() {
                   {drinkeiraTab === 'caipiroskas' && (
                     <div
                       key="caipiroskas"
-                      className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl"
+                      className="p-4 lg:p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl"
                     >
-                      <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
+                      <h3 className="text-xl lg:text-3xl font-bold text-blue-400 mb-4 lg:mb-6 flex items-center"><Wine className="mr-2 lg:mr-3 h-6 w-6 lg:h-8 lg:w-8"/>Caipiroskas Especiais</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
                         {caipiroskas.map((drink) => (
                           <Card
                             key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-xl lg:rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
                           >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                              <Wine className="h-7 w-7 text-cyan-300 drop-shadow" />
-                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                            <CardHeader className="pb-2 flex flex-row items-center gap-2 lg:gap-3">
+                              <Wine className="h-5 w-5 lg:h-7 lg:w-7 text-cyan-300 drop-shadow" />
+                              <CardTitle className="text-lg lg:text-2xl font-bold text-white tracking-tight">
                                 {drink.name}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 rounded-full bg-blue-700/60 text-white text-lg font-bold shadow">
+                                <span className="inline-block px-2 lg:px-3 py-1 rounded-full bg-blue-700/60 text-white text-sm lg:text-lg font-bold shadow">
                                   {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>
                               </div>
-                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
+                              <p className="text-gray-100 text-sm lg:text-base leading-relaxed">{drink.description}</p>
                             </CardContent>
                           </Card>
                         ))}
@@ -1169,28 +1169,28 @@ export default function TenderesPage() {
                   {drinkeiraTab === 'classicos' && (
                     <div
                       key="classicos"
-                      className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl"
+                      className="p-4 lg:p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl"
                     >
-                      <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
+                      <h3 className="text-xl lg:text-3xl font-bold text-red-400 mb-4 lg:mb-6 flex items-center"><Wine className="mr-2 lg:mr-3 h-6 w-6 lg:h-8 lg:w-8"/>Outros Clássicos</h3>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
                         {outrosClassicos.map((drink) => (
                           <Card
                             key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-xl lg:rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
                           >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
-                              <Wine className="h-7 w-7 text-red-300 drop-shadow" />
-                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
+                            <CardHeader className="pb-2 flex flex-row items-center gap-2 lg:gap-3">
+                              <Wine className="h-5 w-5 lg:h-7 lg:w-7 text-red-300 drop-shadow" />
+                              <CardTitle className="text-lg lg:text-2xl font-bold text-white tracking-tight">
                                 {drink.name}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-3 py-1 rounded-full bg-red-700/60 text-white text-lg font-bold shadow">
+                                <span className="inline-block px-2 lg:px-3 py-1 rounded-full bg-red-700/60 text-white text-sm lg:text-lg font-bold shadow">
                                   {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>
                               </div>
-                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
+                              <p className="text-gray-100 text-sm lg:text-base leading-relaxed">{drink.description}</p>
                             </CardContent>
                           </Card>
                         ))}
@@ -1334,40 +1334,40 @@ export default function TenderesPage() {
       )}
 
       {/* Footer */}
-      <footer className="bg-gray-800/80 backdrop-blur-md border-t border-gray-700 py-12">
+      <footer className="bg-gray-800/80 backdrop-blur-md border-t border-gray-700 py-8 lg:py-12">
         <div className="container mx-auto px-4">
-                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
-            <div className="text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
-                <Wine className="h-8 w-8 text-purple-400" />
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">TENDERES</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            <div className="text-center sm:text-left">
+              <div className="flex items-center justify-center sm:justify-start space-x-3 mb-4">
+                <Wine className="h-6 w-6 lg:h-8 lg:w-8 text-purple-400" />
+                <h3 className="text-xl lg:text-2xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">TENDERES</h3>
               </div>
-              <p className="text-gray-300 mb-4">Transformando eventos em experiências inesquecíveis em Fortaleza e região.</p>
-              <div className="flex items-center justify-center md:justify-start space-x-2">
+              <p className="text-gray-300 mb-4 text-sm lg:text-base">Transformando eventos em experiências inesquecíveis em Fortaleza e região.</p>
+              <div className="flex items-center justify-center sm:justify-start space-x-2">
                 <MapPin className="h-4 w-4 text-purple-400" />
                 <span className="text-sm text-gray-300">Fortaleza - Ceará</span>
               </div>
             </div>
             <div className="text-center">
-              <h4 className="text-lg font-semibold text-white mb-4">Contato</h4>
+              <h4 className="text-base lg:text-lg font-semibold text-white mb-3 lg:mb-4">Contato</h4>
               <div className="space-y-2">
                 <div className="flex items-center justify-center space-x-2">
                   <Phone className="h-4 w-4 text-purple-400" />
-                  <span className="text-gray-300">(85) 99433-0680</span>
+                  <span className="text-gray-300 text-sm lg:text-base">(85) 99433-0680</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <Mail className="h-4 w-4 text-purple-400" />
-                  <span className="text-gray-300">contato@tenderes.com.br</span>
+                  <span className="text-gray-300 text-sm lg:text-base">contato@tenderes.com.br</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2">
                   <MessageCircle className="h-4 w-4 text-purple-400" />
-                  <span className="text-gray-300">WhatsApp</span>
+                  <span className="text-gray-300 text-sm lg:text-base">WhatsApp</span>
                 </div>
               </div>
             </div>
-            <div className="text-center md:text-right">
-              <h4 className="text-lg font-semibold text-white mb-4">Atendimento</h4>
-              <div className="space-y-2 text-gray-300">
+            <div className="text-center sm:text-right">
+              <h4 className="text-base lg:text-lg font-semibold text-white mb-3 lg:mb-4">Atendimento</h4>
+              <div className="space-y-2 text-gray-300 text-sm lg:text-base">
                 <p>Segunda a Domingo</p>
                 <p>24 horas por dia</p>
                 <p>Atendimento em toda Fortaleza</p>
@@ -1378,9 +1378,9 @@ export default function TenderesPage() {
               </div>
             </div>
           </div>
-          <Separator className="my-8 bg-gray-700" />
+          <Separator className="my-6 lg:my-8 bg-gray-700" />
           <div className="text-center">
-            <p className="text-gray-400 text-sm">© 2024 TENDERES - Drinks Premium. Todos os direitos reservados. | Fortaleza - CE</p>
+            <p className="text-gray-400 text-xs lg:text-sm">© 2024 TENDERES - Drinks Premium. Todos os direitos reservados. | Fortaleza - CE</p>
           </div>
         </div>
       </footer>
