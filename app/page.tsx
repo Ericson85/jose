@@ -890,7 +890,7 @@ export default function TenderesPage() {
                           <h3 className="text-3xl font-bold text-white mb-2">{category}</h3>
                           <div className="w-24 h-1 bg-gradient-to-r from-purple-500 to-pink-500 mx-auto rounded-full"></div>
                         </div>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
                           {dynamicDrinks.filter((drink) => drink.category === category).map((drink) => {
                             // Função para obter imagem baseada na categoria
                             const getImageByCategory = (category: string) => {
@@ -919,7 +919,7 @@ export default function TenderesPage() {
                               <div className="relative border border-purple-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50">
                                 
                                 {/* Imagem ocupando todo o espaço */}
-                                <div className="h-64 md:h-80 relative">
+                                <div className="h-48 md:h-64 lg:h-80 relative">
                                   <img 
                                     src={(() => {
                                       // MÉTODO NOVO: Lógica simplificada para imagens
@@ -1014,19 +1014,19 @@ export default function TenderesPage() {
                                   <div className="absolute inset-0 bg-black/10"></div>
                                   
                                   {/* Nome do drink sobre a imagem */}
-                                  <div className="absolute top-2 md:top-3 left-2 md:left-3 right-2 md:right-3">
-                                    <h3 className="text-sm md:text-lg font-bold text-white text-center leading-tight drop-shadow-lg bg-black/30 px-2 md:px-3 py-1 rounded-lg">
+                                  <div className="absolute top-1 md:top-2 lg:top-3 left-1 md:left-2 lg:left-3 right-1 md:right-2 lg:right-3">
+                                    <h3 className="text-xs md:text-sm lg:text-lg font-bold text-white text-center leading-tight drop-shadow-lg bg-black/30 px-1 md:px-2 lg:px-3 py-0.5 md:py-1 rounded-lg">
                                       {drink.name}
                                     </h3>
                                   </div>
                                 </div>
 
                                 {/* PEQUENOS CARDS EMBAIXO DA IMAGEM */}
-                                <div className="p-1 md:p-2 space-y-1">
+                                <div className="p-0.5 md:p-1 lg:p-2 space-y-0.5 md:space-y-1">
                                   {/* Card do Preço */}
-                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-1">
+                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-0.5 md:p-1">
                                     <div className="flex flex-col items-center">
-                                      <div className="text-sm md:text-base font-bold text-white">
+                                      <div className="text-xs md:text-sm lg:text-base font-bold text-white">
                                         R$ {drink.price.toFixed(2).replace('.', ',')}
                                       </div>
                                       <div className="text-xs text-purple-200 font-medium">
@@ -1036,24 +1036,24 @@ export default function TenderesPage() {
                                   </div>
 
                                   {/* Card da Quantidade */}
-                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-1">
+                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-0.5 md:p-1">
                                     <div className="flex items-center justify-center space-x-1 md:space-x-2">
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, -1)}
-                                        className="w-5 h-5 md:w-6 md:h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
                                         <span className="text-white text-xs font-bold">-</span>
                                       </button>
                                       
-                                      <div className="min-w-[25px] md:min-w-[30px] text-center">
-                                        <span className="text-sm md:text-sm font-bold text-white">
+                                      <div className="min-w-[20px] md:min-w-[25px] lg:min-w-[30px] text-center">
+                                        <span className="text-xs md:text-sm lg:text-sm font-bold text-white">
                                           {selectedDrinks[drink.id] || 0}
                                         </span>
                                       </div>
                                       
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, 1)}
-                                        className="w-5 h-5 md:w-6 md:h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-4 h-4 md:w-5 md:h-5 lg:w-6 lg:h-6 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
                                         <span className="text-white text-xs font-bold">+</span>
                                       </button>
