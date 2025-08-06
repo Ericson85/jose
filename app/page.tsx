@@ -652,7 +652,7 @@ export default function TenderesPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 pb-20">
-        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-2 md:gap-4 lg:gap-6">
           
           {/* Sidebar */}
           <div className="lg:col-span-1 xl:col-span-1">
@@ -760,7 +760,7 @@ export default function TenderesPage() {
                 <CardContent className="p-4">
                    <div className="bg-gradient-to-br from-gray-900 via-purple-900/50 to-gray-900 backdrop-blur-md rounded-xl p-8 border border-purple-500/30 shadow-2xl mb-8">
                      <h3 className="text-3xl font-bold text-center text-white mb-6 bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Escolha seu Tipo de Orçamento</h3>
-                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
                        <Button 
                          onClick={() => setMode('planos')}
                          className={`h-24 text-xl font-bold transition-all duration-300 ${
@@ -818,7 +818,7 @@ export default function TenderesPage() {
                     <p className="text-gray-300">Carregando planos...</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
                     {completePlans.map((plan) => (
                       <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
                         <CardHeader>
@@ -1083,7 +1083,7 @@ export default function TenderesPage() {
                 <section className="container mx-auto px-4 my-8">
                   <div className="bg-gray-800 p-8 rounded-lg border border-gray-700">
                     <h2 className="text-3xl font-bold text-yellow-400 text-center mb-8">Como Funciona o Modo Drinkeira</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6 text-center">
                       <div>
                         <div className="inline-block bg-yellow-500 text-white text-2xl font-bold w-12 h-12 flex items-center justify-center rounded-full mb-4 mx-auto">1</div>
                         <h4 className="text-xl font-bold text-gray-100 mb-2">Contratação</h4>
@@ -1110,7 +1110,7 @@ export default function TenderesPage() {
                       className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl"
                     >
                       <h3 className="text-3xl font-bold text-green-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipirinhas Especiais</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
                         {caipirinhas.map((drink) => (
                           <Card
                             key={drink.id}
@@ -1141,7 +1141,7 @@ export default function TenderesPage() {
                       className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl"
                     >
                       <h3 className="text-3xl font-bold text-blue-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Caipiroskas Especiais</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
                         {caipiroskas.map((drink) => (
                           <Card
                             key={drink.id}
@@ -1172,7 +1172,7 @@ export default function TenderesPage() {
                       className="p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl"
                     >
                       <h3 className="text-3xl font-bold text-red-400 mb-6 flex items-center"><Wine className="mr-3 h-8 w-8"/>Outros Clássicos</h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
                         {outrosClassicos.map((drink) => (
                           <Card
                             key={drink.id}
@@ -1336,7 +1336,7 @@ export default function TenderesPage() {
       {/* Footer */}
       <footer className="bg-gray-800/80 backdrop-blur-md border-t border-gray-700 py-12">
         <div className="container mx-auto px-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 md:gap-4 lg:gap-6">
             <div className="text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start space-x-3 mb-4">
                 <Wine className="h-8 w-8 text-purple-400" />
