@@ -910,13 +910,11 @@ export default function TenderesPage() {
 
                             return (
                               <div key={drink.id} className="relative group">
-                              {/* Card no estilo Gin Tonic */}
-                              <div className="relative bg-gradient-to-br from-gray-900 via-purple-900/20 to-gray-800 border border-purple-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50 h-96">
-                                {/* Background com gradiente sutil */}
-                                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-pink-500/5"></div>
+                              {/* Card principal */}
+                              <div className="relative border border-purple-600/30 shadow-2xl rounded-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-purple-500/25 hover:border-purple-500/50">
                                 
-                                {/* Imagem de fundo - MÉTODO NOVO */}
-                                <div className="absolute inset-0 rounded-2xl overflow-hidden">
+                                {/* Imagem ocupando todo o espaço */}
+                                <div className="h-80 relative">
                                   <img 
                                     src={(() => {
                                       // MÉTODO NOVO: Lógica simplificada para imagens
@@ -1007,51 +1005,52 @@ export default function TenderesPage() {
                                       console.log(`Imagem carregada com sucesso para ${drink.name}`);
                                     }}
                                   />
-                                  {/* Overlay escuro para melhorar legibilidade do texto */}
-                                  <div className="absolute inset-0 bg-black/40"></div>
-                                </div>
-
-                                {/* Conteúdo do card - SEÇÃO FIXA E RESPONSIVA */}
-                                <div className="relative z-10 flex flex-col h-full">
-                                  {/* Nome do drink - parte superior */}
-                                  <div className="flex-1 flex items-start justify-center pt-4 px-4">
-                                    <h3 className="text-xl md:text-2xl font-bold text-white text-center leading-tight">
+                                  {/* Overlay sutil */}
+                                  <div className="absolute inset-0 bg-black/10"></div>
+                                  
+                                  {/* Nome do drink sobre a imagem */}
+                                  <div className="absolute top-3 left-3 right-3">
+                                    <h3 className="text-lg font-bold text-white text-center leading-tight drop-shadow-lg bg-black/30 px-3 py-1 rounded-lg">
                                       {drink.name}
                                     </h3>
                                   </div>
+                                </div>
 
-                                  {/* SEÇÃO FIXA: Preço e Quantidade - parte inferior */}
-                                  <div className="bg-gradient-to-r from-purple-600/90 to-pink-600/90 backdrop-blur-sm border-t border-purple-400/30 p-4 rounded-b-2xl">
-                                    {/* Preço e tipo */}
-                                    <div className="flex flex-col items-center mb-3">
-                                      <div className="text-2xl md:text-3xl font-bold text-white mb-1">
+                                {/* PEQUENOS CARDS EMBAIXO DA IMAGEM */}
+                                <div className="p-3 space-y-2">
+                                  {/* Card do Preço */}
+                                  <div className="bg-gradient-to-r from-purple-600/20 to-pink-600/20 border border-purple-400/30 rounded-lg p-2">
+                                    <div className="flex flex-col items-center">
+                                      <div className="text-lg font-bold text-white">
                                         R$ {drink.price.toFixed(2).replace('.', ',')}
                                       </div>
-                                      <div className="text-sm text-purple-200 font-medium">
+                                      <div className="text-xs text-purple-200 font-medium">
                                         {drink.priceType === 'per_person' ? 'Por pessoa' : 'Por unidade'}
                                       </div>
                                     </div>
+                                  </div>
 
-                                    {/* Seletor de quantidade - RESPONSIVO */}
+                                  {/* Card da Quantidade */}
+                                  <div className="bg-gradient-to-r from-gray-700/50 to-gray-800/50 border border-gray-600/30 rounded-lg p-2">
                                     <div className="flex items-center justify-center space-x-3">
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, -1)}
-                                        className="w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-white/30 border border-white/30 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-8 h-8 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
-                                        <span className="text-white text-lg md:text-xl font-bold">-</span>
+                                        <span className="text-white text-sm font-bold">-</span>
                                       </button>
                                       
-                                      <div className="min-w-[60px] md:min-w-[80px] text-center">
-                                        <span className="text-2xl md:text-3xl font-bold text-white">
+                                      <div className="min-w-[40px] text-center">
+                                        <span className="text-lg font-bold text-white">
                                           {selectedDrinks[drink.id] || 0}
                                         </span>
                                       </div>
                                       
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, 1)}
-                                        className="w-10 h-10 md:w-12 md:h-12 bg-white/20 hover:bg-white/30 border border-white/30 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-8 h-8 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
-                                        <span className="text-white text-lg md:text-xl font-bold">+</span>
+                                        <span className="text-white text-sm font-bold">+</span>
                                       </button>
                                     </div>
                                   </div>
