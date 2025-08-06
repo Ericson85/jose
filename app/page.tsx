@@ -723,7 +723,7 @@ export default function TenderesPage() {
                      type="number"
                      value={people}
                      onChange={(e) => setPeople(Number(e.target.value))}
-                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12"
+                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                      placeholder="Ex: 50"
                    />
                  </div>
@@ -734,7 +734,7 @@ export default function TenderesPage() {
                      type="number"
                      value={hours}
                      onChange={(e) => setHours(Number(e.target.value))}
-                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12"
+                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
                      placeholder="Ex: 4"
                    />
                  </div>
@@ -1291,7 +1291,7 @@ export default function TenderesPage() {
                        type="number" 
                        value={userData.age || ''} 
                        onChange={(e) => setUserData({...userData, age: parseInt(e.target.value)})}
-                       className={`h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 ${
+                       className={`h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                          userData.age > 0 && userData.age < 18 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
                        }`}
                        placeholder="Ex: 25"
