@@ -404,6 +404,17 @@ export default function TenderesPage() {
   const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
   const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  
+  // Função para scroll suave para a seção de configuração
+  const scrollToConfiguration = () => {
+    const configSection = document.getElementById('configuration-section')
+    if (configSection) {
+      configSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      })
+    }
+  }
   const [drinkeiraTab, setDrinkeiraTab] = useState<'caipirinhas' | 'caipiroskas' | 'classicos'>('caipirinhas')
   const [drinkeiraDrinks, setDrinkeiraDrinks] = useState<DrinkeiraDrink[]>([])
   const [loadingDrinkeiraDrinks, setLoadingDrinkeiraDrinks] = useState(false)
@@ -701,8 +712,10 @@ export default function TenderesPage() {
         <div className="flex flex-col lg:grid lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-4">
           
           {/* Sidebar - em mobile fica no topo */}
-          <div className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
-             <Card className="rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden border border-gray-700">
+          <div id="configuration-section" className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
+             <Card className={`rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-500 ${
+               selectedPlan ? 'border-2 border-green-500 shadow-green-500/20 animate-pulse' : 'border border-gray-700'
+             }`}>
                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
                <CardHeader className="relative z-10 pb-3">
                  <CardTitle className="font-semibold tracking-tight flex items-center space-x-3 text-lg lg:text-xl text-white">
@@ -711,7 +724,15 @@ export default function TenderesPage() {
                    </div>
                    <span>Configuração do Evento</span>
                  </CardTitle>
-                 <CardDescription className="text-sm text-gray-300">Defina os detalhes do seu evento especial</CardDescription>
+                 <CardDescription className="text-sm text-gray-300">
+                   {selectedPlan ? (
+                     <span className="text-green-400 font-medium">
+                       ✅ Plano selecionado! Configure pessoas e horas abaixo
+                     </span>
+                   ) : (
+                     "Defina os detalhes do seu evento especial"
+                   )}
+                 </CardDescription>
                </CardHeader>
                <CardContent className="p-3 lg:p-4 pt-0 space-y-3 lg:space-y-4 relative z-10">
                   <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 lg:mb-4 p-2 lg:p-3 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
@@ -892,12 +913,23 @@ export default function TenderesPage() {
                           </div>
                           <div className="mt-4 lg:mt-6">
                             <Button 
-                              onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
+                              onClick={() => {
+                                const newSelectedPlan = selectedPlan === plan.id ? null : plan.id
+                                setSelectedPlan(newSelectedPlan)
+                                
+                                // Se um plano foi selecionado, redirecionar para configuração
+                                if (newSelectedPlan) {
+                                  showToast("Plano selecionado! Configure agora a quantidade de pessoas e horas.", "success")
+                                  setTimeout(() => {
+                                    scrollToConfiguration()
+                                  }, 100) // Pequeno delay para garantir que o estado foi atualizado
+                                }
+                              }}
                               className={`w-full ${
                                 selectedPlan === plan.id 
                                   ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
                                   : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
-                              } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg`}
+                              } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg transition-all duration-300`}
                             >
                               {selectedPlan === plan.id ? (
                                 <>
