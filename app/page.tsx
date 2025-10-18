@@ -1312,31 +1312,31 @@ export default function TenderesPage() {
       
       {/* Welcome Modal */}
       {showWelcomeModal && (
-        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
-          <Card className="w-full max-w-lg bg-gray-800/90 backdrop-blur-md border-2 border-purple-500/30 shadow-2xl relative overflow-hidden">
+        <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-2 sm:p-4 overflow-y-auto">
+          <Card className="w-full max-w-lg bg-gray-800/90 backdrop-blur-md border-2 border-purple-500/30 shadow-2xl relative overflow-hidden mx-2 sm:mx-4 my-4 sm:my-8">
             <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
-            <CardHeader className="text-center pb-6 relative z-10">
-              <div className="mx-auto mb-4 p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-16 h-16 flex items-center justify-center">
-                <User className="h-8 w-8 text-white" />
+            <CardHeader className="text-center pb-4 sm:pb-6 relative z-10 px-4 sm:px-6">
+              <div className="mx-auto mb-3 sm:mb-4 p-2 sm:p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center">
+                <User className="h-6 w-6 sm:h-8 sm:w-8 text-white" />
               </div>
-              <CardTitle className="text-2xl font-bold text-white mb-2">Dados para Orçamento</CardTitle>
-              <CardDescription className="text-gray-300 text-base leading-relaxed">
+              <CardTitle className="text-xl sm:text-2xl font-bold text-white mb-2">Dados para Orçamento</CardTitle>
+              <CardDescription className="text-gray-300 text-sm sm:text-base leading-relaxed">
                 Para solicitar seu orçamento, precisamos de algumas informações. Seus dados ficarão salvos para futuras solicitações.
               </CardDescription>
             </CardHeader>
-            <CardContent className="px-6 pb-6 relative z-10">
-              <form onSubmit={handleWelcomeSubmit} className="space-y-5">
+            <CardContent className="px-4 sm:px-6 pb-4 sm:pb-6 relative z-10">
+              <form onSubmit={handleWelcomeSubmit} className="space-y-4 sm:space-y-5">
                 <div className="space-y-2">
                   <Label htmlFor="name" className="text-sm font-semibold text-gray-200">Nome Completo</Label>
                   <Input 
                     id="name" 
                     value={userData.name} 
                     onChange={(e) => setUserData({...userData, name: e.target.value})}
-                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    className="h-10 sm:h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 text-sm sm:text-base"
                     placeholder="Digite seu nome completo"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                    <div className="space-y-2">
                      <Label htmlFor="age" className="text-sm font-semibold text-gray-200">Idade</Label>
                      <Input 
@@ -1344,7 +1344,7 @@ export default function TenderesPage() {
                        type="number" 
                        value={userData.age || ''} 
                        onChange={(e) => setUserData({...userData, age: parseInt(e.target.value)})}
-                       className={`h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
+                       className={`h-10 sm:h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 text-sm sm:text-base [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${
                          userData.age > 0 && userData.age < 18 ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
                        }`}
                        placeholder="Ex: 25"
@@ -1363,7 +1363,7 @@ export default function TenderesPage() {
                        id="state" 
                        value={userData.state} 
                        onChange={(e) => setUserData({...userData, state: e.target.value})}
-                       className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                       className="h-10 sm:h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 text-sm sm:text-base"
                        placeholder="Ex: Ceará"
                      />
                    </div>
@@ -1374,7 +1374,7 @@ export default function TenderesPage() {
                     id="city" 
                     value={userData.city} 
                     onChange={(e) => setUserData({...userData, city: e.target.value})}
-                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    className="h-10 sm:h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 text-sm sm:text-base"
                     placeholder="Ex: Fortaleza"
                   />
                 </div>
@@ -1384,7 +1384,7 @@ export default function TenderesPage() {
                     id="phone" 
                     value={userData.phone} 
                     onChange={(e) => setUserData({...userData, phone: e.target.value})}
-                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    className="h-10 sm:h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 text-sm sm:text-base"
                     placeholder="Ex: (85) 99999-9999"
                   />
                 </div>
@@ -1394,14 +1394,14 @@ export default function TenderesPage() {
                     id="address" 
                     value={userData.address} 
                     onChange={(e) => setUserData({...userData, address: e.target.value})}
-                    className="h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400"
+                    className="h-10 sm:h-12 bg-gray-700 border-gray-600 focus:border-purple-500 focus:ring-purple-500 text-white placeholder-gray-400 text-sm sm:text-base"
                     placeholder="Digite seu endereço"
                   />
                 </div>
                 <Button 
                   type="submit" 
                   disabled={!isFormValid} 
-                  className={`w-full h-12 text-base font-semibold transition-all duration-200 ${
+                  className={`w-full h-10 sm:h-12 text-sm sm:text-base font-semibold transition-all duration-200 ${
                     isFormValid 
                       ? 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl' 
                       : 'bg-gray-600 text-gray-400 cursor-not-allowed'
