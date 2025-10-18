@@ -1,0 +1,50 @@
+**PROMPT PARA CRIAÇÃO DE LOGO - MARCA TENDERES**
+
+Crie uma identidade visual moderna e elegante para a marca "TENDERES" - uma plataforma premium de drinks e coquetéis. 
+
+**ELEMENTOS OBRIGATÓRIOS:**
+- Nome da marca: "TENDERES" (deve estar claramente legível)
+- Incorporar uma taça de Martini estilizada ou elemento relacionado a drinks sofisticados
+- Design inovador, minimalista e premium
+
+**PALETA DE CORES (baseada no site existente):**
+- Cores primárias: Tons de roxo/púrpura (#8B5CF6, #A855F7, #9333EA)
+- Cores secundárias: Cinza escuro elegante (#1F2937, #374151, #4B5563)
+- Acentos: Gradientes de roxo para rosa (#8B5CF6 → #EC4899)
+- Detalhes: Branco puro (#FFFFFF) para contraste e elegância
+
+**ESTILO VISUAL:**
+- Estética minimalista e sofisticada
+- Linhas limpas e geometria moderna
+- Possível uso de gradientes sutis
+- Tipografia elegante e contemporânea
+- Sensação premium e exclusiva
+
+**CONCEITOS PARA INTEGRAÇÃO:**
+- Taça de Martini: Pode ser estilizada, abstrata ou integrada à tipografia
+- Elementos de luxo: Formas geométricas refinadas, linhas douradas/prateadas sutis
+- Modernidade: Formas angulares, negative space criativo
+- Versatilidade: Deve funcionar em fundos claros e escuros
+
+**VARIAÇÕES NECESSÁRIAS:**
+1. Logo principal (horizontal com ícone + texto)
+2. Versão apenas do ícone/símbolo (para usar como favicon)
+3. Versão monocromática (para aplicações especiais)
+4. Versão em fundo escuro e fundo claro
+
+**INSPIRAÇÃO VISUAL:**
+- Marcas de bebidas premium como Grey Goose, Hennessy
+- Apps modernos de delivery como Uber Eats (pela sofisticação)
+- Estética de bares cocktail de alta classe
+- Design system contemporâneo com elementos de luxo acessível
+
+**FORMATO DE ENTREGA:**
+- Fundo transparente (PNG)
+- Alta resolução (mínimo 2000px de largura)
+- Vetorial se possível (SVG)
+
+**PALAVRAS-CHAVE PARA IA:**
+luxury logo design, martini glass icon, purple gradient, modern typography, premium brand identity, cocktail bar logo, elegant minimalist design, sophisticated brand mark, drink delivery app logo, high-end beverage branding
+
+**PROMPT TÉCNICO ADICIONAL:**
+"Create a premium logo for 'TENDERES', a sophisticated drinks platform. Incorporate a stylized martini glass with modern typography. Use purple gradients (#8B5CF6 to #EC4899) with dark gray accents. Clean, minimalist design with luxury feel. Vector-style, high contrast, works on light and dark backgrounds. Professional brand identity suitable for mobile app and web platform."
