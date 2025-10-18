@@ -739,46 +739,6 @@ export default function TenderesPage() {
                  </CardDescription>
                </CardHeader>
                <CardContent className="p-3 lg:p-4 pt-0 space-y-3 lg:space-y-4 relative z-10">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 lg:mb-4 p-3 lg:p-4 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
-                     <div className="mb-3 sm:mb-0 flex-1">
-                        <h4 className="font-semibold text-green-300 text-sm lg:text-base mb-1">Modo Drinkeira</h4>
-                        <p className="text-xs lg:text-sm text-green-400">Bartender vende drinks na hora</p>
-                     </div>
-                     <Button 
-                        onClick={() => {
-                          const newDrinkeiraMode = !isDrinkeiraMode;
-                          setIsDrinkeiraMode(newDrinkeiraMode);
-                          setMode(newDrinkeiraMode ? 'drinkeira' : 'planos');
-                          
-                          // Se modo drinkeira foi ativado, redirecionar para configuração
-                          if (newDrinkeiraMode) {
-                            showToast("Modo Drinkeira ativado! Configure agora a quantidade de pessoas e horas.", "success");
-                            setTimeout(() => {
-                              scrollToConfiguration();
-                            }, 100);
-                          }
-                        }}
-                        variant={isDrinkeiraMode ? "default" : "outline"}
-                        size="sm"
-                        className={`text-xs lg:text-sm px-4 py-2 transition-all duration-300 ${
-                          isDrinkeiraMode 
-                            ? "bg-green-600 hover:bg-green-700 text-white shadow-lg" 
-                            : "border-green-400 text-green-300 hover:bg-green-900 hover:border-green-300"
-                        }`}
-                      >
-                        {isDrinkeiraMode ? (
-                          <>
-                            <CheckCircle className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-                            Ativado
-                          </>
-                        ) : (
-                          <>
-                            <Wine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
-                            Ativar
-                          </>
-                        )}
-                     </Button>
-                  </div>
                  <div className="space-y-2 lg:space-y-3">
                    <Label htmlFor="people" className="text-gray-300 text-sm lg:text-base">Número de Convidados</Label>
                    <Input
@@ -974,6 +934,66 @@ export default function TenderesPage() {
                         </CardContent>
                       </Card>
                     ))}
+                    
+                    {/* Card do Modo Drinkeira */}
+                    <Card className="bg-gray-800 border border-gray-700 shadow-lg">
+                      <CardHeader className="pb-3">
+                        <CardTitle className="text-lg lg:text-2xl text-white flex items-center gap-2">
+                          <Wine className="h-4 w-4 lg:h-5 lg:w-5 text-green-400" />
+                          Modo Drinkeira
+                        </CardTitle>
+                        <CardDescription className="text-base lg:text-lg text-green-200 font-bold mb-2">
+                          Bartender vende drinks na hora
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-gray-300 mb-3 lg:mb-4 text-sm lg:text-base">
+                          Contrate apenas o bartender e taxa de locomoção. Os convidados escolhem e pagam pelos drinks no evento.
+                        </p>
+                        <div>
+                          <span className="font-semibold text-white text-sm lg:text-base">Como funciona:</span>
+                          <ul className="list-disc list-inside text-gray-200 mt-2 text-sm lg:text-base">
+                            <li>Você paga apenas bartender + locomoção</li>
+                            <li>Drinks vendidos no evento</li>
+                            <li>Preços diferenciados por drink</li>
+                          </ul>
+                        </div>
+                        <div className="mt-4 lg:mt-6">
+                          <Button 
+                            onClick={() => {
+                              const newDrinkeiraMode = !isDrinkeiraMode;
+                              setIsDrinkeiraMode(newDrinkeiraMode);
+                              setMode(newDrinkeiraMode ? 'drinkeira' : 'planos');
+                              
+                              // Se modo drinkeira foi ativado, redirecionar para configuração
+                              if (newDrinkeiraMode) {
+                                showToast("Modo Drinkeira ativado! Configure agora a quantidade de pessoas e horas.", "success");
+                                setTimeout(() => {
+                                  scrollToConfiguration();
+                                }, 100);
+                              }
+                            }}
+                            className={`w-full ${
+                              isDrinkeiraMode 
+                                ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                                : 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800'
+                            } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg transition-all duration-300`}
+                          >
+                            {isDrinkeiraMode ? (
+                              <>
+                                <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                                Modo Ativado
+                              </>
+                            ) : (
+                              <>
+                                <Wine className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                                Ativar Modo
+                              </>
+                            )}
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
               </div>
