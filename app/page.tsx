@@ -404,6 +404,7 @@ export default function TenderesPage() {
   const [isDrinkeiraMode, setIsDrinkeiraMode] = useState(false)
   const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
+  const [showPlanSelectionInDetailed, setShowPlanSelectionInDetailed] = useState(false)
   
   // Função para scroll suave para a seção de configuração
   const scrollToConfiguration = () => {
@@ -445,12 +446,26 @@ export default function TenderesPage() {
       if (newQuantity <= 0) {
         const newSelected = { ...prev }
         delete newSelected[drinkId]
+        
+        // Se não há mais drinks selecionados, esconder seleção de planos
+        const hasAnyDrinks = Object.keys(newSelected).length > 0
+        if (!hasAnyDrinks) {
+          setShowPlanSelectionInDetailed(false)
+        }
+        
         return newSelected
       } else {
-        return {
+        const updated = {
           ...prev,
           [drinkId]: newQuantity,
         }
+        
+        // Se é o primeiro drink sendo adicionado, mostrar seleção de planos
+        if (currentQuantity === 0 && newQuantity > 0 && !showPlanSelectionInDetailed) {
+          setShowPlanSelectionInDetailed(true)
+        }
+        
+        return updated
       }
     })
   }
@@ -869,6 +884,86 @@ export default function TenderesPage() {
                     Atualizar Drinks
                   </Button>
                 </div>
+                
+                {/* Seleção de Planos no Modo Detalhado */}
+                {showPlanSelectionInDetailed && (
+                  <div className="bg-gradient-to-r from-purple-900/30 to-pink-900/30 border border-purple-500/50 rounded-xl p-6">
+                    <div className="text-center mb-6">
+                      <h3 className="text-xl lg:text-2xl font-bold text-white mb-2">
+                        🎉 Ótima escolha! Que tal um plano completo?
+                      </h3>
+                      <p className="text-gray-300 text-sm lg:text-base">
+                        Você pode escolher um plano que já inclui drinks selecionados ou continuar montando seu orçamento personalizado
+                      </p>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                      {completePlans.map((plan) => (
+                        <Card 
+                          key={plan.id} 
+                          className={`bg-gray-800 border border-gray-700 shadow-lg cursor-pointer transition-all duration-300 hover:scale-105 ${
+                            selectedPlan === plan.id ? 'border-2 border-purple-500 bg-purple-900/20' : 'hover:border-purple-400'
+                          }`}
+                          onClick={() => setSelectedPlan(selectedPlan === plan.id ? null : plan.id)}
+                        >
+                          <CardHeader className="pb-3">
+                            <CardTitle className="text-lg text-white flex items-center gap-2">
+                              {plan.popular && <Star className="h-5 w-5 text-yellow-400" />}
+                              {plan.name}
+                            </CardTitle>
+                            <CardDescription className="text-gray-300 text-sm">
+                              {plan.description}
+                            </CardDescription>
+                          </CardHeader>
+                          <CardContent>
+                            <div className="space-y-2">
+                              <div className="text-2xl font-bold text-purple-400">
+                                R$ {plan.price.toFixed(2).replace('.', ',')}
+                                <span className="text-sm text-gray-400 ml-1">por pessoa</span>
+                              </div>
+                              <div className="text-xs text-gray-400">
+                                Drinks inclusos: {plan.drinks.join(', ')}
+                              </div>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                    
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <Button
+                        onClick={() => setShowPlanSelectionInDetailed(false)}
+                        variant="outline"
+                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                      >
+                        Continuar sem plano
+                      </Button>
+                      {selectedPlan && (
+                        <Button
+                          onClick={() => {
+                            // Aplicar plano selecionado aos drinks
+                            const selectedPlanData = completePlans.find(plan => plan.id === selectedPlan)
+                            if (selectedPlanData) {
+                              const newSelectedDrinks: { [key: string]: number } = {}
+                              selectedPlanData.drinks.forEach(drinkName => {
+                                const drink = dynamicDrinks.find(d => d.name === drinkName)
+                                if (drink) {
+                                  newSelectedDrinks[drink.id] = 1
+                                }
+                              })
+                              setSelectedDrinks(newSelectedDrinks)
+                              setShowPlanSelectionInDetailed(false)
+                              showToast(`Plano ${selectedPlanData.name} aplicado com sucesso!`, "success")
+                            }
+                          }}
+                          className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                        >
+                          Aplicar Plano Selecionado
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                )}
                 
                 {isLoadingDrinks ? (
                   <div className="text-center py-8 lg:py-12">
