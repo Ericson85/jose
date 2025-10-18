@@ -446,28 +446,23 @@ export default function TenderesPage() {
       if (newQuantity <= 0) {
         const newSelected = { ...prev }
         delete newSelected[drinkId]
-        
-        // Se não há mais drinks selecionados, esconder configuração de eventos
-        const hasAnyDrinks = Object.keys(newSelected).length > 0
-        if (!hasAnyDrinks) {
-          setShowEventConfigInDetailed(false)
-        }
-        
         return newSelected
       } else {
-        const updated = {
+        return {
           ...prev,
           [drinkId]: newQuantity,
         }
-        
-        // Se é o primeiro drink sendo adicionado, mostrar configuração de eventos
-        if (currentQuantity === 0 && newQuantity > 0 && !showEventConfigInDetailed) {
-          setShowEventConfigInDetailed(true)
-        }
-        
-        return updated
       }
     })
+  }
+
+  // Função para verificar se há drinks selecionados
+  const hasSelectedDrinks = Object.keys(selectedDrinks).length > 0
+
+  // Função para finalizar seleção e mostrar configuração de eventos
+  const handleFinishSelection = () => {
+    setShowEventConfigInDetailed(true)
+    showToast("Drinks selecionados! Agora configure seu evento.", "success")
   }
 
 
@@ -1166,6 +1161,30 @@ export default function TenderesPage() {
                         </div>
                       </div>
                     ))}
+                  </div>
+                )}
+                
+                {/* Botão Finalizar Seleção */}
+                {hasSelectedDrinks && !showEventConfigInDetailed && (
+                  <div className="text-center py-8">
+                    <div className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border border-green-500/50 rounded-xl p-6 max-w-md mx-auto">
+                      <div className="mb-4">
+                        <h3 className="text-lg font-bold text-white mb-2">
+                          🎉 Drinks Selecionados!
+                        </h3>
+                        <p className="text-gray-300 text-sm">
+                          Você selecionou {Object.keys(selectedDrinks).length} tipo(s) de drink
+                        </p>
+                      </div>
+                      
+                      <Button
+                        onClick={handleFinishSelection}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold py-3 px-8 text-lg"
+                      >
+                        <CheckCircle className="h-5 w-5 mr-2" />
+                        Finalizar Seleção
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
