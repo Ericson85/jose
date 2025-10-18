@@ -708,112 +708,8 @@ export default function TenderesPage() {
 
       {/* Main Content */}
       <div className="container mx-auto px-4 pb-12">
-        {/* Layout responsivo: em mobile fica em coluna única, em desktop fica em grid */}
-        <div className="flex flex-col lg:grid lg:grid-cols-4 xl:grid-cols-5 gap-4 lg:gap-4">
-          
-          {/* Sidebar - em mobile fica no topo */}
-          <div id="configuration-section" className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
-             <Card className={`rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-500 ${
-               (selectedPlan || isDrinkeiraMode) ? 'border-2 border-green-500 shadow-green-500/20' : 'border border-gray-700'
-             }`}>
-               <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
-               <CardHeader className="relative z-10 pb-3">
-                 <CardTitle className="font-semibold tracking-tight flex items-center space-x-3 text-lg lg:text-xl text-white">
-                   <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
-                      <Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
-                   </div>
-                   <span>Configuração do Evento</span>
-                 </CardTitle>
-                 <CardDescription className="text-sm text-gray-300">
-                   {selectedPlan ? (
-                     <span className="text-green-400 font-medium">
-                       ✅ Plano selecionado! Configure pessoas e horas abaixo
-                     </span>
-                   ) : isDrinkeiraMode ? (
-                     <span className="text-green-400 font-medium">
-                       ✅ Modo Drinkeira ativado! Configure pessoas e horas abaixo
-                     </span>
-                   ) : (
-                     "Defina os detalhes do seu evento especial"
-                   )}
-                 </CardDescription>
-               </CardHeader>
-               <CardContent className="p-3 lg:p-4 pt-0 space-y-3 lg:space-y-4 relative z-10">
-                 <div className="space-y-2 lg:space-y-3">
-                   <Label htmlFor="people" className="text-gray-300 text-sm lg:text-base">Número de Convidados</Label>
-                   <Input
-                     id="people"
-                     type="number"
-                     value={people}
-                     onChange={(e) => {
-                       const value = e.target.value
-                       setPeople(value === '' ? '' : Number(value))
-                     }}
-                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                     placeholder="Ex: 50"
-                   />
-                 </div>
-                 <div className="space-y-2 lg:space-y-3">
-                   <Label htmlFor="hours" className="text-gray-300 text-sm lg:text-base">Duração do Evento (horas)</Label>
-                   <Input
-                     id="hours"
-                     type="number"
-                     value={hours}
-                     onChange={(e) => {
-                       const value = e.target.value
-                       setHours(value === '' ? '' : Number(value))
-                     }}
-                     className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-                     placeholder="Ex: 4"
-                   />
-                 </div>
-
-                 {/* Resumo do Orçamento */}
-                 {(((typeof people === 'number' && people > 0) || (typeof hours === 'number' && hours > 0)) || (mode === 'planos' && selectedPlan) || isDrinkeiraMode) && (
-                   <div className="mt-3 lg:mt-4 space-y-2 lg:space-y-3">
-                     <h3 className="text-lg lg:text-xl font-bold text-white flex items-center gap-2">
-                       <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-300" />
-                       Resumo do Orçamento
-                     </h3>
-                     <div className="space-y-2 text-gray-200 text-sm lg:text-lg">
-                       <div className="flex justify-between items-center">
-                         <span>
-                            {mode === 'planos' && selectedPlan ? "Custo do Plano" : isDrinkeiraMode ? "Custo Bartenders" : "Custo Drinks"}
-                         </span>
-                         <span className="font-semibold">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
-                       </div>
-                       <div className="flex justify-between items-center bg-purple-500/10 p-2 lg:p-3 rounded-lg">
-                         <span className="text-xs lg:text-sm">{config.transportationFeeName}</span>
-                         <span className="font-semibold text-sm lg:text-base">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
-                       </div>
-                       {extraCosts.map((cost) => (
-                         <div key={cost.id} className="flex justify-between items-center bg-orange-500/10 p-2 lg:p-3 rounded-lg">
-                           <span className="text-xs lg:text-sm">{cost.name}</span>
-                           <span className="font-semibold text-orange-300 text-sm lg:text-base">{cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
-                         </div>
-                       ))}
-                     </div>
-                     <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg p-3 lg:p-4 flex justify-between items-center mt-3 lg:mt-4">
-                       <span className="text-lg lg:text-2xl font-bold text-white">Total</span>
-                       <span className="text-xl lg:text-3xl font-bold text-white">
-                         {(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
-                       </span>
-                     </div>
-                     <Button 
-                       onClick={sendToWhatsApp}
-                       className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-sm lg:text-lg h-12 lg:h-14 rounded-xl shadow-lg mt-3 lg:mt-4"
-                     >
-                       <MessageCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                       Finalizar Contrato
-                     </Button>
-                   </div>
-                 )}
-               </CardContent>
-             </Card>
-          </div>
-
-          {/* Drink Selection - em mobile fica embaixo */}
-          <div className="lg:col-span-3 xl:col-span-4 order-2 lg:order-2 space-y-3 lg:space-y-4">
+        {/* Conteúdo principal */}
+        <div className="space-y-6 lg:space-y-8">
             
              <Card className="rounded-lg text-card-foreground bg-gray-800/80 backdrop-blur-md shadow-xl border-0 border-gray-700">
                 <CardContent className="p-3 lg:p-4">
@@ -1342,9 +1238,113 @@ export default function TenderesPage() {
               </div>
             )}
 
-          </div>
         </div>
       </div>
+
+      {/* Seção de Configuração do Evento - Movida para o final */}
+      {((selectedPlan || isDrinkeiraMode) || ((typeof people === 'number' && people > 0) || (typeof hours === 'number' && hours > 0))) && (
+        <div id="configuration-section" className="container mx-auto px-4 py-8">
+          <Card className={`rounded-lg text-card-foreground bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-500 ${
+            (selectedPlan || isDrinkeiraMode) ? 'border-2 border-green-500 shadow-green-500/20' : 'border border-gray-700'
+          }`}>
+            <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
+            <CardHeader className="relative z-10 pb-3">
+              <CardTitle className="font-semibold tracking-tight flex items-center space-x-3 text-lg lg:text-xl text-white">
+                <div className="p-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-lg">
+                   <Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-white" />
+                </div>
+                <span>Configuração do Evento</span>
+              </CardTitle>
+              <CardDescription className="text-sm text-gray-300">
+                {selectedPlan ? (
+                  <span className="text-green-400 font-medium">
+                    ✅ Plano selecionado! Configure pessoas e horas abaixo
+                  </span>
+                ) : isDrinkeiraMode ? (
+                  <span className="text-green-400 font-medium">
+                    ✅ Modo Drinkeira ativado! Configure pessoas e horas abaixo
+                  </span>
+                ) : (
+                  "Defina os detalhes do seu evento especial"
+                )}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-3 lg:p-4 pt-0 space-y-3 lg:space-y-4 relative z-10">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 lg:gap-6">
+                <div className="space-y-2 lg:space-y-3">
+                  <Label htmlFor="people" className="text-gray-300 text-sm lg:text-base">Número de Convidados</Label>
+                  <Input
+                    id="people"
+                    type="number"
+                    value={people}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setPeople(value === '' ? '' : Number(value))
+                    }}
+                    className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    placeholder="Ex: 50"
+                  />
+                </div>
+                <div className="space-y-2 lg:space-y-3">
+                  <Label htmlFor="hours" className="text-gray-300 text-sm lg:text-base">Duração do Evento (horas)</Label>
+                  <Input
+                    id="hours"
+                    type="number"
+                    value={hours}
+                    onChange={(e) => {
+                      const value = e.target.value
+                      setHours(value === '' ? '' : Number(value))
+                    }}
+                    className="bg-gray-700 border-gray-600 text-white h-10 lg:h-12 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                    placeholder="Ex: 4"
+                  />
+                </div>
+              </div>
+
+              {/* Resumo do Orçamento */}
+              {(((typeof people === 'number' && people > 0) || (typeof hours === 'number' && hours > 0)) || (mode === 'planos' && selectedPlan) || isDrinkeiraMode) && (
+                <div className="mt-6 lg:mt-8 space-y-4 lg:space-y-6">
+                  <h3 className="text-xl lg:text-2xl font-bold text-white flex items-center gap-2 text-center justify-center">
+                    <Sparkles className="h-6 w-6 lg:h-7 lg:w-7 text-yellow-300" />
+                    Resumo do Orçamento
+                  </h3>
+                  <div className="bg-gray-900/50 rounded-xl p-4 lg:p-6 space-y-3 lg:space-y-4">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-300 text-sm lg:text-base">
+                         {mode === 'planos' && selectedPlan ? "Custo do Plano" : isDrinkeiraMode ? "Custo Bartenders" : "Custo Drinks"}
+                      </span>
+                      <span className="font-semibold text-white text-sm lg:text-base">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                    </div>
+                    <div className="flex justify-between items-center bg-purple-500/10 p-3 lg:p-4 rounded-lg">
+                      <span className="text-sm lg:text-base text-gray-300">{config.transportationFeeName}</span>
+                      <span className="font-semibold text-white text-sm lg:text-base">{budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                    </div>
+                    {extraCosts.map((cost) => (
+                      <div key={cost.id} className="flex justify-between items-center bg-orange-500/10 p-3 lg:p-4 rounded-lg">
+                        <span className="text-sm lg:text-base text-gray-300">{cost.name}</span>
+                        <span className="font-semibold text-orange-300 text-sm lg:text-base">{cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl p-4 lg:p-6 flex justify-between items-center">
+                    <span className="text-xl lg:text-3xl font-bold text-white">Total</span>
+                    <span className="text-2xl lg:text-4xl font-bold text-white">
+                      {(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}
+                    </span>
+                  </div>
+                  <Button 
+                    onClick={sendToWhatsApp}
+                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold text-base lg:text-lg h-12 lg:h-14 rounded-xl shadow-lg"
+                  >
+                    <MessageCircle className="mr-2 h-5 w-5 lg:h-6 lg:w-6" />
+                    Finalizar Contrato
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       {/* Welcome Modal */}
       {showWelcomeModal && (
