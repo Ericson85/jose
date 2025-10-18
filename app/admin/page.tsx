@@ -53,6 +53,7 @@ export default function AdminPage() {
   const [loadingEvents, setLoadingEvents] = useState(false)
   const [editingDbEvent, setEditingDbEvent] = useState<any>(null)
   const [allDrinks, setAllDrinks] = useState<Drink[]>([])
+  const [allPlans, setAllPlans] = useState<any[]>([])
   const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config'>('dashboard')
   
   // Login states
@@ -164,9 +165,12 @@ export default function AdminPage() {
       const data = await res.json();
       setDbEvents(data);
       
-      // Carregar drinks se ainda não foram carregados
+      // Carregar drinks e planos se ainda não foram carregados
       if (allDrinks.length === 0) {
         await fetchAllDrinks();
+      }
+      if (allPlans.length === 0) {
+        await fetchAllPlans();
       }
     } catch (error) {
       console.error('Erro ao buscar eventos:', error);
@@ -184,6 +188,17 @@ export default function AdminPage() {
       console.log('🍹 Drinks carregados:', data.length);
     } catch (error) {
       console.error('Erro ao buscar drinks:', error);
+    }
+  }
+
+  async function fetchAllPlans() {
+    try {
+      const res = await fetch('/api/plans');
+      const data = await res.json();
+      setAllPlans(data);
+      console.log('📋 Planos carregados:', data.length);
+    } catch (error) {
+      console.error('Erro ao buscar planos:', error);
     }
   }
 
@@ -1619,7 +1634,13 @@ export default function AdminPage() {
                               {event.event_type === 'planos' && event.selected_plan_id && (
                                 <div className="mb-3 p-2 bg-blue-900/20 rounded-lg border border-blue-700/30">
                                   <p className="text-blue-300 text-xs font-semibold mb-1">📋 Plano Escolhido:</p>
-                                  <p className="text-blue-200 text-xs">{event.selected_plan_id}</p>
+                                  <p className="text-blue-200 text-xs">
+                                    {(() => {
+                                      const plan = allPlans.find(p => p.id.toString() === event.selected_plan_id);
+                                      console.log('🔍 Procurando plano:', { selected_plan_id: event.selected_plan_id, plan, totalPlans: allPlans.length });
+                                      return plan ? plan.name : `Plano não encontrado (ID: ${event.selected_plan_id})`;
+                                    })()}
+                                  </p>
                                 </div>
                               )}
                               
