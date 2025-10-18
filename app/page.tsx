@@ -714,7 +714,7 @@ export default function TenderesPage() {
           {/* Sidebar - em mobile fica no topo */}
           <div id="configuration-section" className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
              <Card className={`rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-500 ${
-               selectedPlan ? 'border-2 border-green-500 shadow-green-500/20 animate-pulse' : 'border border-gray-700'
+               selectedPlan ? 'border-2 border-green-500 shadow-green-500/20' : 'border border-gray-700'
              }`}>
                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
                <CardHeader className="relative z-10 pb-3">
