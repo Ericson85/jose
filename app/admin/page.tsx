@@ -1649,8 +1649,23 @@ export default function AdminPage() {
                                   <p className="text-purple-300 text-xs font-semibold mb-1">🍹 Drinks Selecionados:</p>
                                   <div className="text-purple-200 text-xs">
                                     {Object.entries(JSON.parse(event.selected_drinks || '{}')).map(([drinkId, quantity]) => {
-                                      const drink = allDrinks.find(d => d.id === drinkId);
-                                      console.log('🔍 Procurando drink:', { drinkId, quantity, drink, totalDrinks: allDrinks.length });
+                                      // Tentar diferentes formas de busca
+                                      let drink = allDrinks.find(d => d.id.toString() === drinkId);
+                                      if (!drink) {
+                                        drink = allDrinks.find(d => d.id === parseInt(drinkId));
+                                      }
+                                      if (!drink) {
+                                        drink = allDrinks.find(d => d.id === drinkId);
+                                      }
+                                      
+                                      console.log('🔍 Debug drink:', { 
+                                        drinkId, 
+                                        drinkIdType: typeof drinkId,
+                                        drink, 
+                                        totalDrinks: allDrinks.length,
+                                        allDrinkIds: allDrinks.map(d => ({ id: d.id, type: typeof d.id, name: d.name }))
+                                      });
+                                      
                                       return (
                                         <p key={drinkId}>• {String(quantity)}x {drink ? drink.name : `Drink não encontrado (ID: ${drinkId})`}</p>
                                       );
