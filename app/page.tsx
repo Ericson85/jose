@@ -1,14 +1,13 @@
 "use client"
 
 import { useState, useEffect, useMemo } from "react"
-import { Wine, Users, Clock, Calculator, Star, CheckCircle, Sparkles, Heart, Award, Moon, Sun, MapPin, Phone, Mail, MessageCircle, User, RefreshCw } from "lucide-react"
+import { Wine, Users, Clock, Calculator, Star, CheckCircle, Sparkles, Heart, Award, MapPin, Phone, Mail, MessageCircle, User, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
-import { useTheme } from "next-themes"
 
 export interface Drink {
   id: string
@@ -183,7 +182,6 @@ const completePlans: CompletePlan[] = [
 ]
 
 export default function TenderesPage() {
-  const { theme, setTheme } = useTheme()
   const [showWelcomeModal, setShowWelcomeModal] = useState(false)
   const [userData, setUserData] = useState<UserData>({
     name: "",
@@ -622,31 +620,27 @@ export default function TenderesPage() {
         </div>
       )}
 
-      {/* Header */}
+      {/* Header Responsivo */}
       <header className="relative z-10 bg-gray-900/80 backdrop-blur-md border-b border-purple-500/30">
-        <div className="container mx-auto px-4 py-3 lg:py-4">
+        <div className="container mx-auto px-4 py-3 lg:py-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2 lg:space-x-3">
-              <Wine className="h-6 w-6 lg:h-8 lg:w-8 text-purple-400" />
-              <h1 className="text-xl lg:text-2xl font-bold text-white">Tenderes</h1>
-            </div>
+            {/* Logo - Mobile: menor, Desktop: maior */}
             <div className="flex items-center space-x-2 lg:space-x-4">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                className="text-gray-300 hover:text-white p-2 lg:p-3"
-              >
-                {theme === "dark" ? <Sun className="h-4 w-4 lg:h-5 lg:w-5" /> : <Moon className="h-4 w-4 lg:h-5 lg:w-5" />}
-              </Button>
+              <Wine className="h-6 w-6 lg:h-10 lg:w-10 text-purple-400" />
+              <h1 className="text-lg lg:text-3xl font-bold text-white">Tenderes</h1>
+            </div>
+            
+            {/* Botão Perfil - Mobile: compacto, Desktop: espaçado */}
+            <div className="flex items-center">
+              {/* Mobile: botão pequeno, Desktop: botão grande */}
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => setShowWelcomeModal(true)}
-                className="border-purple-500 text-purple-300 hover:bg-purple-900/50 text-xs lg:text-sm"
+                className="border-purple-500 text-purple-300 hover:bg-purple-900/50 text-xs lg:text-base px-2 py-1 lg:px-6 lg:py-3"
               >
-                <User className="h-3 w-3 lg:h-4 lg:w-4 mr-1 lg:mr-2" />
-                Perfil
+                <User className="h-3 w-3 lg:h-5 lg:w-5 mr-1 lg:mr-3" />
+                <span className="hidden sm:inline">Perfil</span>
               </Button>
             </div>
           </div>
@@ -670,17 +664,32 @@ export default function TenderesPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-purple-600/10 to-pink-600/10 animate-pulse"></div>
         <div className="container mx-auto px-4 relative z-10">
           <div className="max-w-4xl mx-auto">
-            <h2 className="text-3xl lg:text-4xl xl:text-5xl font-bold text-white mb-3 lg:mb-4 leading-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-white mb-3 lg:mb-4 leading-tight">
               Drinks <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Perfeitos</span>
               <br className="hidden lg:block"/>para Seu Evento
             </h2>
             <p className="text-base lg:text-lg xl:text-xl text-gray-300 mb-4 lg:mb-6 max-w-3xl mx-auto leading-relaxed">
                Monte seu pacote personalizado de drinks premium e receba um orçamento instantâneo. Transforme seu evento em uma experiência inesquecível.
             </p>
+            {/* Mobile: Cards empilhados, Desktop: Cards lado a lado */}
             <div className="flex flex-col sm:flex-row flex-wrap justify-center items-center gap-2 lg:gap-3 xl:gap-4 text-sm text-gray-300">
-               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><CheckCircle className="h-4 w-4 lg:h-5 lg:w-5 text-green-400" /> <span className="font-medium text-sm lg:text-base">Drinks Premium</span></div>
-               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Award className="h-4 w-4 lg:h-5 lg:w-5 text-blue-400" /> <span className="font-medium text-sm lg:text-base">Serviço Profissional</span></div>
-               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center"><Calculator className="h-4 w-4 lg:h-5 lg:w-5 text-purple-400" /> <span className="font-medium text-sm lg:text-base">Orçamento Instantâneo</span></div>
+               {/* Mobile: Card maior e mais visível */}
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gradient-to-r from-green-600/20 to-emerald-600/20 backdrop-blur-sm rounded-xl px-4 py-3 lg:px-4 lg:py-2 shadow-lg border border-green-500/30 w-full sm:w-auto justify-center sm:rounded-full">
+                 <CheckCircle className="h-5 w-5 lg:h-5 lg:w-5 text-green-400" /> 
+                 <span className="font-medium text-base lg:text-base">Drinks Premium</span>
+               </div>
+               
+               {/* Mobile: Card menor, Desktop: tamanho normal */}
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gray-800/60 backdrop-blur-sm rounded-full px-3 lg:px-4 py-2 shadow-lg border border-gray-700 w-full sm:w-auto justify-center">
+                 <Award className="h-4 w-4 lg:h-5 lg:w-5 text-blue-400" /> 
+                 <span className="font-medium text-sm lg:text-base">Serviço Profissional</span>
+               </div>
+               
+               {/* Mobile: Card com destaque especial */}
+               <div className="flex items-center space-x-2 lg:space-x-3 bg-gradient-to-r from-purple-600/20 to-pink-600/20 backdrop-blur-sm rounded-xl px-4 py-3 lg:px-4 lg:py-2 shadow-lg border border-purple-500/30 w-full sm:w-auto justify-center sm:rounded-full">
+                 <Calculator className="h-5 w-5 lg:h-5 lg:w-5 text-purple-400" /> 
+                 <span className="font-medium text-base lg:text-base">Orçamento Instantâneo</span>
+               </div>
             </div>
           </div>
         </div>
