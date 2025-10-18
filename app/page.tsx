@@ -463,6 +463,17 @@ export default function TenderesPage() {
   const handleFinishSelection = () => {
     setShowEventConfigInDetailed(true)
     showToast("Drinks selecionados! Agora configure seu evento.", "success")
+    
+    // Scroll automático para a configuração de eventos após um pequeno delay
+    setTimeout(() => {
+      const eventConfigElement = document.querySelector('[data-event-config]')
+      if (eventConfigElement) {
+        eventConfigElement.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'start'
+        })
+      }
+    }, 300)
   }
 
 
@@ -882,7 +893,7 @@ export default function TenderesPage() {
                 
                 {/* Configuração de Eventos no Modo Detalhado */}
                 {showEventConfigInDetailed && (
-                  <div className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/50 rounded-xl p-6">
+                  <div data-event-config className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 border border-blue-500/50 rounded-xl p-6">
                     <div className="text-center mb-6">
                       <h3 className="text-xl lg:text-2xl font-bold text-white mb-2">
                         🎉 Perfeito! Agora configure seu evento
