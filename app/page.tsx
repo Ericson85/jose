@@ -1178,9 +1178,6 @@ export default function TenderesPage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <p className="text-gray-300 mb-4 text-sm lg:text-base text-center">
-                        Contrate apenas o bartender e taxa de locomoção. Os convidados escolhem e pagam pelos drinks no evento.
-                      </p>
                       <Button 
                         onClick={() => {
                           const newDrinkeiraMode = !isDrinkeiraMode;
@@ -1189,7 +1186,7 @@ export default function TenderesPage() {
                           
                           // Se modo drinkeira foi ativado, redirecionar para configuração
                           if (newDrinkeiraMode) {
-                            showToast("Modo Drinkeira ativado! Configure agora a quantidade de pessoas e horas.", "success");
+                            showToast("Modo Drinkeira selecionado! Configure agora a quantidade de pessoas e horas.", "success");
                             setTimeout(() => {
                               scrollToConfiguration();
                             }, 100);
@@ -1204,12 +1201,12 @@ export default function TenderesPage() {
                         {isDrinkeiraMode ? (
                           <>
                             <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                            Modo Ativado
+                            Plano Selecionado
                           </>
                         ) : (
                           <>
                             <Wine className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                            Ativar Modo
+                            Selecionar Plano
                           </>
                         )}
                       </Button>
