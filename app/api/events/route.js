@@ -28,7 +28,10 @@ export async function GET() {
 // POST: Criar novo evento
 export async function POST(request) {
   try {
+    console.log('🔄 API Events POST chamada');
     const body = await request.json();
+    console.log('📝 Dados recebidos:', body);
+    
     const {
       name,
       description,
@@ -52,6 +55,7 @@ export async function POST(request) {
       whatsapp_message
     } = body;
 
+    console.log('🔗 Conectando ao banco de dados...');
     const [result] = await db.query(
       `INSERT INTO events (
         name, description, date, location, max_guests, status,
@@ -69,14 +73,15 @@ export async function POST(request) {
       ]
     );
 
+    console.log('✅ Evento inserido no banco com ID:', result.insertId);
     return NextResponse.json({
       id: result.insertId,
       message: 'Evento criado com sucesso'
     });
   } catch (error) {
-    console.error('Erro ao criar evento:', error);
+    console.error('❌ Erro ao criar evento:', error);
     return NextResponse.json(
-      { error: 'Erro ao criar evento', details: error },
+      { error: 'Erro ao criar evento', details: error.message },
       { status: 500 }
     );
   }

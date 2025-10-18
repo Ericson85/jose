@@ -620,6 +620,8 @@ export default function TenderesPage() {
 
     // Criar evento pré-agendado no banco de dados
     try {
+      console.log('🔄 Iniciando criação de evento pré-agendado...')
+      
       const eventData = {
         name: `${userData.name} - ${mode === 'planos' ? 'Plano Completo' : mode === 'detalhado' ? 'Orçamento Detalhado' : 'Modo Drinkeira'}`,
         description: `Evento pré-agendado - Cliente solicitou orçamento via WhatsApp`,
@@ -643,16 +645,29 @@ export default function TenderesPage() {
         whatsapp_message: message
       }
 
-      await fetch('/api/events', {
+      console.log('📝 Dados do evento:', eventData)
+
+      const response = await fetch('/api/events', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(eventData)
       })
 
+      console.log('📡 Resposta da API:', response.status, response.statusText)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('❌ Erro na API:', errorText)
+        throw new Error(`API retornou ${response.status}: ${errorText}`)
+      }
+
+      const result = await response.json()
+      console.log('✅ Evento criado com sucesso:', result)
+
       showToast("Evento pré-agendado criado! Agora enviando para WhatsApp...", "success")
     } catch (error) {
-      console.error('Erro ao criar evento pré-agendado:', error)
-      showToast("Erro ao salvar evento, mas enviando para WhatsApp...", "error")
+      console.error('❌ Erro ao criar evento pré-agendado:', error)
+      showToast(`Erro ao salvar evento: ${error.message}`, "error")
     }
 
     // Enviar para WhatsApp
