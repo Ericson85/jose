@@ -406,6 +406,7 @@ export default function TenderesPage() {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [showEventConfigInDetailed, setShowEventConfigInDetailed] = useState(false)
   const [showPreviewModal, setShowPreviewModal] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
   
   // Função para scroll suave para a seção de configuração
   const scrollToConfiguration = () => {
@@ -622,7 +623,8 @@ export default function TenderesPage() {
       const result = await response.json()
       console.log('✅ Evento criado com sucesso:', result)
 
-      showToast("Evento finalizado! Nossa equipe entrará em contato em breve.", "success")
+      // Mostrar modal de sucesso centralizado
+      setShowSuccessModal(true)
       
       // Limpar formulário após finalizar
       setSelectedDrinks({})
@@ -630,6 +632,11 @@ export default function TenderesPage() {
       setPeople('')
       setHours('')
       setShowEventConfigInDetailed(false)
+      
+      // Fechar modal de sucesso após 3 segundos
+      setTimeout(() => {
+        setShowSuccessModal(false)
+      }, 3000)
       
     } catch (error) {
       console.error('❌ Erro ao criar evento pré-agendado:', error)
@@ -797,7 +804,25 @@ export default function TenderesPage() {
           </div>
         </div>
       )}
-      {/* Notification de atualização automática */}
+      
+      {/* Modal de Sucesso Centralizado */}
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-green-900 to-emerald-800 rounded-2xl p-8 max-w-md w-full border border-green-600/50 shadow-2xl">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h2 className="text-2xl font-bold text-white mb-2">Sucesso!</h2>
+              <p className="text-green-100 text-lg">
+                Evento finalizado! Nossa equipe entrará em contato em breve.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
       {showUpdateNotification && (
         <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
           <div className="bg-green-600/90 backdrop-blur-md text-white px-4 py-2 rounded-lg shadow-lg border border-green-500/50 flex items-center gap-2">
