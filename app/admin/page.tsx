@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star } from "lucide-react"
+import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star, CheckCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -49,6 +49,8 @@ export default function AdminPage() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [drinks, setDrinks] = useState<Drink[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [dbEvents, setDbEvents] = useState<any[]>([])
+  const [loadingEvents, setLoadingEvents] = useState(false)
   const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config'>('dashboard')
   
   // Login states
@@ -147,6 +149,25 @@ export default function AdminPage() {
   useEffect(() => {
     if (activeTab === 'plans') fetchPlans();
   }, [activeTab]);
+
+  // Buscar eventos do banco ao abrir aba
+  useEffect(() => {
+    if (activeTab === 'events') fetchDbEvents();
+  }, [activeTab]);
+
+  async function fetchDbEvents() {
+    setLoadingEvents(true);
+    try {
+      const res = await fetch('/api/events');
+      const data = await res.json();
+      setDbEvents(data);
+    } catch (error) {
+      console.error('Erro ao buscar eventos:', error);
+      showMessage('Erro ao carregar eventos!', 'error');
+    } finally {
+      setLoadingEvents(false);
+    }
+  }
 
   async function fetchPlans() {
     setLoadingPlans(true);
@@ -1456,76 +1477,195 @@ export default function AdminPage() {
             )}
 
             {activeTab === 'events' && (
-              <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-xl text-white">Eventos Cadastrados</CardTitle>
-                      <CardDescription className="text-gray-300">
-                        Gerencie todos os eventos
-                      </CardDescription>
+              <div className="space-y-6">
+                {/* Eventos Pré-Agendados */}
+                <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-xl text-white">Eventos Pré-Agendados</CardTitle>
+                        <CardDescription className="text-gray-300">
+                          Eventos criados pelos clientes - Aguardando contato
+                        </CardDescription>
+                      </div>
+                      <Button
+                        onClick={fetchDbEvents}
+                        disabled={loadingEvents}
+                        className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                      >
+                        {loadingEvents ? (
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                        ) : (
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                        )}
+                        Atualizar
+                      </Button>
                     </div>
-                    <Button
-                      onClick={handleAddNew}
-                      className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
-                    >
-                      <Plus className="h-4 w-4 mr-2" />
-                      Novo Evento
-                    </Button>
+                  </CardHeader>
+                  <CardContent>
+                    {loadingEvents ? (
+                      <div className="text-center py-8">
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-4"></div>
+                        <p className="text-gray-300">Carregando eventos...</p>
+                      </div>
+                    ) : dbEvents.length === 0 ? (
+                      <div className="text-center py-8">
+                        <div className="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                          <span className="text-gray-400 text-2xl">📅</span>
+                        </div>
+                        <p className="text-gray-400">Nenhum evento pré-agendado encontrado</p>
+                      </div>
+                    ) : (
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {dbEvents.map((event) => (
+                          <Card key={event.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                            <CardContent className="p-4">
+                              <div className="flex items-center justify-between mb-3">
+                                <div className="w-12 h-12 bg-gradient-to-br from-orange-900/50 to-red-900/50 rounded-lg flex items-center justify-center">
+                                  <span className="text-orange-300 font-bold">!</span>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                  <Button
+                                    onClick={() => {
+                                      // Marcar como ativo
+                                      fetch(`/api/events`, {
+                                        method: 'PUT',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ ...event, status: 'active' })
+                                      }).then(() => {
+                                        fetchDbEvents();
+                                        showMessage('Evento marcado como ativo!', 'success');
+                                      });
+                                    }}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-green-600 text-green-300 hover:bg-green-900/50"
+                                  >
+                                    <CheckCircle className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      if (confirm('Tem certeza que deseja excluir este evento?')) {
+                                        fetch(`/api/events?id=${event.id}`, { method: 'DELETE' })
+                                          .then(() => {
+                                            fetchDbEvents();
+                                            showMessage('Evento excluído!', 'success');
+                                          });
+                                      }
+                                    }}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-red-600 text-red-300 hover:bg-red-900/50"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                              <h4 className="font-semibold text-white mb-2">{event.name}</h4>
+                              <p className="text-gray-300 text-sm mb-2 line-clamp-2">{event.description}</p>
+                              <div className="space-y-1 text-xs text-gray-400">
+                                <p>📅 {new Date(event.date).toLocaleDateString('pt-BR')}</p>
+                                <p>📍 {event.location}</p>
+                                <p>👥 {event.people_count} pessoas</p>
+                                <p>⏰ {event.hours_count} horas</p>
+                                <p>💰 R$ {Number(event.total_budget).toFixed(2).replace('.', ',')}</p>
+                                <p>📱 {event.customer_phone}</p>
+                              </div>
+                              <div className="mt-3">
+                                <Badge className={`text-xs ${
+                                  event.status === 'pre_scheduled' 
+                                    ? 'bg-orange-900/50 text-orange-200 border-orange-700/50'
+                                    : event.status === 'active'
+                                    ? 'bg-green-900/50 text-green-200 border-green-700/50'
+                                    : event.status === 'completed'
+                                    ? 'bg-gray-900/50 text-gray-200 border-gray-700/50'
+                                    : 'bg-red-900/50 text-red-200 border-red-700/50'
+                                }`}>
+                                  {event.status === 'pre_scheduled' ? 'Pré-Agendado' : 
+                                   event.status === 'active' ? 'Ativo' : 
+                                   event.status === 'completed' ? 'Concluído' : 'Inativo'}
+                                </Badge>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Eventos Manuais */}
+                <Card className="bg-gray-800/80 backdrop-blur-md shadow-xl border-0">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-xl text-white">Eventos Manuais</CardTitle>
+                        <CardDescription className="text-gray-300">
+                          Eventos criados manualmente pelo admin
+                        </CardDescription>
+                      </div>
+                      <Button
+                        onClick={handleAddNew}
+                        className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Novo Evento
+                      </Button>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {events.map((event) => (
+                        <Card key={event.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
+                          <CardContent className="p-4">
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="w-12 h-12 bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-lg flex items-center justify-center">
+                                <span className="text-blue-300 font-bold">E</span>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <Button
+                                  onClick={() => handleEdit(event)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
+                                >
+                                  <Edit className="h-4 w-4" />
+                                </Button>
+                                <Button
+                                  onClick={() => handleDelete(event.id)}
+                                  variant="outline"
+                                  size="sm"
+                                  className="border-red-600 text-red-300 hover:bg-red-900/50"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                            <h4 className="font-semibold text-white mb-2">{event.name}</h4>
+                            <p className="text-gray-300 text-sm mb-2 line-clamp-2">{event.description}</p>
+                            <div className="space-y-1 text-xs text-gray-400">
+                              <p>📅 {new Date(event.date).toLocaleDateString('pt-BR')}</p>
+                              <p>📍 {event.location}</p>
+                              <p>👥 Máx: {event.maxGuests} convidados</p>
+                            </div>
+                            <div className="mt-3">
+                              <Badge className={`text-xs ${
+                                event.status === 'active' 
+                                  ? 'bg-green-900/50 text-green-200 border-green-700/50'
+                                  : event.status === 'completed'
+                                  ? 'bg-gray-900/50 text-gray-200 border-gray-700/50'
+                                  : 'bg-red-900/50 text-red-200 border-red-700/50'
+                              }`}>
+                                {event.status === 'active' ? 'Ativo' : event.status === 'completed' ? 'Concluído' : 'Inativo'}
+                              </Badge>
+                            </div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {events.map((event) => (
-                      <Card key={event.id} className="bg-gray-700/50 border-gray-600 hover:border-purple-500/50 transition-colors">
-                        <CardContent className="p-4">
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="w-12 h-12 bg-gradient-to-br from-blue-900/50 to-cyan-900/50 rounded-lg flex items-center justify-center">
-                              <span className="text-blue-300 font-bold">E</span>
-                            </div>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                onClick={() => handleEdit(event)}
-                                variant="outline"
-                                size="sm"
-                                className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
-                              >
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <Button
-                                onClick={() => handleDelete(event.id)}
-                                variant="outline"
-                                size="sm"
-                                className="border-red-600 text-red-300 hover:bg-red-900/50"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                          <h4 className="font-semibold text-white mb-2">{event.name}</h4>
-                          <p className="text-gray-300 text-sm mb-2 line-clamp-2">{event.description}</p>
-                          <div className="space-y-1 text-xs text-gray-400">
-                            <p>📅 {new Date(event.date).toLocaleDateString('pt-BR')}</p>
-                            <p>📍 {event.location}</p>
-                            <p>👥 Máx: {event.maxGuests} convidados</p>
-                          </div>
-                          <div className="mt-3">
-                            <Badge className={`text-xs ${
-                              event.status === 'active' 
-                                ? 'bg-green-900/50 text-green-200 border-green-700/50'
-                                : event.status === 'completed'
-                                ? 'bg-gray-900/50 text-gray-200 border-gray-700/50'
-                                : 'bg-red-900/50 text-red-200 border-red-700/50'
-                            }`}>
-                              {event.status === 'active' ? 'Ativo' : event.status === 'completed' ? 'Concluído' : 'Inativo'}
-                            </Badge>
-                          </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
             )}
           </div>
 

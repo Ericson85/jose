@@ -551,7 +551,7 @@ export default function TenderesPage() {
     }
   }, [mode, selectedPlan, completePlans, isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks, config, extraCosts])
 
-  const sendToWhatsApp = () => {
+  const sendToWhatsApp = async () => {
     // Verificar se o usuário já preencheu os dados
     const savedUserData = localStorage.getItem("tenderes_user_data")
     if (!savedUserData || !userData.name || !userData.phone) {
@@ -618,6 +618,44 @@ export default function TenderesPage() {
     message += `\n---------------------------------\n`
     message += `*VALOR TOTAL: ${(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}*`
 
+    // Criar evento pré-agendado no banco de dados
+    try {
+      const eventData = {
+        name: `${userData.name} - ${mode === 'planos' ? 'Plano Completo' : mode === 'detalhado' ? 'Orçamento Detalhado' : 'Modo Drinkeira'}`,
+        description: `Evento pré-agendado - Cliente solicitou orçamento via WhatsApp`,
+        date: new Date().toISOString().split('T')[0], // Data atual
+        location: userData.address || 'Local não informado',
+        max_guests: peopleNum,
+        status: 'pre_scheduled',
+        customer_name: userData.name,
+        customer_phone: userData.phone,
+        customer_email: '',
+        customer_address: userData.address || '',
+        customer_city: userData.city || '',
+        customer_state: userData.state || '',
+        customer_age: userData.age || 0,
+        event_type: mode,
+        selected_plan_id: selectedPlan || null,
+        selected_drinks: selectedDrinks,
+        people_count: peopleNum,
+        hours_count: hoursNum,
+        total_budget: budgetResult.total,
+        whatsapp_message: message
+      }
+
+      await fetch('/api/events', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(eventData)
+      })
+
+      showToast("Evento pré-agendado criado! Agora enviando para WhatsApp...", "success")
+    } catch (error) {
+      console.error('Erro ao criar evento pré-agendado:', error)
+      showToast("Erro ao salvar evento, mas enviando para WhatsApp...", "error")
+    }
+
+    // Enviar para WhatsApp
     const whatsappUrl = `https://api.whatsapp.com/send?phone=5585994330680&text=${encodeURIComponent(message)}`
     window.open(whatsappUrl, "_blank")
   }
