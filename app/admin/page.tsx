@@ -52,6 +52,7 @@ export default function AdminPage() {
   const [dbEvents, setDbEvents] = useState<any[]>([])
   const [loadingEvents, setLoadingEvents] = useState(false)
   const [editingDbEvent, setEditingDbEvent] = useState<any>(null)
+  const [allDrinks, setAllDrinks] = useState<Drink[]>([])
   const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config'>('dashboard')
   
   // Login states
@@ -162,11 +163,27 @@ export default function AdminPage() {
       const res = await fetch('/api/events');
       const data = await res.json();
       setDbEvents(data);
+      
+      // Carregar drinks se ainda não foram carregados
+      if (allDrinks.length === 0) {
+        await fetchAllDrinks();
+      }
     } catch (error) {
       console.error('Erro ao buscar eventos:', error);
       showMessage('Erro ao carregar eventos!', 'error');
     } finally {
       setLoadingEvents(false);
+    }
+  }
+
+  async function fetchAllDrinks() {
+    try {
+      const res = await fetch('/api/drinks');
+      const data = await res.json();
+      setAllDrinks(data);
+      console.log('🍹 Drinks carregados:', data.length);
+    } catch (error) {
+      console.error('Erro ao buscar drinks:', error);
     }
   }
 
@@ -1611,8 +1628,8 @@ export default function AdminPage() {
                                   <p className="text-purple-300 text-xs font-semibold mb-1">🍹 Drinks Selecionados:</p>
                                   <div className="text-purple-200 text-xs">
                                     {Object.entries(JSON.parse(event.selected_drinks || '{}')).map(([drinkId, quantity]) => {
-                                      const drink = drinks.find(d => d.id === drinkId);
-                                      console.log('🔍 Procurando drink:', { drinkId, quantity, drink, totalDrinks: drinks.length });
+                                      const drink = allDrinks.find(d => d.id === drinkId);
+                                      console.log('🔍 Procurando drink:', { drinkId, quantity, drink, totalDrinks: allDrinks.length });
                                       return (
                                         <p key={drinkId}>• {String(quantity)}x {drink ? drink.name : `Drink não encontrado (ID: ${drinkId})`}</p>
                                       );
