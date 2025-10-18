@@ -1158,9 +1158,9 @@ export default function TenderesPage() {
                                       
                                       <button
                                         onClick={() => handleDrinkQuantityChange(drink.id, 1)}
-                                        className="w-4 h-4 lg:w-5 lg:h-5 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
+                                        className="w-6 h-6 lg:w-7 lg:h-7 bg-purple-600/60 hover:bg-purple-600/80 border border-purple-400/50 rounded flex items-center justify-center transition-all duration-200 hover:scale-105"
                                       >
-                                        <span className="text-white text-xs font-bold">+</span>
+                                        <span className="text-white text-sm font-bold">+</span>
                                       </button>
                                     </div>
                                   </div>
