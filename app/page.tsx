@@ -1477,11 +1477,11 @@ export default function TenderesPage() {
                                 {caipirinhas.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
                                   <Card
                                     key={drink.id}
-                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl h-32"
                                   >
                                     <CardHeader className="pb-2 flex flex-row items-center gap-2">
                                       <Wine className="h-5 w-5 text-purple-300 drop-shadow" />
-                                      <CardTitle className="text-lg font-bold text-white tracking-tight">
+                                      <CardTitle className="text-lg font-bold text-white tracking-tight line-clamp-2">
                                         {drink.name}
                                       </CardTitle>
                                     </CardHeader>
@@ -1491,7 +1491,7 @@ export default function TenderesPage() {
                                           {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </span>
                                       </div>
-                                      <p className="text-gray-100 text-sm leading-relaxed">{drink.description}</p>
+                                      <p className="text-gray-100 text-sm leading-relaxed line-clamp-2">{drink.description}</p>
                                     </CardContent>
                                   </Card>
                                 ))}
@@ -1542,11 +1542,11 @@ export default function TenderesPage() {
                                 {caipiroskas.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
                                   <Card
                                     key={drink.id}
-                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl h-32"
                                   >
                                     <CardHeader className="pb-2 flex flex-row items-center gap-2">
                                       <Wine className="h-5 w-5 text-cyan-300 drop-shadow" />
-                                      <CardTitle className="text-lg font-bold text-white tracking-tight">
+                                      <CardTitle className="text-lg font-bold text-white tracking-tight line-clamp-2">
                                         {drink.name}
                                       </CardTitle>
                                     </CardHeader>
@@ -1556,7 +1556,7 @@ export default function TenderesPage() {
                                           {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </span>
                                       </div>
-                                      <p className="text-gray-100 text-sm leading-relaxed">{drink.description}</p>
+                                      <p className="text-gray-100 text-sm leading-relaxed line-clamp-2">{drink.description}</p>
                                     </CardContent>
                                   </Card>
                                 ))}
@@ -1607,11 +1607,11 @@ export default function TenderesPage() {
                                 {outrosClassicos.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
                                   <Card
                                     key={drink.id}
-                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl h-32"
                                   >
                                     <CardHeader className="pb-2 flex flex-row items-center gap-2">
                                       <Wine className="h-5 w-5 text-red-300 drop-shadow" />
-                                      <CardTitle className="text-lg font-bold text-white tracking-tight">
+                                      <CardTitle className="text-lg font-bold text-white tracking-tight line-clamp-2">
                                         {drink.name}
                                       </CardTitle>
                                     </CardHeader>
@@ -1621,7 +1621,7 @@ export default function TenderesPage() {
                                           {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                         </span>
                                       </div>
-                                      <p className="text-gray-100 text-sm leading-relaxed">{drink.description}</p>
+                                      <p className="text-gray-100 text-sm leading-relaxed line-clamp-2">{drink.description}</p>
                                     </CardContent>
                                   </Card>
                                 ))}
