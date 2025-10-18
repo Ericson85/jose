@@ -714,7 +714,7 @@ export default function TenderesPage() {
           {/* Sidebar - em mobile fica no topo */}
           <div id="configuration-section" className="lg:col-span-1 xl:col-span-1 order-1 lg:order-1">
              <Card className={`rounded-lg text-card-foreground lg:sticky top-24 bg-gray-800/80 backdrop-blur-md shadow-xl overflow-hidden transition-all duration-500 ${
-               selectedPlan ? 'border-2 border-green-500 shadow-green-500/20' : 'border border-gray-700'
+               (selectedPlan || isDrinkeiraMode) ? 'border-2 border-green-500 shadow-green-500/20' : 'border border-gray-700'
              }`}>
                <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-pink-500/5"></div>
                <CardHeader className="relative z-10 pb-3">
@@ -729,27 +729,54 @@ export default function TenderesPage() {
                      <span className="text-green-400 font-medium">
                        ✅ Plano selecionado! Configure pessoas e horas abaixo
                      </span>
+                   ) : isDrinkeiraMode ? (
+                     <span className="text-green-400 font-medium">
+                       ✅ Modo Drinkeira ativado! Configure pessoas e horas abaixo
+                     </span>
                    ) : (
                      "Defina os detalhes do seu evento especial"
                    )}
                  </CardDescription>
                </CardHeader>
                <CardContent className="p-3 lg:p-4 pt-0 space-y-3 lg:space-y-4 relative z-10">
-                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 lg:mb-4 p-2 lg:p-3 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
-                     <div className="mb-2 sm:mb-0">
-                        <h4 className="font-semibold text-green-300 text-sm lg:text-base">Modo Drinkeira</h4>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 lg:mb-4 p-3 lg:p-4 bg-gradient-to-r from-green-900/50 to-emerald-900/50 rounded-xl border border-green-700/50">
+                     <div className="mb-3 sm:mb-0 flex-1">
+                        <h4 className="font-semibold text-green-300 text-sm lg:text-base mb-1">Modo Drinkeira</h4>
                         <p className="text-xs lg:text-sm text-green-400">Bartender vende drinks na hora</p>
                      </div>
                      <Button 
                         onClick={() => {
-                          setIsDrinkeiraMode(!isDrinkeiraMode);
-                          setMode(isDrinkeiraMode ? 'planos' : 'drinkeira');
+                          const newDrinkeiraMode = !isDrinkeiraMode;
+                          setIsDrinkeiraMode(newDrinkeiraMode);
+                          setMode(newDrinkeiraMode ? 'drinkeira' : 'planos');
+                          
+                          // Se modo drinkeira foi ativado, redirecionar para configuração
+                          if (newDrinkeiraMode) {
+                            showToast("Modo Drinkeira ativado! Configure agora a quantidade de pessoas e horas.", "success");
+                            setTimeout(() => {
+                              scrollToConfiguration();
+                            }, 100);
+                          }
                         }}
                         variant={isDrinkeiraMode ? "default" : "outline"}
                         size="sm"
-                        className={`text-xs lg:text-sm ${isDrinkeiraMode ? "bg-green-600 hover:bg-green-700 text-white" : "border-green-400 text-green-300 hover:bg-green-900"}`}
+                        className={`text-xs lg:text-sm px-4 py-2 transition-all duration-300 ${
+                          isDrinkeiraMode 
+                            ? "bg-green-600 hover:bg-green-700 text-white shadow-lg" 
+                            : "border-green-400 text-green-300 hover:bg-green-900 hover:border-green-300"
+                        }`}
                       >
-                        {isDrinkeiraMode ? "Ativado" : "Ativar"}
+                        {isDrinkeiraMode ? (
+                          <>
+                            <CheckCircle className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                            Ativado
+                          </>
+                        ) : (
+                          <>
+                            <Wine className="mr-1 h-3 w-3 lg:h-4 lg:w-4" />
+                            Ativar
+                          </>
+                        )}
                      </Button>
                   </div>
                  <div className="space-y-2 lg:space-y-3">
@@ -782,7 +809,7 @@ export default function TenderesPage() {
                  </div>
 
                  {/* Resumo do Orçamento */}
-                 {(((typeof people === 'number' && people > 0) || (typeof hours === 'number' && hours > 0)) || (mode === 'planos' && selectedPlan) || (mode === 'drinkeira' && isDrinkeiraMode)) && (
+                 {(((typeof people === 'number' && people > 0) || (typeof hours === 'number' && hours > 0)) || (mode === 'planos' && selectedPlan) || isDrinkeiraMode) && (
                    <div className="mt-3 lg:mt-4 space-y-2 lg:space-y-3">
                      <h3 className="text-lg lg:text-xl font-bold text-white flex items-center gap-2">
                        <Sparkles className="h-5 w-5 lg:h-6 lg:w-6 text-yellow-300" />
