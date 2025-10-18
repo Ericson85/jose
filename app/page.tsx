@@ -934,66 +934,6 @@ export default function TenderesPage() {
                         </CardContent>
                       </Card>
                     ))}
-                    
-                    {/* Card do Modo Drinkeira */}
-                    <Card className="bg-gray-800 border border-gray-700 shadow-lg">
-                      <CardHeader className="pb-3">
-                        <CardTitle className="text-lg lg:text-2xl text-white flex items-center gap-2">
-                          <Wine className="h-4 w-4 lg:h-5 lg:w-5 text-green-400" />
-                          Modo Drinkeira
-                        </CardTitle>
-                        <CardDescription className="text-base lg:text-lg text-green-200 font-bold mb-2">
-                          Bartender vende drinks na hora
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-gray-300 mb-3 lg:mb-4 text-sm lg:text-base">
-                          Contrate apenas o bartender e taxa de locomoção. Os convidados escolhem e pagam pelos drinks no evento.
-                        </p>
-                        <div>
-                          <span className="font-semibold text-white text-sm lg:text-base">Como funciona:</span>
-                          <ul className="list-disc list-inside text-gray-200 mt-2 text-sm lg:text-base">
-                            <li>Você paga apenas bartender + locomoção</li>
-                            <li>Drinks vendidos no evento</li>
-                            <li>Preços diferenciados por drink</li>
-                          </ul>
-                        </div>
-                        <div className="mt-4 lg:mt-6">
-                          <Button 
-                            onClick={() => {
-                              const newDrinkeiraMode = !isDrinkeiraMode;
-                              setIsDrinkeiraMode(newDrinkeiraMode);
-                              setMode(newDrinkeiraMode ? 'drinkeira' : 'planos');
-                              
-                              // Se modo drinkeira foi ativado, redirecionar para configuração
-                              if (newDrinkeiraMode) {
-                                showToast("Modo Drinkeira ativado! Configure agora a quantidade de pessoas e horas.", "success");
-                                setTimeout(() => {
-                                  scrollToConfiguration();
-                                }, 100);
-                              }
-                            }}
-                            className={`w-full ${
-                              isDrinkeiraMode 
-                                ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
-                                : 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800'
-                            } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg transition-all duration-300`}
-                          >
-                            {isDrinkeiraMode ? (
-                              <>
-                                <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                                Modo Ativado
-                              </>
-                            ) : (
-                              <>
-                                <Wine className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                                Ativar Modo
-                              </>
-                            )}
-                          </Button>
-                        </div>
-                      </CardContent>
-                    </Card>
                   </div>
                 )}
               </div>
@@ -1225,6 +1165,58 @@ export default function TenderesPage() {
             )}
             {mode === 'drinkeira' && (
               <div className="space-y-6 lg:space-y-8 bg-gray-900 p-4 lg:p-8 rounded-xl border border-gray-700">
+                {/* Botão de Seleção do Modo Drinkeira */}
+                <div className="text-center mb-6 lg:mb-8">
+                  <Card className="bg-gray-800 border border-gray-700 shadow-lg max-w-md mx-auto">
+                    <CardHeader className="pb-3">
+                      <CardTitle className="text-lg lg:text-2xl text-white flex items-center justify-center gap-2">
+                        <Wine className="h-5 w-5 lg:h-6 lg:w-6 text-green-400" />
+                        Modo Drinkeira
+                      </CardTitle>
+                      <CardDescription className="text-base lg:text-lg text-green-200 font-bold">
+                        Bartender vende drinks na hora
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-gray-300 mb-4 text-sm lg:text-base text-center">
+                        Contrate apenas o bartender e taxa de locomoção. Os convidados escolhem e pagam pelos drinks no evento.
+                      </p>
+                      <Button 
+                        onClick={() => {
+                          const newDrinkeiraMode = !isDrinkeiraMode;
+                          setIsDrinkeiraMode(newDrinkeiraMode);
+                          setMode(newDrinkeiraMode ? 'drinkeira' : 'planos');
+                          
+                          // Se modo drinkeira foi ativado, redirecionar para configuração
+                          if (newDrinkeiraMode) {
+                            showToast("Modo Drinkeira ativado! Configure agora a quantidade de pessoas e horas.", "success");
+                            setTimeout(() => {
+                              scrollToConfiguration();
+                            }, 100);
+                          }
+                        }}
+                        className={`w-full ${
+                          isDrinkeiraMode 
+                            ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                            : 'bg-gradient-to-r from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800'
+                        } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg transition-all duration-300`}
+                      >
+                        {isDrinkeiraMode ? (
+                          <>
+                            <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                            Modo Ativado
+                          </>
+                        ) : (
+                          <>
+                            <Wine className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                            Ativar Modo
+                          </>
+                        )}
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
+
                 {/* Abas de Navegação */}
                 <div className="flex flex-col sm:flex-row justify-center gap-2 lg:gap-4 mb-6 lg:mb-8">
                   <Button variant={drinkeiraTab === 'caipirinhas' ? 'default' : 'ghost'} onClick={() => setDrinkeiraTab('caipirinhas')} className="text-sm lg:text-lg font-semibold text-green-400 hover:bg-green-500/10 hover:text-green-300">Caipirinhas</Button>
