@@ -773,63 +773,81 @@ export default function TenderesPage() {
                     <p className="text-gray-300 text-sm lg:text-base">Carregando planos...</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
-                    {completePlans.map((plan) => (
-                      <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
-                        <CardHeader className="pb-3">
-                          <CardTitle className="text-lg lg:text-2xl text-white flex items-center gap-2">
-                            {plan.popular && <Star className="h-4 w-4 lg:h-5 lg:w-5 text-yellow-400" />} {plan.name}
-                          </CardTitle>
-                          <CardDescription className="text-base lg:text-lg text-purple-200 font-bold mb-2">
-                            {Number(plan.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} por pessoa
-                          </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <p className="text-gray-300 mb-3 lg:mb-4 text-sm lg:text-base">{plan.description}</p>
-                          <div>
-                            <span className="font-semibold text-white text-sm lg:text-base">Drinks inclusos:</span>
-                            <ul className="list-disc list-inside text-gray-200 mt-2 text-sm lg:text-base">
-                              {plan.drinks && plan.drinks.map((drink, idx) => (
-                                <li key={idx}>{drink}</li>
-                              ))}
-                            </ul>
-                          </div>
-                          <div className="mt-4 lg:mt-6">
-                            <Button 
-                              onClick={() => {
-                                const newSelectedPlan = selectedPlan === plan.id ? null : plan.id
-                                setSelectedPlan(newSelectedPlan)
-                                
-                                // Se um plano foi selecionado, redirecionar para configuração
-                                if (newSelectedPlan) {
-                                  showToast("Plano selecionado! Configure agora a quantidade de pessoas e horas.", "success")
-                                  setTimeout(() => {
-                                    scrollToConfiguration()
-                                  }, 100) // Pequeno delay para garantir que o estado foi atualizado
-                                }
-                              }}
-                              className={`w-full ${
-                                selectedPlan === plan.id 
-                                  ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
-                                  : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
-                              } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg transition-all duration-300`}
-                            >
-                              {selectedPlan === plan.id ? (
-                                <>
-                                  <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                                  Plano Selecionado
-                                </>
-                              ) : (
-                                <>
-                                  <Star className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
-                                  Selecionar Plano
-                                </>
-                              )}
-                            </Button>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
+                  <div className="relative">
+                    {/* Carrossel de Planos */}
+                    <div className="overflow-x-auto scrollbar-hide carousel-container">
+                      <div className="flex gap-4 lg:gap-6 pb-4" style={{ width: 'max-content' }}>
+                        {completePlans.map((plan) => (
+                          <Card key={plan.id} className={`bg-gray-800 border border-gray-700 shadow-lg flex-shrink-0 w-80 lg:w-96 carousel-item ${plan.popular ? 'border-2 border-purple-500' : ''}`}>
+                            <CardHeader className="pb-3">
+                              <CardTitle className="text-lg lg:text-2xl text-white flex items-center gap-2">
+                                {plan.popular && <Star className="h-4 w-4 lg:h-5 lg:w-5 text-yellow-400" />} {plan.name}
+                              </CardTitle>
+                              <CardDescription className="text-base lg:text-lg text-purple-200 font-bold mb-2">
+                                {Number(plan.price).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })} por pessoa
+                              </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                              <p className="text-gray-300 mb-3 lg:mb-4 text-sm lg:text-base">{plan.description}</p>
+                              <div>
+                                <span className="font-semibold text-white text-sm lg:text-base">Drinks inclusos:</span>
+                                <ul className="list-disc list-inside text-gray-200 mt-2 text-sm lg:text-base">
+                                  {plan.drinks && plan.drinks.map((drink, idx) => (
+                                    <li key={idx}>{drink}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                              <div className="mt-4 lg:mt-6">
+                                <Button 
+                                  onClick={() => {
+                                    const newSelectedPlan = selectedPlan === plan.id ? null : plan.id
+                                    setSelectedPlan(newSelectedPlan)
+                                    
+                                    // Se um plano foi selecionado, redirecionar para configuração
+                                    if (newSelectedPlan) {
+                                      showToast("Plano selecionado! Configure agora a quantidade de pessoas e horas.", "success")
+                                      setTimeout(() => {
+                                        scrollToConfiguration()
+                                      }, 100) // Pequeno delay para garantir que o estado foi atualizado
+                                    }
+                                  }}
+                                  className={`w-full ${
+                                    selectedPlan === plan.id 
+                                      ? 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700' 
+                                      : 'bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600'
+                                  } text-white font-bold text-sm lg:text-base h-10 lg:h-12 rounded-xl shadow-lg transition-all duration-300`}
+                                >
+                                  {selectedPlan === plan.id ? (
+                                    <>
+                                      <CheckCircle className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                                      Plano Selecionado
+                                    </>
+                                  ) : (
+                                    <>
+                                      <Star className="mr-2 h-4 w-4 lg:h-5 lg:w-5" />
+                                      Selecionar Plano
+                                    </>
+                                  )}
+                                </Button>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
+                      </div>
+                    </div>
+                    
+                    {/* Indicador de scroll e dica */}
+                    <div className="flex flex-col items-center mt-4 space-y-2">
+                      <p className="text-gray-400 text-sm">← Deslize para ver mais planos →</p>
+                      <div className="flex gap-2">
+                        {completePlans.map((_, index) => (
+                          <div 
+                            key={index} 
+                            className="w-2 h-2 rounded-full bg-gray-600"
+                          />
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 )}
               </div>

@@ -143,4 +143,24 @@ body {
   .status-completed {
     @apply bg-gray-900/50 text-gray-200 border-gray-700/50;
   }
+  
+  /* Estilos para carrossel */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;  /* Chrome, Safari and Opera */
+  }
+  
+  /* Scroll suave para o carrossel */
+  .carousel-container {
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+  }
+  
+  .carousel-item {
+    scroll-snap-align: start;
+  }
 }
