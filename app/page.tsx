@@ -1468,25 +1468,59 @@ export default function TenderesPage() {
                       className="p-4 lg:p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl"
                     >
                       <h3 className="text-xl lg:text-3xl font-bold text-green-400 mb-4 lg:mb-6 flex items-center"><Wine className="mr-2 lg:mr-3 h-6 w-6 lg:h-8 lg:w-8"/>Caipirinhas Especiais</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                      {/* Layout mobile: scroll horizontal com grid 2x2 */}
+                      <div className="lg:hidden">
+                        <div className="overflow-x-auto pb-4">
+                          <div className="flex gap-4" style={{ width: `${Math.ceil(caipirinhas.length / 2) * 320}px` }}>
+                            {Array.from({ length: Math.ceil(caipirinhas.length / 2) }, (_, rowIndex) => (
+                              <div key={rowIndex} className="flex flex-col gap-4" style={{ width: '320px' }}>
+                                {caipirinhas.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
+                                  <Card
+                                    key={drink.id}
+                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                                  >
+                                    <CardHeader className="pb-2 flex flex-row items-center gap-2">
+                                      <Wine className="h-5 w-5 text-purple-300 drop-shadow" />
+                                      <CardTitle className="text-lg font-bold text-white tracking-tight">
+                                        {drink.name}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="inline-block px-2 py-1 rounded-full bg-purple-700/60 text-white text-sm font-bold shadow">
+                                          {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-100 text-sm leading-relaxed">{drink.description}</p>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Layout desktop: grid normal */}
+                      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-4 gap-4">
                         {caipirinhas.map((drink) => (
                           <Card
                             key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-xl lg:rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-purple-700 via-pink-700 to-purple-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
                           >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-2 lg:gap-3">
-                              <Wine className="h-5 w-5 lg:h-7 lg:w-7 text-purple-300 drop-shadow" />
-                              <CardTitle className="text-lg lg:text-2xl font-bold text-white tracking-tight">
+                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                              <Wine className="h-7 w-7 text-purple-300 drop-shadow" />
+                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
                                 {drink.name}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-2 lg:px-3 py-1 rounded-full bg-purple-700/60 text-white text-sm lg:text-lg font-bold shadow">
+                                <span className="inline-block px-3 py-1 rounded-full bg-purple-700/60 text-white text-lg font-bold shadow">
                                   {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>
                               </div>
-                              <p className="text-gray-100 text-sm lg:text-base leading-relaxed">{drink.description}</p>
+                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
                             </CardContent>
                           </Card>
                         ))}
@@ -1499,25 +1533,59 @@ export default function TenderesPage() {
                       className="p-4 lg:p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl"
                     >
                       <h3 className="text-xl lg:text-3xl font-bold text-blue-400 mb-4 lg:mb-6 flex items-center"><Wine className="mr-2 lg:mr-3 h-6 w-6 lg:h-8 lg:w-8"/>Caipiroskas Especiais</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                      {/* Layout mobile: scroll horizontal com grid 2x2 */}
+                      <div className="lg:hidden">
+                        <div className="overflow-x-auto pb-4">
+                          <div className="flex gap-4" style={{ width: `${Math.ceil(caipiroskas.length / 2) * 320}px` }}>
+                            {Array.from({ length: Math.ceil(caipiroskas.length / 2) }, (_, rowIndex) => (
+                              <div key={rowIndex} className="flex flex-col gap-4" style={{ width: '320px' }}>
+                                {caipiroskas.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
+                                  <Card
+                                    key={drink.id}
+                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                                  >
+                                    <CardHeader className="pb-2 flex flex-row items-center gap-2">
+                                      <Wine className="h-5 w-5 text-cyan-300 drop-shadow" />
+                                      <CardTitle className="text-lg font-bold text-white tracking-tight">
+                                        {drink.name}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="inline-block px-2 py-1 rounded-full bg-blue-700/60 text-white text-sm font-bold shadow">
+                                          {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-100 text-sm leading-relaxed">{drink.description}</p>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Layout desktop: grid normal */}
+                      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-4 gap-4">
                         {caipiroskas.map((drink) => (
                           <Card
                             key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-xl lg:rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-blue-700 via-cyan-700 to-blue-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
                           >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-2 lg:gap-3">
-                              <Wine className="h-5 w-5 lg:h-7 lg:w-7 text-cyan-300 drop-shadow" />
-                              <CardTitle className="text-lg lg:text-2xl font-bold text-white tracking-tight">
+                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                              <Wine className="h-7 w-7 text-cyan-300 drop-shadow" />
+                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
                                 {drink.name}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-2 lg:px-3 py-1 rounded-full bg-blue-700/60 text-white text-sm lg:text-lg font-bold shadow">
+                                <span className="inline-block px-3 py-1 rounded-full bg-blue-700/60 text-white text-lg font-bold shadow">
                                   {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>
                               </div>
-                              <p className="text-gray-100 text-sm lg:text-base leading-relaxed">{drink.description}</p>
+                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
                             </CardContent>
                           </Card>
                         ))}
@@ -1530,25 +1598,59 @@ export default function TenderesPage() {
                       className="p-4 lg:p-6 rounded-lg bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl"
                     >
                       <h3 className="text-xl lg:text-3xl font-bold text-red-400 mb-4 lg:mb-6 flex items-center"><Wine className="mr-2 lg:mr-3 h-6 w-6 lg:h-8 lg:w-8"/>Outros Clássicos</h3>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 lg:gap-4">
+                      {/* Layout mobile: scroll horizontal com grid 2x2 */}
+                      <div className="lg:hidden">
+                        <div className="overflow-x-auto pb-4">
+                          <div className="flex gap-4" style={{ width: `${Math.ceil(outrosClassicos.length / 2) * 320}px` }}>
+                            {Array.from({ length: Math.ceil(outrosClassicos.length / 2) }, (_, rowIndex) => (
+                              <div key={rowIndex} className="flex flex-col gap-4" style={{ width: '320px' }}>
+                                {outrosClassicos.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
+                                  <Card
+                                    key={drink.id}
+                                    className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                                  >
+                                    <CardHeader className="pb-2 flex flex-row items-center gap-2">
+                                      <Wine className="h-5 w-5 text-red-300 drop-shadow" />
+                                      <CardTitle className="text-lg font-bold text-white tracking-tight">
+                                        {drink.name}
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                      <div className="flex items-center gap-2 mb-2">
+                                        <span className="inline-block px-2 py-1 rounded-full bg-red-700/60 text-white text-sm font-bold shadow">
+                                          {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
+                                        </span>
+                                      </div>
+                                      <p className="text-gray-100 text-sm leading-relaxed">{drink.description}</p>
+                                    </CardContent>
+                                  </Card>
+                                ))}
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                      
+                      {/* Layout desktop: grid normal */}
+                      <div className="hidden lg:grid grid-cols-3 xl:grid-cols-4 gap-4">
                         {outrosClassicos.map((drink) => (
                           <Card
                             key={drink.id}
-                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-xl lg:rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
+                            className="bg-gray-900/90 border-2 border-transparent bg-clip-padding border-gradient-to-br from-red-700 via-pink-700 to-red-900 shadow-xl rounded-2xl transition-transform duration-200 hover:scale-105 hover:shadow-2xl"
                           >
-                            <CardHeader className="pb-2 flex flex-row items-center gap-2 lg:gap-3">
-                              <Wine className="h-5 w-5 lg:h-7 lg:w-7 text-red-300 drop-shadow" />
-                              <CardTitle className="text-lg lg:text-2xl font-bold text-white tracking-tight">
+                            <CardHeader className="pb-2 flex flex-row items-center gap-3">
+                              <Wine className="h-7 w-7 text-red-300 drop-shadow" />
+                              <CardTitle className="text-2xl font-bold text-white tracking-tight">
                                 {drink.name}
                               </CardTitle>
                             </CardHeader>
                             <CardContent>
                               <div className="flex items-center gap-2 mb-2">
-                                <span className="inline-block px-2 lg:px-3 py-1 rounded-full bg-red-700/60 text-white text-sm lg:text-lg font-bold shadow">
+                                <span className="inline-block px-3 py-1 rounded-full bg-red-700/60 text-white text-lg font-bold shadow">
                                   {drink.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
                                 </span>
                               </div>
-                              <p className="text-gray-100 text-sm lg:text-base leading-relaxed">{drink.description}</p>
+                              <p className="text-gray-100 text-base leading-relaxed">{drink.description}</p>
                             </CardContent>
                           </Card>
                         ))}
