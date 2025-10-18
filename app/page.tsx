@@ -405,6 +405,7 @@ export default function TenderesPage() {
   const [mode, setMode] = useState<'planos' | 'detalhado' | 'drinkeira'>('planos')
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null)
   const [showEventConfigInDetailed, setShowEventConfigInDetailed] = useState(false)
+  const [showPreviewModal, setShowPreviewModal] = useState(false)
   
   // Função para scroll suave para a seção de configuração
   const scrollToConfiguration = () => {
@@ -552,6 +553,13 @@ export default function TenderesPage() {
   }, [mode, selectedPlan, completePlans, isDrinkeiraMode, selectedDrinks, people, hours, dynamicDrinks, config, extraCosts])
 
   const sendToWhatsApp = async () => {
+    // Mostrar modal de prévia primeiro
+    setShowPreviewModal(true)
+  }
+
+  const confirmSendToWhatsApp = async () => {
+    setShowPreviewModal(false)
+    
     // Verificar se o usuário já preencheu os dados
     const savedUserData = localStorage.getItem("tenderes_user_data")
     if (!savedUserData || !userData.name || !userData.phone) {
@@ -560,63 +568,66 @@ export default function TenderesPage() {
       return
     }
 
-    const peopleNum = typeof people === 'number' ? people : 0
-    const hoursNum = typeof hours === 'number' ? hours : 0
+    const peopleNum = typeof people === 'number' ? people : parseInt(people.toString()) || 0
+    const hoursNum = typeof hours === 'number' ? hours : parseInt(hours.toString()) || 0
 
-    let message = `*Orçamento TENDERES - Drinks Premium*\n\n`
-    message += `*Cliente:* ${userData.name || "Não informado"}\n`
-    message += `*Contato:* ${userData.phone || "Não informado"}\n\n`
-    message += `--- DETALHES DO EVENTO ---\n`
-    message += `👥 Convidados: ${peopleNum}\n`
-    message += `⏰ Duração: ${hoursNum} horas\n`
-    message += `👨‍🍳 Bartenders: ${budgetResult.bartenders}\n\n`
-
-    if (mode === 'planos' && selectedPlan) {
-        const selectedPlanData = completePlans.find(plan => plan.id === selectedPlan)
-        message += `--- PLANO COMPLETO SELECIONADO ---\n`
-        message += `📋 Plano: ${selectedPlanData?.name || 'Plano Selecionado'}\n`
-        message += `💰 Valor por pessoa: ${selectedPlanData?.price?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) || 'R$ 0,00'}\n`
-        message += `👥 Total para ${peopleNum} pessoas: ${((selectedPlanData?.price || 0) * peopleNum).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        message += `${config.transportationFeeName}: ${config.transportationFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        if (budgetResult.extraCosts > 0) {
-            message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-            extraCosts.forEach(cost => {
-                message += `  - ${cost.name}: ${cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-            })
-        }
-        message += `\nDrinks Inclusos no Plano:\n`
-        selectedPlanData?.drinks.forEach(drink => {
-            message += `- ${drink}\n`
-        })
-    } else if (isDrinkeiraMode) {
-        message += `--- MODO DRINKEIRA ---\n`
-        message += `${config.bartenderBaseCostName}: ${budgetResult.bartenderCost?.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        message += `${config.transportationFeeName}: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        if (budgetResult.extraCosts > 0) {
-            message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-            extraCosts.forEach(cost => {
-                message += `  - ${cost.name}: ${cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-            })
-        }
-    } else {
-        message += `--- MODO PRÉ-COMPRA ---\n`
-        message += `Custo dos Drinks: ${budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        message += `Taxa de Locomoção: ${budgetResult.transportFee.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-        if (budgetResult.extraCosts > 0) {
-            message += `Custos Extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-            extraCosts.forEach(cost => {
-                message += `  - ${cost.name}: ${cost.value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-            })
-        }
-        message += `\nDrinks Selecionados:\n`
-        Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
-            const drink = dynamicDrinks.find(d => d.id === drinkId)
-            if(drink) message += `- ${quantity}x ${drink.name}\n`
-        })
+    if (peopleNum === 0 || hoursNum === 0) {
+      showToast("Por favor, preencha o número de pessoas e horas do evento.", "error")
+      return
     }
 
-    message += `\n---------------------------------\n`
-    message += `*VALOR TOTAL: ${(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}*`
+    let message = `*🍹 ORÇAMENTO TENDERES 🍹*\n\n`
+    message += `*Cliente:* ${userData.name}\n`
+    message += `*Telefone:* ${userData.phone}\n`
+    message += `*Endereço:* ${userData.address || 'Não informado'}\n`
+    message += `*Cidade:* ${userData.city || 'Não informado'}\n`
+    message += `*Estado:* ${userData.state || 'Não informado'}\n\n`
+
+    message += `*📋 DETALHES DO EVENTO:*\n`
+    message += `• Pessoas: ${peopleNum}\n`
+    message += `• Duração: ${hoursNum}h\n`
+    message += `• Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`
+
+    if (mode === 'planos') {
+      const plan = completePlans.find(p => p.id === selectedPlan)
+      if (plan) {
+        message += `*📦 PLANO ESCOLHIDO:*\n`
+        message += `• ${plan.name}\n`
+        message += `• ${plan.description}\n\n`
+        
+        message += `*🍹 DRINKS INCLUSOS:*\n`
+        plan.drinks.forEach(drink => {
+          message += `• ${drink}\n`
+        })
+        message += `\n`
+      }
+    } else if (mode === 'detalhado') {
+      message += `*🍹 DRINKS SELECIONADOS:*\n`
+      Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
+        const drink = dynamicDrinks.find(d => d.id === drinkId)
+        if (drink) {
+          message += `• ${quantity}x ${drink.name}\n`
+        }
+      })
+      message += `\n`
+    } else if (mode === 'drinkeira') {
+      message += `*🍹 MODO DRINKEIRA:*\n`
+      message += `• Serviço de bartender profissional\n`
+      message += `• Drinks preparados no local\n`
+      message += `• ${peopleNum} pessoas\n\n`
+    }
+
+    message += `*💰 ORÇAMENTO:*\n`
+    message += `• Subtotal: ${budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+    if (budgetResult.bartenders > 0) {
+      message += `• Bartenders (${budgetResult.bartenders}): ${(budgetResult.bartenderCost || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+    }
+    if (budgetResult.extraCosts > 0) {
+      message += `• Custos extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
+    }
+    message += `*VALOR TOTAL: ${(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}*\n\n`
+
+    message += `*📞 Entre em contato para confirmar e finalizar o orçamento!*`
 
     // Criar evento pré-agendado no banco de dados
     try {
@@ -667,7 +678,7 @@ export default function TenderesPage() {
       showToast("Evento pré-agendado criado! Agora enviando para WhatsApp...", "success")
     } catch (error) {
       console.error('❌ Erro ao criar evento pré-agendado:', error)
-      showToast(`Erro ao salvar evento: ${error.message}`, "error")
+      showToast(`Erro ao salvar evento: ${error instanceof Error ? error.message : 'Erro desconhecido'}`, "error")
     }
 
     // Enviar para WhatsApp
@@ -695,6 +706,147 @@ export default function TenderesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 relative overflow-hidden">
+      
+      {/* Modal de Prévia do Contrato */}
+      {showPreviewModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                <span className="text-3xl">📋</span>
+                Prévia do Orçamento
+              </h2>
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="text-gray-400 hover:text-white text-2xl"
+              >
+                ×
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              {/* Informações do Cliente */}
+              <div className="bg-blue-900/20 rounded-xl p-4 border border-blue-700/30">
+                <h3 className="text-lg font-semibold text-blue-300 mb-3">👤 Dados do Cliente</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                  <div><span className="text-gray-400">Nome:</span> <span className="text-white">{userData.name}</span></div>
+                  <div><span className="text-gray-400">Telefone:</span> <span className="text-white">{userData.phone}</span></div>
+                  <div><span className="text-gray-400">Endereço:</span> <span className="text-white">{userData.address || 'Não informado'}</span></div>
+                  <div><span className="text-gray-400">Cidade:</span> <span className="text-white">{userData.city || 'Não informado'}</span></div>
+                </div>
+              </div>
+
+              {/* Detalhes do Evento */}
+              <div className="bg-green-900/20 rounded-xl p-4 border border-green-700/30">
+                <h3 className="text-lg font-semibold text-green-300 mb-3">🎉 Detalhes do Evento</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
+                  <div><span className="text-gray-400">Pessoas:</span> <span className="text-white font-semibold">{people}</span></div>
+                  <div><span className="text-gray-400">Duração:</span> <span className="text-white font-semibold">{hours}h</span></div>
+                  <div><span className="text-gray-400">Data:</span> <span className="text-white">{new Date().toLocaleDateString('pt-BR')}</span></div>
+                </div>
+              </div>
+
+              {/* Plano/Drinks Selecionados */}
+              {mode === 'planos' && selectedPlan && (
+                <div className="bg-purple-900/20 rounded-xl p-4 border border-purple-700/30">
+                  <h3 className="text-lg font-semibold text-purple-300 mb-3">📦 Plano Escolhido</h3>
+                  {(() => {
+                    const plan = completePlans.find(p => p.id === selectedPlan);
+                    return plan ? (
+                      <div className="space-y-2">
+                        <div className="text-white font-semibold">{plan.name}</div>
+                        <div className="text-gray-300 text-sm">{plan.description}</div>
+                        <div className="text-sm">
+                          <span className="text-gray-400">Drinks inclusos:</span>
+                          <ul className="mt-1 ml-4 space-y-1">
+                            {plan.drinks.map((drink, index) => (
+                              <li key={index} className="text-white">• {drink}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    ) : null;
+                  })()}
+                </div>
+              )}
+
+              {mode === 'detalhado' && Object.keys(selectedDrinks).length > 0 && (
+                <div className="bg-purple-900/20 rounded-xl p-4 border border-purple-700/30">
+                  <h3 className="text-lg font-semibold text-purple-300 mb-3">🍹 Drinks Selecionados</h3>
+                  <div className="space-y-2">
+                    {Object.entries(selectedDrinks).map(([drinkId, quantity]) => {
+                      const drink = dynamicDrinks.find(d => d.id === drinkId);
+                      return drink ? (
+                        <div key={drinkId} className="flex justify-between items-center text-sm">
+                          <span className="text-white">{drink.name}</span>
+                          <span className="text-purple-300 font-semibold">{quantity}x</span>
+                        </div>
+                      ) : null;
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {mode === 'drinkeira' && (
+                <div className="bg-purple-900/20 rounded-xl p-4 border border-purple-700/30">
+                  <h3 className="text-lg font-semibold text-purple-300 mb-3">🍹 Modo Drinkeira</h3>
+                  <div className="text-white text-sm">
+                    • Serviço de bartender profissional<br/>
+                    • Drinks preparados no local<br/>
+                    • {people} pessoas
+                  </div>
+                </div>
+              )}
+
+              {/* Orçamento */}
+              <div className="bg-yellow-900/20 rounded-xl p-4 border border-yellow-700/30">
+                <h3 className="text-lg font-semibold text-yellow-300 mb-3">💰 Resumo Financeiro</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">Subtotal:</span>
+                    <span className="text-white">{budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                  </div>
+                  {budgetResult.bartenders > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Bartenders ({budgetResult.bartenders}):</span>
+                      <span className="text-white">{(budgetResult.bartenderCost || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                    </div>
+                  )}
+                  {budgetResult.extraCosts > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-400">Custos extras:</span>
+                      <span className="text-white">{budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                    </div>
+                  )}
+                  <div className="border-t border-yellow-700/30 pt-2 mt-3">
+                    <div className="flex justify-between text-lg font-bold">
+                      <span className="text-yellow-300">TOTAL:</span>
+                      <span className="text-white">{budgetResult.total.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Botões de Ação */}
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => setShowPreviewModal(false)}
+                className="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={confirmSendToWhatsApp}
+                className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                <span>📱</span>
+                Enviar para WhatsApp
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Notification de atualização automática */}
       {showUpdateNotification && (
         <div className="fixed top-4 right-4 z-50 animate-in slide-in-from-right duration-300">
