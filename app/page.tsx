@@ -622,7 +622,7 @@ export default function TenderesPage() {
       const result = await response.json()
       console.log('✅ Evento criado com sucesso:', result)
 
-      showToast("Evento finalizado com sucesso! Você pode acompanhar no painel admin.", "success")
+      showToast("Evento finalizado com sucesso! Logo logo entraremos em contato.", "success")
       
       // Limpar formulário após finalizar
       setSelectedDrinks({})
