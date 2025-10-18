@@ -51,6 +51,7 @@ export default function AdminPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [dbEvents, setDbEvents] = useState<any[]>([])
   const [loadingEvents, setLoadingEvents] = useState(false)
+  const [editingDbEvent, setEditingDbEvent] = useState<any>(null)
   const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config'>('dashboard')
   
   // Login states
@@ -166,6 +167,25 @@ export default function AdminPage() {
       showMessage('Erro ao carregar eventos!', 'error');
     } finally {
       setLoadingEvents(false);
+    }
+  }
+
+  async function handleSaveDbEvent() {
+    if (!editingDbEvent) return;
+    
+    try {
+      await fetch('/api/events', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingDbEvent)
+      });
+      
+      showMessage('Evento atualizado com sucesso!', 'success');
+      setEditingDbEvent(null);
+      fetchDbEvents();
+    } catch (error) {
+      console.error('Erro ao atualizar evento:', error);
+      showMessage('Erro ao atualizar evento!', 'error');
     }
   }
 
@@ -1540,8 +1560,21 @@ export default function AdminPage() {
                                     variant="outline"
                                     size="sm"
                                     className="border-green-600 text-green-300 hover:bg-green-900/50"
+                                    title="Marcar como ativo"
                                   >
                                     <CheckCircle className="h-4 w-4" />
+                                  </Button>
+                                  <Button
+                                    onClick={() => {
+                                      // Editar evento
+                                      setEditingDbEvent(event);
+                                    }}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-blue-600 text-blue-300 hover:bg-blue-900/50"
+                                    title="Editar evento"
+                                  >
+                                    <Edit className="h-4 w-4" />
                                   </Button>
                                   <Button
                                     onClick={() => {
@@ -1556,6 +1589,7 @@ export default function AdminPage() {
                                     variant="outline"
                                     size="sm"
                                     className="border-red-600 text-red-300 hover:bg-red-900/50"
+                                    title="Excluir evento"
                                   >
                                     <Trash2 className="h-4 w-4" />
                                   </Button>
@@ -1563,6 +1597,29 @@ export default function AdminPage() {
                               </div>
                               <h4 className="font-semibold text-white mb-2">{event.name}</h4>
                               <p className="text-gray-300 text-sm mb-2 line-clamp-2">{event.description}</p>
+                              
+                              {/* Informações do Plano/Drinks */}
+                              {event.event_type === 'planos' && event.selected_plan_id && (
+                                <div className="mb-3 p-2 bg-blue-900/20 rounded-lg border border-blue-700/30">
+                                  <p className="text-blue-300 text-xs font-semibold mb-1">📋 Plano Escolhido:</p>
+                                  <p className="text-blue-200 text-xs">{event.selected_plan_id}</p>
+                                </div>
+                              )}
+                              
+                              {event.event_type === 'detalhado' && event.selected_drinks && (
+                                <div className="mb-3 p-2 bg-purple-900/20 rounded-lg border border-purple-700/30">
+                                  <p className="text-purple-300 text-xs font-semibold mb-1">🍹 Drinks Selecionados:</p>
+                                  <div className="text-purple-200 text-xs">
+                                    {Object.entries(JSON.parse(event.selected_drinks || '{}')).map(([drinkId, quantity]) => {
+                                      const drink = drinks.find(d => d.id === drinkId);
+                                      return (
+                                        <p key={drinkId}>• {String(quantity)}x {drink ? drink.name : `Drink ID: ${drinkId}`}</p>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              )}
+                              
                               <div className="space-y-1 text-xs text-gray-400">
                                 <p>📅 {new Date(event.date).toLocaleDateString('pt-BR')}</p>
                                 <p>📍 {event.location}</p>
@@ -1570,6 +1627,8 @@ export default function AdminPage() {
                                 <p>⏰ {event.hours_count} horas</p>
                                 <p>💰 R$ {Number(event.total_budget).toFixed(2).replace('.', ',')}</p>
                                 <p>📱 {event.customer_phone}</p>
+                                <p>👤 {event.customer_name}</p>
+                                {event.customer_city && <p>🏙️ {event.customer_city}, {event.customer_state}</p>}
                               </div>
                               <div className="mt-3">
                                 <Badge className={`text-xs ${
@@ -1675,7 +1734,8 @@ export default function AdminPage() {
               <CardHeader>
                 <CardTitle className="text-lg text-white">
                   {editingDrink ? (isAddingNew ? "Adicionar Drink" : "Editar Drink") : 
-                   editingEvent ? (isAddingNew ? "Adicionar Evento" : "Editar Evento") : "Formulário"}
+                   editingEvent ? (isAddingNew ? "Adicionar Evento" : "Editar Evento") :
+                   editingDbEvent ? "Editar Evento Pré-Agendado" : "Formulário"}
                 </CardTitle>
               </CardHeader>
               <CardContent>
@@ -1988,6 +2048,145 @@ export default function AdminPage() {
                       </Button>
                       <Button
                         onClick={handleSave}
+                        className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        Salvar
+                      </Button>
+                    </div>
+                  </div>
+                ) : editingDbEvent ? (
+                  <div className="space-y-4">
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Nome do Evento
+                      </Label>
+                      <Input
+                        value={editingDbEvent.name}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, name: e.target.value } : null)}
+                        placeholder="Ex: Aniversário João"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Descrição
+                      </Label>
+                      <textarea
+                        value={editingDbEvent.description}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, description: e.target.value } : null)}
+                        placeholder="Descreva o evento..."
+                        className="w-full h-20 border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400 rounded-md p-2 resize-none"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Data do Evento
+                      </Label>
+                      <Input
+                        type="date"
+                        value={editingDbEvent.date}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, date: e.target.value } : null)}
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Local
+                      </Label>
+                      <Input
+                        value={editingDbEvent.location}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, location: e.target.value } : null)}
+                        placeholder="Ex: Casa do João"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Número de Pessoas
+                      </Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        value={editingDbEvent.people_count}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, people_count: Number(e.target.value) } : null)}
+                        placeholder="20"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Duração (horas)
+                      </Label>
+                      <Input
+                        type="number"
+                        min="1"
+                        max="12"
+                        value={editingDbEvent.hours_count}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, hours_count: Number(e.target.value) } : null)}
+                        placeholder="4"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Orçamento Total
+                      </Label>
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={editingDbEvent.total_budget}
+                        onChange={(e) => setEditingDbEvent((prev: any) => prev ? { ...prev, total_budget: Number(e.target.value) } : null)}
+                        placeholder="0.00"
+                        className="border-gray-600 bg-gray-700 text-white focus:border-purple-400 focus:ring-purple-400"
+                      />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label className="text-sm font-medium text-gray-200">
+                        Status
+                      </Label>
+                      <Select
+                        value={editingDbEvent.status}
+                        onValueChange={(value: "active" | "inactive" | "completed" | "pre_scheduled") => setEditingDbEvent((prev: any) => prev ? { ...prev, status: value } : null)}
+                      >
+                        <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-gray-700 border-gray-600">
+                          <SelectItem value="pre_scheduled" className="text-white">
+                            Pré-Agendado
+                          </SelectItem>
+                          <SelectItem value="active" className="text-white">
+                            Ativo
+                          </SelectItem>
+                          <SelectItem value="inactive" className="text-white">
+                            Inativo
+                          </SelectItem>
+                          <SelectItem value="completed" className="text-white">
+                            Concluído
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex space-x-2 pt-4">
+                      <Button
+                        onClick={() => setEditingDbEvent(null)}
+                        variant="outline"
+                        className="flex-1 border-gray-600 text-gray-300 hover:bg-gray-700"
+                      >
+                        Cancelar
+                      </Button>
+                      <Button
+                        onClick={handleSaveDbEvent}
                         className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700"
                       >
                         <Save className="h-4 w-4 mr-2" />
