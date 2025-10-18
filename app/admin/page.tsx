@@ -1612,8 +1612,9 @@ export default function AdminPage() {
                                   <div className="text-purple-200 text-xs">
                                     {Object.entries(JSON.parse(event.selected_drinks || '{}')).map(([drinkId, quantity]) => {
                                       const drink = drinks.find(d => d.id === drinkId);
+                                      console.log('🔍 Procurando drink:', { drinkId, quantity, drink, totalDrinks: drinks.length });
                                       return (
-                                        <p key={drinkId}>• {String(quantity)}x {drink ? drink.name : `Drink ID: ${drinkId}`}</p>
+                                        <p key={drinkId}>• {String(quantity)}x {drink ? drink.name : `Drink não encontrado (ID: ${drinkId})`}</p>
                                       );
                                     })}
                                   </div>
