@@ -557,14 +557,14 @@ export default function TenderesPage() {
     setShowPreviewModal(true)
   }
 
-  const confirmSendToWhatsApp = async () => {
+  const confirmFinalizeEvent = async () => {
     setShowPreviewModal(false)
     
     // Verificar se o usuário já preencheu os dados
     const savedUserData = localStorage.getItem("tenderes_user_data")
     if (!savedUserData || !userData.name || !userData.phone) {
       setShowWelcomeModal(true)
-      showToast("Por favor, preencha seus dados antes de solicitar o orçamento.", "info")
+      showToast("Por favor, preencha seus dados antes de finalizar o evento.", "info")
       return
     }
 
@@ -576,66 +576,13 @@ export default function TenderesPage() {
       return
     }
 
-    let message = `*🍹 ORÇAMENTO TENDERES 🍹*\n\n`
-    message += `*Cliente:* ${userData.name}\n`
-    message += `*Telefone:* ${userData.phone}\n`
-    message += `*Endereço:* ${userData.address || 'Não informado'}\n`
-    message += `*Cidade:* ${userData.city || 'Não informado'}\n`
-    message += `*Estado:* ${userData.state || 'Não informado'}\n\n`
-
-    message += `*📋 DETALHES DO EVENTO:*\n`
-    message += `• Pessoas: ${peopleNum}\n`
-    message += `• Duração: ${hoursNum}h\n`
-    message += `• Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`
-
-    if (mode === 'planos') {
-      const plan = completePlans.find(p => p.id === selectedPlan)
-      if (plan) {
-        message += `*📦 PLANO ESCOLHIDO:*\n`
-        message += `• ${plan.name}\n`
-        message += `• ${plan.description}\n\n`
-        
-        message += `*🍹 DRINKS INCLUSOS:*\n`
-        plan.drinks.forEach(drink => {
-          message += `• ${drink}\n`
-        })
-        message += `\n`
-      }
-    } else if (mode === 'detalhado') {
-      message += `*🍹 DRINKS SELECIONADOS:*\n`
-      Object.entries(selectedDrinks).forEach(([drinkId, quantity]) => {
-        const drink = dynamicDrinks.find(d => d.id === drinkId)
-        if (drink) {
-          message += `• ${quantity}x ${drink.name}\n`
-        }
-      })
-      message += `\n`
-    } else if (mode === 'drinkeira') {
-      message += `*🍹 MODO DRINKEIRA:*\n`
-      message += `• Serviço de bartender profissional\n`
-      message += `• Drinks preparados no local\n`
-      message += `• ${peopleNum} pessoas\n\n`
-    }
-
-    message += `*💰 ORÇAMENTO:*\n`
-    message += `• Subtotal: ${budgetResult.subtotal.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-    if (budgetResult.bartenders > 0) {
-      message += `• Bartenders (${budgetResult.bartenders}): ${(budgetResult.bartenderCost || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-    }
-    if (budgetResult.extraCosts > 0) {
-      message += `• Custos extras: ${budgetResult.extraCosts.toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}\n`
-    }
-    message += `*VALOR TOTAL: ${(budgetResult.total).toLocaleString("pt-BR", { style: "currency", currency: "BRL" })}*\n\n`
-
-    message += `*📞 Entre em contato para confirmar e finalizar o orçamento!*`
-
     // Criar evento pré-agendado no banco de dados
     try {
       console.log('🔄 Iniciando criação de evento pré-agendado...')
       
       const eventData = {
         name: `${userData.name} - ${mode === 'planos' ? 'Plano Completo' : mode === 'detalhado' ? 'Orçamento Detalhado' : 'Modo Drinkeira'}`,
-        description: `Evento pré-agendado - Cliente solicitou orçamento via WhatsApp`,
+        description: `Evento pré-agendado - Cliente finalizou orçamento`,
         date: new Date().toISOString().split('T')[0], // Data atual
         location: userData.address || 'Local não informado',
         max_guests: peopleNum,
@@ -653,7 +600,7 @@ export default function TenderesPage() {
         people_count: peopleNum,
         hours_count: hoursNum,
         total_budget: budgetResult.total,
-        whatsapp_message: message
+        whatsapp_message: ''
       }
 
       console.log('📝 Dados do evento:', eventData)
@@ -675,15 +622,19 @@ export default function TenderesPage() {
       const result = await response.json()
       console.log('✅ Evento criado com sucesso:', result)
 
-      showToast("Evento pré-agendado criado! Agora enviando para WhatsApp...", "success")
+      showToast("Evento finalizado com sucesso! Você pode acompanhar no painel admin.", "success")
+      
+      // Limpar formulário após finalizar
+      setSelectedDrinks({})
+      setSelectedPlan(null)
+      setPeople('')
+      setHours('')
+      setShowEventConfigInDetailed(false)
+      
     } catch (error) {
       console.error('❌ Erro ao criar evento pré-agendado:', error)
       showToast(`Erro ao salvar evento: ${error instanceof Error ? error.message : 'Erro desconhecido'}`, "error")
     }
-
-    // Enviar para WhatsApp
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=5585994330680&text=${encodeURIComponent(message)}`
-    window.open(whatsappUrl, "_blank")
   }
 
   const categories = [...new Set(dynamicDrinks.map((drink) => drink.category))]
@@ -713,8 +664,8 @@ export default function TenderesPage() {
           <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-white flex items-center gap-2">
-                <span className="text-3xl">📋</span>
-                Prévia do Orçamento
+                <span className="text-3xl">✅</span>
+                Finalizar Evento
               </h2>
               <button
                 onClick={() => setShowPreviewModal(false)}
@@ -837,11 +788,11 @@ export default function TenderesPage() {
                 Cancelar
               </button>
               <button
-                onClick={confirmSendToWhatsApp}
+                onClick={confirmFinalizeEvent}
                 className="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-semibold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2"
               >
-                <span>📱</span>
-                Enviar para WhatsApp
+                <span>✅</span>
+                Finalizar Evento
               </button>
             </div>
           </div>
