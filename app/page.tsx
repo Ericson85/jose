@@ -1471,9 +1471,9 @@ export default function TenderesPage() {
                       {/* Layout mobile: scroll horizontal com grid 2x2 */}
                       <div className="lg:hidden">
                         <div className="overflow-x-auto pb-4">
-                          <div className="flex gap-4" style={{ width: `${Math.ceil(caipirinhas.length / 2) * 320}px` }}>
+                          <div className="flex gap-3" style={{ width: `${Math.ceil(caipirinhas.length / 2) * 280}px` }}>
                             {Array.from({ length: Math.ceil(caipirinhas.length / 2) }, (_, rowIndex) => (
-                              <div key={rowIndex} className="flex flex-col gap-4" style={{ width: '320px' }}>
+                              <div key={rowIndex} className="flex flex-col gap-3" style={{ width: '280px' }}>
                                 {caipirinhas.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
                                   <Card
                                     key={drink.id}
@@ -1536,9 +1536,9 @@ export default function TenderesPage() {
                       {/* Layout mobile: scroll horizontal com grid 2x2 */}
                       <div className="lg:hidden">
                         <div className="overflow-x-auto pb-4">
-                          <div className="flex gap-4" style={{ width: `${Math.ceil(caipiroskas.length / 2) * 320}px` }}>
+                          <div className="flex gap-3" style={{ width: `${Math.ceil(caipiroskas.length / 2) * 280}px` }}>
                             {Array.from({ length: Math.ceil(caipiroskas.length / 2) }, (_, rowIndex) => (
-                              <div key={rowIndex} className="flex flex-col gap-4" style={{ width: '320px' }}>
+                              <div key={rowIndex} className="flex flex-col gap-3" style={{ width: '280px' }}>
                                 {caipiroskas.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
                                   <Card
                                     key={drink.id}
@@ -1601,9 +1601,9 @@ export default function TenderesPage() {
                       {/* Layout mobile: scroll horizontal com grid 2x2 */}
                       <div className="lg:hidden">
                         <div className="overflow-x-auto pb-4">
-                          <div className="flex gap-4" style={{ width: `${Math.ceil(outrosClassicos.length / 2) * 320}px` }}>
+                          <div className="flex gap-3" style={{ width: `${Math.ceil(outrosClassicos.length / 2) * 280}px` }}>
                             {Array.from({ length: Math.ceil(outrosClassicos.length / 2) }, (_, rowIndex) => (
-                              <div key={rowIndex} className="flex flex-col gap-4" style={{ width: '320px' }}>
+                              <div key={rowIndex} className="flex flex-col gap-3" style={{ width: '280px' }}>
                                 {outrosClassicos.slice(rowIndex * 2, (rowIndex + 1) * 2).map((drink) => (
                                   <Card
                                     key={drink.id}
