@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { UserMenu } from "@/components/ui/user-menu"
-import ChatWindow from "@/components/chat/chat-window"
+import FeedWindow from "@/components/feed/feed-window"
 
 export interface Drink {
   id: string
@@ -654,8 +654,8 @@ export default function TenderesPage() {
   // Efeito para o toast
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null)
   
-  // Estado para o chat
-  const [showChat, setShowChat] = useState(false)
+  // Estado para o feed
+  const [showFeed, setShowFeed] = useState(false)
   useEffect(() => {
     if (toast) {
       const timer = setTimeout(() => setToast(null), 3000)
@@ -855,7 +855,7 @@ export default function TenderesPage() {
                   // Implementar navegação para podcast
                   window.open('https://spotify.com', '_blank')
                 }}
-                onChatClick={() => setShowChat(true)}
+                onChatClick={() => setShowFeed(true)}
               />
             </div>
           </div>
@@ -1952,10 +1952,10 @@ export default function TenderesPage() {
         </div>
       </footer>
 
-      {/* Chat Window */}
-      <ChatWindow
-        isOpen={showChat}
-        onClose={() => setShowChat(false)}
+      {/* Feed Window */}
+      <FeedWindow
+        isOpen={showFeed}
+        onClose={() => setShowFeed(false)}
         currentUser={{
           id: "user1",
           username: userData.name || "Usuário",

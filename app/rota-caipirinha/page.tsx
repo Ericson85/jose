@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import ChatWindow from "@/components/chat/chat-window"
+import FeedWindow from "@/components/feed/feed-window"
 
 // Importação dinâmica para evitar problemas de SSR
 const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
@@ -136,7 +136,7 @@ export default function RotaCaipirinha() {
 
   const [selectedEstablishment, setSelectedEstablishment] = useState<Establishment | null>(null)
   const [selectedType, setSelectedType] = useState<"todos" | "bar" | "boate" | "restaurante">("todos")
-  const [showChat, setShowChat] = useState(false)
+  const [showFeed, setShowFeed] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -384,11 +384,11 @@ export default function RotaCaipirinha() {
                         Ver no Mapa
                       </Button>
                       <Button
-                        onClick={() => setShowChat(true)}
+                        onClick={() => setShowFeed(true)}
                         className="bg-purple-600 hover:bg-purple-700 flex-1"
                       >
                         <MessageCircle className="h-4 w-4 mr-2" />
-                        Chat
+                        Feed
                       </Button>
                       <Button
                         onClick={() => callEstablishment(selectedEstablishment.phone)}
@@ -406,10 +406,10 @@ export default function RotaCaipirinha() {
         </div>
       </div>
 
-      {/* Chat Window */}
-      <ChatWindow
-        isOpen={showChat}
-        onClose={() => setShowChat(false)}
+      {/* Feed Window */}
+      <FeedWindow
+        isOpen={showFeed}
+        onClose={() => setShowFeed(false)}
         establishmentId={selectedEstablishment?.id}
         establishmentName={selectedEstablishment?.name}
         currentUser={{

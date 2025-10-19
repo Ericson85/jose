@@ -1,36 +1,109 @@
 import { NextResponse } from 'next/server'
 
-// Simulação de banco de dados em memória para mensagens
+// Simulação de banco de dados em memória para mensagens/feed
 let messages = [
   {
     id: "1",
     userId: "user1",
-    username: "João",
+    username: "João Silva",
     avatar: "/placeholder-user.jpg",
-    establishmentId: null, // null = chat geral
+    establishmentId: null, // null = feed geral
     establishmentName: null,
     type: "text", // text, image, location
-    content: "Olá pessoal! Alguém conhece um bom bar por aqui?",
+    content: "Olá pessoal! Alguém conhece um bom bar por aqui? Quero fazer uma festa incrível! 🎉",
     imageUrl: null,
     location: null,
     timestamp: new Date().toISOString(),
-    likes: 0,
-    replies: []
+    likes: 5,
+    likedBy: ["user2", "user3"],
+    replies: [
+      {
+        id: "reply1",
+        userId: "user2",
+        username: "Maria",
+        avatar: "/placeholder-user.jpg",
+        content: "Recomendo o Bar da Caipirinha! Ambiente top!",
+        timestamp: new Date(Date.now() - 100000).toISOString()
+      }
+    ],
+    shares: 2,
+    category: "geral"
   },
   {
     id: "2",
     userId: "user2", 
-    username: "Maria",
+    username: "Maria Santos",
     avatar: "/placeholder-user.jpg",
     establishmentId: "1",
     establishmentName: "Bar da Caipirinha",
+    type: "image",
+    content: "Momento incrível no Bar da Caipirinha! 🍹✨",
+    imageUrl: "https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500",
+    location: null,
+    timestamp: new Date(Date.now() - 600000).toISOString(),
+    likes: 12,
+    likedBy: ["user1", "user3", "user4"],
+    replies: [],
+    shares: 1,
+    category: "foto"
+  },
+  {
+    id: "3",
+    userId: "user3",
+    username: "Carlos",
+    avatar: "/placeholder-user.jpg",
+    establishmentId: "2",
+    establishmentName: "Boate Sunset",
+    type: "location",
+    content: "📍 Na Boate Sunset! Música eletrônica incrível! Quem vem? 🎵",
+    imageUrl: null,
+    location: {
+      lat: -23.5505,
+      lng: -46.6333,
+      address: "Boate Sunset, Vila Madalena"
+    },
+    timestamp: new Date(Date.now() - 900000).toISOString(),
+    likes: 8,
+    likedBy: ["user1", "user2"],
+    replies: [
+      {
+        id: "reply2",
+        userId: "user1",
+        username: "João Silva",
+        avatar: "/placeholder-user.jpg",
+        content: "Estou indo! Nos vemos lá! 🚀",
+        timestamp: new Date(Date.now() - 800000).toISOString()
+      }
+    ],
+    shares: 3,
+    category: "localizacao"
+  },
+  {
+    id: "4",
+    userId: "user4",
+    username: "Ana Costa",
+    avatar: "/placeholder-user.jpg",
+    establishmentId: null,
+    establishmentName: null,
     type: "text",
-    content: "Estou no Bar da Caipirinha, ambiente incrível! 🍹",
+    content: "Acabei de contratar a Tenderes para minha festa de aniversário! O atendimento foi excepcional! 👏✨",
     imageUrl: null,
     location: null,
-    timestamp: new Date(Date.now() - 300000).toISOString(),
-    likes: 3,
-    replies: []
+    timestamp: new Date(Date.now() - 1200000).toISOString(),
+    likes: 15,
+    likedBy: ["user1", "user2", "user3", "user5"],
+    replies: [
+      {
+        id: "reply3",
+        userId: "user2",
+        username: "Maria Santos",
+        avatar: "/placeholder-user.jpg",
+        content: "Também usei o serviço! Recomendo demais! 🎉",
+        timestamp: new Date(Date.now() - 1100000).toISOString()
+      }
+    ],
+    shares: 5,
+    category: "depoimento"
   }
 ]
 
@@ -112,7 +185,10 @@ export async function POST(request) {
       location: location || null,
       timestamp: new Date().toISOString(),
       likes: 0,
-      replies: []
+      likedBy: [],
+      replies: [],
+      shares: 0,
+      category: type === 'image' ? 'foto' : type === 'location' ? 'localizacao' : 'geral'
     }
     
     messages.push(newMessage)
@@ -131,11 +207,11 @@ export async function POST(request) {
   }
 }
 
-// PUT - Curtir mensagem
+// PUT - Curtir/descurtir mensagem ou adicionar comentário
 export async function PUT(request) {
   try {
     const body = await request.json()
-    const { messageId } = body
+    const { messageId, userId, action, comment } = body
     
     const messageIndex = messages.findIndex(msg => msg.id === messageId)
     
@@ -146,18 +222,44 @@ export async function PUT(request) {
       }, { status: 404 })
     }
     
-    messages[messageIndex].likes += 1
+    if (action === 'like') {
+      const isLiked = messages[messageIndex].likedBy.includes(userId)
+      
+      if (isLiked) {
+        // Descurtir
+        messages[messageIndex].likedBy = messages[messageIndex].likedBy.filter(id => id !== userId)
+        messages[messageIndex].likes -= 1
+      } else {
+        // Curtir
+        messages[messageIndex].likedBy.push(userId)
+        messages[messageIndex].likes += 1
+      }
+    } else if (action === 'comment' && comment) {
+      const newReply = {
+        id: Date.now().toString(),
+        userId,
+        username: body.username || "Usuário",
+        avatar: body.avatar || "/placeholder-user.jpg",
+        content: comment,
+        timestamp: new Date().toISOString()
+      }
+      messages[messageIndex].replies.push(newReply)
+    } else if (action === 'share') {
+      messages[messageIndex].shares += 1
+    }
     
     return NextResponse.json({
       success: true,
       data: messages[messageIndex],
-      message: "Mensagem curtida com sucesso"
+      message: action === 'like' ? 
+        (messages[messageIndex].likedBy.includes(userId) ? "Mensagem curtida" : "Curtida removida") :
+        action === 'comment' ? "Comentário adicionado" : "Compartilhado"
     })
     
   } catch (error) {
     return NextResponse.json({
       success: false,
-      error: "Erro ao curtir mensagem"
+      error: "Erro ao processar ação"
     }, { status: 500 })
   }
 }
