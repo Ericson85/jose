@@ -303,7 +303,7 @@ export default function AdminPanel({ isOpen, onClose, onDrinksUpdate, currentDri
             </div>
             <div>
               <h2 className="text-2xl font-bold text-white">Painel Administrativo</h2>
-              <p className="text-gray-300">Gerenciamento Completo - TENDERES</p>
+              <p className="text-gray-300">Gerenciamento Completo - TENDERES v2.0</p>
             </div>
           </div>
           <div className="flex items-center space-x-3">
