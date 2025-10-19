@@ -249,6 +249,7 @@ export default function AdminPage() {
       specialties: [],
       priceRange: "€",
       menuLink: "",
+      googlePlaceId: "",
       images: [],
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -2923,91 +2924,76 @@ export default function AdminPage() {
 
                     <div>
                       <Label className="text-sm font-medium text-gray-200 mb-3 block">Horários de Funcionamento</Label>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-xs text-gray-400">Segunda-feira</Label>
-                          <Input
-                            value={editingEstablishment.hours.monday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, monday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="18:00 - 02:00"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Terça-feira</Label>
-                          <Input
-                            value={editingEstablishment.hours.tuesday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, tuesday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="18:00 - 02:00"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Quarta-feira</Label>
-                          <Input
-                            value={editingEstablishment.hours.wednesday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, wednesday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="18:00 - 02:00"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Quinta-feira</Label>
-                          <Input
-                            value={editingEstablishment.hours.thursday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, thursday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="18:00 - 02:00"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Sexta-feira</Label>
-                          <Input
-                            value={editingEstablishment.hours.friday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, friday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="18:00 - 03:00"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Sábado</Label>
-                          <Input
-                            value={editingEstablishment.hours.saturday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, saturday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="18:00 - 03:00"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Domingo</Label>
-                          <Input
-                            value={editingEstablishment.hours.sunday}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              hours: { ...prev.hours, sunday: e.target.value }
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white text-sm"
-                            placeholder="Fechado"
-                          />
-                        </div>
+                      <div className="space-y-4">
+                        {[
+                          { key: 'monday', label: 'Segunda-feira' },
+                          { key: 'tuesday', label: 'Terça-feira' },
+                          { key: 'wednesday', label: 'Quarta-feira' },
+                          { key: 'thursday', label: 'Quinta-feira' },
+                          { key: 'friday', label: 'Sexta-feira' },
+                          { key: 'saturday', label: 'Sábado' },
+                          { key: 'sunday', label: 'Domingo' }
+                        ].map(({ key, label }) => {
+                          const isOpen = editingEstablishment.hours[key] !== 'Fechado' && editingEstablishment.hours[key] !== ''
+                          return (
+                            <div key={key} className="bg-gray-700/30 p-3 rounded-lg border border-gray-600">
+                              <div className="flex items-center justify-between mb-2">
+                                <Label className="text-sm font-medium text-gray-200">{label}</Label>
+                                <div className="flex items-center space-x-2">
+                                  <Switch
+                                    checked={isOpen}
+                                    onCheckedChange={(checked) => setEditingEstablishment(prev => prev ? {
+                                      ...prev,
+                                      hours: {
+                                        ...prev.hours,
+                                        [key]: checked ? '18:00 - 02:00' : 'Fechado'
+                                      }
+                                    } : null)}
+                                  />
+                                  <span className="text-xs text-gray-400">
+                                    {isOpen ? 'Aberto' : 'Fechado'}
+                                  </span>
+                                </div>
+                              </div>
+                              {isOpen && (
+                                <div className="grid grid-cols-2 gap-3">
+                                  <div>
+                                    <Label className="text-xs text-gray-400">Abre às</Label>
+                                    <Input
+                                      type="time"
+                                      value={editingEstablishment.hours[key]?.split(' - ')[0] || '18:00'}
+                                      onChange={(e) => {
+                                        const currentHours = editingEstablishment.hours[key]?.split(' - ') || ['18:00', '02:00']
+                                        const newHours = `${e.target.value} - ${currentHours[1]}`
+                                        setEditingEstablishment(prev => prev ? {
+                                          ...prev,
+                                          hours: { ...prev.hours, [key]: newHours }
+                                        } : null)
+                                      }}
+                                      className="border-gray-600 bg-gray-700 text-white text-sm"
+                                    />
+                                  </div>
+                                  <div>
+                                    <Label className="text-xs text-gray-400">Fecha às</Label>
+                                    <Input
+                                      type="time"
+                                      value={editingEstablishment.hours[key]?.split(' - ')[1] || '02:00'}
+                                      onChange={(e) => {
+                                        const currentHours = editingEstablishment.hours[key]?.split(' - ') || ['18:00', '02:00']
+                                        const newHours = `${currentHours[0]} - ${e.target.value}`
+                                        setEditingEstablishment(prev => prev ? {
+                                          ...prev,
+                                          hours: { ...prev.hours, [key]: newHours }
+                                        } : null)
+                                      }}
+                                      className="border-gray-600 bg-gray-700 text-white text-sm"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          )
+                        })}
                       </div>
                     </div>
 
@@ -3021,6 +3007,41 @@ export default function AdminPage() {
                       />
                       <p className="text-xs text-gray-400 mt-1">
                         Link para o cardápio online do estabelecimento
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-gray-200">Sincronizar com Google Maps</Label>
+                      <div className="flex space-x-2">
+                        <Input
+                          value={editingEstablishment.googlePlaceId || ""}
+                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, googlePlaceId: e.target.value } : null)}
+                          className="border-gray-600 bg-gray-700 text-white flex-1"
+                          placeholder="ID do lugar no Google Maps (opcional)"
+                        />
+                        <Button
+                          onClick={async () => {
+                            if (!editingEstablishment?.googlePlaceId) {
+                              showMessage("Digite o ID do lugar no Google Maps primeiro", "error")
+                              return
+                            }
+                            
+                            try {
+                              // Aqui você pode integrar com Google Places API
+                              showMessage("Funcionalidade em desenvolvimento - será integrada com Google Places API", "info")
+                            } catch (error) {
+                              showMessage("Erro ao sincronizar com Google Maps", "error")
+                            }
+                          }}
+                          variant="outline"
+                          className="border-blue-500 text-blue-300 hover:bg-blue-900/50"
+                        >
+                          <RefreshCw className="h-4 w-4 mr-2" />
+                          Sincronizar
+                        </Button>
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Para obter o ID: 1) Abra o Google Maps 2) Procure pelo estabelecimento 3) Clique em "Compartilhar" 4) Copie o ID do lugar
                       </p>
                     </div>
 

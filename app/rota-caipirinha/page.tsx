@@ -46,6 +46,7 @@ interface Establishment {
   specialties: string[]
   priceRange: "€" | "€€" | "€€€"
   menuLink?: string
+  googlePlaceId?: string
   images: string[]
   isActive: boolean
   createdAt: string
