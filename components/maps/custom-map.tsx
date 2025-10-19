@@ -33,7 +33,7 @@ export default function CustomMap({
   const [markers, setMarkers] = useState<google.maps.Marker[]>([])
 
   useEffect(() => {
-    if (!mapRef.current || !window.google) return
+    if (!mapRef.current || typeof window === 'undefined' || !window.google) return
 
     const mapInstance = new window.google.maps.Map(mapRef.current, {
       center,
@@ -61,7 +61,7 @@ export default function CustomMap({
   }, [center, zoom])
 
   useEffect(() => {
-    if (!map || !bars.length) return
+    if (!map || !bars.length || typeof window === 'undefined') return
 
     // Limpar marcadores existentes
     markers.forEach(marker => marker.setMap(null))
@@ -127,7 +127,7 @@ export default function CustomMap({
     window.open(url, '_blank')
   }
 
-  if (!window.google) {
+  if (typeof window === 'undefined' || !window.google) {
     return (
       <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">
         <div className="text-center">

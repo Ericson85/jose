@@ -1,12 +1,26 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import dynamic from "next/dynamic"
 import { MapPin, Navigation, Phone, Clock, Star, Wine, ArrowLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import CustomMap from "@/components/maps/custom-map"
+
+// Importação dinâmica para evitar problemas de SSR
+const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
+  ssr: false,
+  loading: () => (
+    <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">
+      <div className="text-center">
+        <MapPin className="h-16 w-16 text-purple-400 mx-auto mb-4" />
+        <h3 className="text-lg font-semibold text-white mb-2">Carregando Mapa...</h3>
+        <p className="text-gray-400">Aguarde enquanto carregamos o Google Maps</p>
+      </div>
+    </div>
+  )
+})
 
 interface Bar {
   id: string
@@ -23,6 +37,7 @@ interface Bar {
 }
 
 export default function RotaCaipirinha() {
+  const [isClient, setIsClient] = useState(false)
   const [bars, setBars] = useState<Bar[]>([
     {
       id: "1",
@@ -68,18 +83,23 @@ export default function RotaCaipirinha() {
   const [selectedBar, setSelectedBar] = useState<Bar | null>(null)
 
   useEffect(() => {
+    setIsClient(true)
     // Aqui você pode integrar com Google Maps API
     // Por enquanto, vamos simular o mapa
     console.log("Inicializando mapa com bares:", bars)
   }, [bars])
 
   const openInGoogleMaps = (bar: Bar) => {
-    const url = `https://www.google.com/maps?q=${bar.lat},${bar.lng}`
-    window.open(url, '_blank')
+    if (typeof window !== 'undefined') {
+      const url = `https://www.google.com/maps?q=${bar.lat},${bar.lng}`
+      window.open(url, '_blank')
+    }
   }
 
   const callBar = (phone: string) => {
-    window.open(`tel:${phone}`)
+    if (typeof window !== 'undefined') {
+      window.open(`tel:${phone}`)
+    }
   }
 
   return (
@@ -165,13 +185,23 @@ export default function RotaCaipirinha() {
                 <Navigation className="h-5 w-5 mr-2 text-green-400" />
                 Mapa Interativo
               </h2>
-              <CustomMap 
-                bars={bars}
-                selectedBar={selectedBar}
-                onBarSelect={setSelectedBar}
-                center={{ lat: -23.5505, lng: -46.6333 }}
-                zoom={13}
-              />
+              {isClient ? (
+                <CustomMap 
+                  bars={bars}
+                  selectedBar={selectedBar}
+                  onBarSelect={setSelectedBar}
+                  center={{ lat: -23.5505, lng: -46.6333 }}
+                  zoom={13}
+                />
+              ) : (
+                <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">
+                  <div className="text-center">
+                    <MapPin className="h-16 w-16 text-purple-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-white mb-2">Carregando Mapa...</h3>
+                    <p className="text-gray-400">Aguarde enquanto carregamos o Google Maps</p>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Detalhes do Bar Selecionado */}
