@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import dynamic from "next/dynamic"
-import { MapPin, Navigation, Phone, Clock, Star, Wine, ArrowLeft } from "lucide-react"
+import { MapPin, Navigation, Phone, Clock, Star, Wine, ArrowLeft, Filter, Utensils, Music, Coffee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -22,7 +22,7 @@ const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
   )
 })
 
-interface Bar {
+interface Establishment {
   id: string
   name: string
   address: string
@@ -34,11 +34,13 @@ interface Bar {
   description: string
   specialties: string[]
   priceRange: "€" | "€€" | "€€€"
+  type: "bar" | "boate" | "restaurante"
+  category: string
 }
 
 export default function RotaCaipirinha() {
   const [isClient, setIsClient] = useState(false)
-  const [bars, setBars] = useState<Bar[]>([
+  const [establishments, setEstablishments] = useState<Establishment[]>([
     {
       id: "1",
       name: "Bar da Caipirinha",
@@ -50,7 +52,9 @@ export default function RotaCaipirinha() {
       lng: -46.6333,
       description: "Especialista em caipirinhas tradicionais e criativas",
       specialties: ["Caipirinha Tradicional", "Caipirinha de Frutas", "Cachaça Premium"],
-      priceRange: "€€"
+      priceRange: "€€",
+      type: "bar",
+      category: "Bar Tradicional"
     },
     {
       id: "2",
@@ -63,7 +67,9 @@ export default function RotaCaipirinha() {
       lng: -46.6565,
       description: "Ambiente aconchegante com música ao vivo",
       specialties: ["Caipirinha de Limão", "Batidas", "Drinks Brasileiros"],
-      priceRange: "€€€"
+      priceRange: "€€€",
+      type: "bar",
+      category: "Bar com Música"
     },
     {
       id: "3",
@@ -76,27 +82,96 @@ export default function RotaCaipirinha() {
       lng: -46.6388,
       description: "Noite de samba com as melhores caipirinhas",
       specialties: ["Caipirinha Artesanal", "Cachaça de Alambique", "Petiscos"],
-      priceRange: "€€"
+      priceRange: "€€",
+      type: "bar",
+      category: "Bar de Samba"
+    },
+    {
+      id: "4",
+      name: "Club Night",
+      address: "Av. Faria Lima, 1000",
+      phone: "(11) 66666-6666",
+      hours: "23:00 - 06:00",
+      rating: 4.6,
+      lat: -23.5655,
+      lng: -46.6945,
+      description: "Boate moderna com os melhores DJs e drinks premium",
+      specialties: ["Drinks Premium", "Eletrônica", "VIP Area"],
+      priceRange: "€€€",
+      type: "boate",
+      category: "Boate Eletrônica"
+    },
+    {
+      id: "5",
+      name: "Restaurante Mineiro",
+      address: "Rua dos Pampas, 234",
+      phone: "(11) 55555-5555",
+      hours: "11:00 - 23:00",
+      rating: 4.9,
+      lat: -23.5425,
+      lng: -46.6285,
+      description: "Comida mineira autêntica com caipirinhas artesanais",
+      specialties: ["Feijão Tropeiro", "Caipirinha de Cachaça", "Comida Caseira"],
+      priceRange: "€€",
+      type: "restaurante",
+      category: "Restaurante Regional"
+    },
+    {
+      id: "6",
+      name: "Sushi & Caipirinha",
+      address: "Rua Liberdade, 456",
+      phone: "(11) 44444-4444",
+      hours: "18:00 - 01:00",
+      rating: 4.4,
+      lat: -23.5585,
+      lng: -46.6325,
+      description: "Fusão japonesa-brasileira com drinks criativos",
+      specialties: ["Sushi Premium", "Caipirinha de Saquê", "Fusion Drinks"],
+      priceRange: "€€€",
+      type: "restaurante",
+      category: "Restaurante Fusion"
     }
   ])
 
-  const [selectedBar, setSelectedBar] = useState<Bar | null>(null)
+  const [selectedEstablishment, setSelectedEstablishment] = useState<Establishment | null>(null)
+  const [selectedType, setSelectedType] = useState<"todos" | "bar" | "boate" | "restaurante">("todos")
 
   useEffect(() => {
     setIsClient(true)
-    // Aqui você pode integrar com Google Maps API
-    // Por enquanto, vamos simular o mapa
-    console.log("Inicializando mapa com bares:", bars)
-  }, [bars])
+    console.log("Inicializando mapa com estabelecimentos:", establishments)
+  }, [establishments])
 
-  const openInGoogleMaps = (bar: Bar) => {
+  // Filtrar estabelecimentos por tipo
+  const filteredEstablishments = selectedType === "todos" 
+    ? establishments 
+    : establishments.filter(est => est.type === selectedType)
+
+  const getTypeIcon = (type: string) => {
+    switch (type) {
+      case "bar": return <Wine className="h-4 w-4" />
+      case "boate": return <Music className="h-4 w-4" />
+      case "restaurante": return <Utensils className="h-4 w-4" />
+      default: return <Coffee className="h-4 w-4" />
+    }
+  }
+
+  const getTypeColor = (type: string) => {
+    switch (type) {
+      case "bar": return "text-purple-400"
+      case "boate": return "text-pink-400"
+      case "restaurante": return "text-orange-400"
+      default: return "text-gray-400"
+    }
+  }
+
+  const openInGoogleMaps = (establishment: Establishment) => {
     if (typeof window !== 'undefined') {
-      const url = `https://www.google.com/maps?q=${bar.lat},${bar.lng}`
+      const url = `https://www.google.com/maps?q=${establishment.lat},${establishment.lng}`
       window.open(url, '_blank')
     }
   }
 
-  const callBar = (phone: string) => {
+  const callEstablishment = (phone: string) => {
     if (typeof window !== 'undefined') {
       window.open(`tel:${phone}`)
     }
@@ -119,7 +194,7 @@ export default function RotaCaipirinha() {
                 <Wine className="h-8 w-8 text-purple-400" />
                 <div>
                   <h1 className="text-2xl font-bold text-white">Rota da Caipirinha</h1>
-                  <p className="text-gray-300">Descubra os melhores bares da cidade</p>
+                  <p className="text-gray-300">Descubra bares, boates e restaurantes da cidade</p>
                 </div>
               </div>
             </div>
@@ -134,39 +209,93 @@ export default function RotaCaipirinha() {
             <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6">
               <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
                 <MapPin className="h-5 w-5 mr-2 text-purple-400" />
-                Bares na Rota
+                Estabelecimentos na Rota
               </h2>
+              
+              {/* Filtros */}
+              <div className="mb-6">
+                <h3 className="text-sm font-medium text-gray-300 mb-3 flex items-center">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filtrar por tipo:
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    variant={selectedType === "todos" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("todos")}
+                    className="text-xs"
+                  >
+                    Todos ({establishments.length})
+                  </Button>
+                  <Button
+                    variant={selectedType === "bar" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("bar")}
+                    className="text-xs"
+                  >
+                    <Wine className="h-3 w-3 mr-1" />
+                    Bares ({establishments.filter(e => e.type === "bar").length})
+                  </Button>
+                  <Button
+                    variant={selectedType === "boate" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("boate")}
+                    className="text-xs"
+                  >
+                    <Music className="h-3 w-3 mr-1" />
+                    Boates ({establishments.filter(e => e.type === "boate").length})
+                  </Button>
+                  <Button
+                    variant={selectedType === "restaurante" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedType("restaurante")}
+                    className="text-xs"
+                  >
+                    <Utensils className="h-3 w-3 mr-1" />
+                    Restaurantes ({establishments.filter(e => e.type === "restaurante").length})
+                  </Button>
+                </div>
+              </div>
+
               <div className="space-y-3">
-                {bars.map((bar) => (
+                {filteredEstablishments.map((establishment) => (
                   <Card 
-                    key={bar.id} 
+                    key={establishment.id} 
                     className={`cursor-pointer transition-all duration-300 bg-gray-700/50 border-gray-600 hover:border-purple-500/50 ${
-                      selectedBar?.id === bar.id ? 'border-purple-500 bg-purple-900/20' : ''
+                      selectedEstablishment?.id === establishment.id ? 'border-purple-500 bg-purple-900/20' : ''
                     }`}
-                    onClick={() => setSelectedBar(bar)}
+                    onClick={() => setSelectedEstablishment(establishment)}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h3 className="font-semibold text-white mb-1">{bar.name}</h3>
-                          <p className="text-sm text-gray-300 mb-2">{bar.description}</p>
+                          <div className="flex items-center space-x-2 mb-2">
+                            <div className={`${getTypeColor(establishment.type)}`}>
+                              {getTypeIcon(establishment.type)}
+                            </div>
+                            <h3 className="font-semibold text-white">{establishment.name}</h3>
+                          </div>
+                          <p className="text-sm text-gray-300 mb-2">{establishment.description}</p>
                           <div className="flex items-center space-x-2 mb-2">
                             <div className="flex items-center">
                               {[...Array(5)].map((_, i) => (
                                 <Star 
                                   key={i} 
-                                  className={`h-3 w-3 ${i < Math.floor(bar.rating) ? 'text-yellow-400 fill-current' : 'text-gray-600'}`} 
+                                  className={`h-3 w-3 ${i < Math.floor(establishment.rating) ? 'text-yellow-400 fill-current' : 'text-gray-600'}`} 
                                 />
                               ))}
-                              <span className="text-xs text-gray-400 ml-1">{bar.rating}</span>
+                              <span className="text-xs text-gray-400 ml-1">{establishment.rating}</span>
                             </div>
                             <Badge className="bg-purple-900/50 text-purple-200 text-xs">
-                              {bar.priceRange}
+                              {establishment.priceRange}
+                            </Badge>
+                            <Badge className="bg-blue-900/50 text-blue-200 text-xs">
+                              {establishment.category}
                             </Badge>
                           </div>
                           <div className="flex items-center text-xs text-gray-400">
                             <Clock className="h-3 w-3 mr-1" />
-                            {bar.hours}
+                            {establishment.hours}
                           </div>
                         </div>
                       </div>
@@ -187,9 +316,9 @@ export default function RotaCaipirinha() {
               </h2>
               {isClient ? (
                 <CustomMap 
-                  bars={bars}
-                  selectedBar={selectedBar}
-                  onBarSelect={setSelectedBar}
+                  bars={establishments}
+                  selectedBar={selectedEstablishment}
+                  onBarSelect={setSelectedEstablishment}
                   center={{ lat: -23.5505, lng: -46.6333 }}
                   zoom={13}
                 />
@@ -204,10 +333,15 @@ export default function RotaCaipirinha() {
               )}
             </div>
 
-            {/* Detalhes do Bar Selecionado */}
-            {selectedBar && (
+            {/* Detalhes do Estabelecimento Selecionado */}
+            {selectedEstablishment && (
               <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6">
-                <h2 className="text-xl font-semibold text-white mb-4">Detalhes do Bar</h2>
+                <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
+                  <div className={`${getTypeColor(selectedEstablishment.type)} mr-2`}>
+                    {getTypeIcon(selectedEstablishment.type)}
+                  </div>
+                  Detalhes do {selectedEstablishment.type === 'bar' ? 'Bar' : selectedEstablishment.type === 'boate' ? 'Boate' : 'Restaurante'}
+                </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-lg font-semibold text-white mb-2">{selectedBar.name}</h3>
