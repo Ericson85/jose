@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { MoreHorizontal, User, MapPin, Headphones, Settings, ExternalLink } from "lucide-react"
+import { Menu, User, MapPin, Headphones, Settings, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -47,7 +47,7 @@ export function UserMenu({
           size="sm"
           className="border-purple-500 text-purple-300 hover:bg-purple-900/50 text-xs lg:text-base px-2 py-1 lg:px-4 lg:py-2"
         >
-          <MoreHorizontal className="h-3 w-3 lg:h-5 lg:w-5" />
+          <Menu className="h-3 w-3 lg:h-5 lg:w-5" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent 
