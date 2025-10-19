@@ -99,7 +99,7 @@ export function UserMenu({
         >
           <div className="flex items-center space-x-3">
             <MessageCircle className="h-4 w-4 text-green-400" />
-            <span>Instagram</span>
+            <span>Dbobeira</span>
           </div>
         </DropdownMenuItem>
         

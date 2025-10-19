@@ -371,7 +371,7 @@ export default function InstagramFeed({
       <div className="w-64 bg-gray-900 border-r border-gray-700 flex flex-col">
         {/* Logo */}
         <div className="p-4 border-b border-gray-700">
-          <h2 className="text-xl font-bold text-white">Tenderes</h2>
+          <h2 className="text-xl font-bold text-white">Dbobeira</h2>
           <p className="text-xs text-gray-400">Feed Social</p>
         </div>
 
@@ -433,7 +433,7 @@ export default function InstagramFeed({
         {/* Header */}
         <div className="bg-gray-900 border-b border-gray-700 p-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-white">
-            {establishmentName ? establishmentName : "Feed"}
+            {establishmentName ? establishmentName : "Dbobeira"}
           </h1>
           <Button
             variant="ghost"
@@ -481,7 +481,7 @@ export default function InstagramFeed({
               <div className="text-center">
                 <Camera className="h-12 w-12 text-gray-500 mx-auto mb-4" />
                 <p className="text-gray-400">Nenhum post ainda</p>
-                <p className="text-sm text-gray-500">Seja o primeiro a compartilhar!</p>
+                    <p className="text-sm text-gray-500">Seja o primeiro a compartilhar no Dbobeira!</p>
               </div>
             </div>
           ) : (
@@ -693,7 +693,7 @@ export default function InstagramFeed({
                     </Avatar>
                     <div>
                       <p className="text-white font-medium">{currentUser.username}</p>
-                      <p className="text-gray-400 text-sm">Compartilhando com a comunidade</p>
+                      <p className="text-gray-400 text-sm">Compartilhando no Dbobeira</p>
                     </div>
                   </div>
 
