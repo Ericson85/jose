@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import React, { useState, useEffect } from "react"
 import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star, CheckCircle, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -54,7 +54,7 @@ export default function AdminPage() {
   const [editingDbEvent, setEditingDbEvent] = useState<any>(null)
   const [allDrinks, setAllDrinks] = useState<Drink[]>([])
   const [allPlans, setAllPlans] = useState<any[]>([])
-  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config' | 'rota-caipirinha'>('dashboard')
   
   // Login states
   const [password, setPassword] = useState("")
@@ -86,6 +86,12 @@ export default function AdminPage() {
   const [editingDrinkeiraDrink, setEditingDrinkeiraDrink] = useState<Drink | null>(null);
   const [isAddingNewDrinkeira, setIsAddingNewDrinkeira] = useState(false);
   const [drinkeiraDrinkToDelete, setDrinkeiraDrinkToDelete] = useState<Drink | null>(null);
+
+  // Estados para Rota da Caipirinha
+  const [establishments, setEstablishments] = useState<any[]>([])
+  const [loadingEstablishments, setLoadingEstablishments] = useState(false)
+  const [editingEstablishment, setEditingEstablishment] = useState<any>(null)
+  const [isAddingNewEstablishment, setIsAddingNewEstablishment] = useState(false)
 
   // Estados para Configurações de Eventos
   const [eventConfig, setEventConfig] = useState({
@@ -201,6 +207,114 @@ export default function AdminPage() {
       console.error('Erro ao buscar planos:', error);
     }
   }
+
+  // Funções para Rota da Caipirinha
+  async function loadEstablishments() {
+    setLoadingEstablishments(true);
+    try {
+      const response = await fetch('/api/establishments');
+      const data = await response.json();
+      if (data.success) {
+        setEstablishments(data.data);
+      }
+    } catch (error) {
+      console.error('Erro ao carregar estabelecimentos:', error);
+      showMessage('Erro ao carregar estabelecimentos', 'error');
+    } finally {
+      setLoadingEstablishments(false);
+    }
+  }
+
+  function handleAddNewEstablishment() {
+    const newEstablishment = {
+      id: Date.now().toString(),
+      name: "",
+      type: "bar",
+      category: "",
+      address: "",
+      phone: "",
+      description: "",
+      lat: -3.7319,
+      lng: -38.5267,
+      rating: 0,
+      hours: {
+        monday: "Fechado",
+        tuesday: "Fechado", 
+        wednesday: "Fechado",
+        thursday: "Fechado",
+        friday: "Fechado",
+        saturday: "Fechado",
+        sunday: "Fechado"
+      },
+      specialties: [],
+      priceRange: "€",
+      menu: [],
+      images: [],
+      isActive: true,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    setEditingEstablishment(newEstablishment);
+    setIsAddingNewEstablishment(true);
+  }
+
+  async function handleSaveEstablishment() {
+    if (!editingEstablishment) return;
+
+    try {
+      const url = isAddingNewEstablishment ? '/api/establishments' : `/api/establishments/${editingEstablishment.id}`;
+      const method = isAddingNewEstablishment ? 'POST' : 'PUT';
+
+      const response = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingEstablishment)
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showMessage("Estabelecimento salvo com sucesso!", "success");
+        setEditingEstablishment(null);
+        setIsAddingNewEstablishment(false);
+        loadEstablishments();
+      } else {
+        showMessage("Erro ao salvar estabelecimento", "error");
+      }
+    } catch (error) {
+      console.error('Erro ao salvar estabelecimento:', error);
+      showMessage("Erro ao salvar estabelecimento", "error");
+    }
+  }
+
+  async function handleDeleteEstablishment(id: string) {
+    if (!confirm("Tem certeza que deseja excluir este estabelecimento?")) return;
+
+    try {
+      const response = await fetch(`/api/establishments/${id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        showMessage("Estabelecimento excluído com sucesso!", "success");
+        loadEstablishments();
+      } else {
+        showMessage("Erro ao excluir estabelecimento", "error");
+      }
+    } catch (error) {
+      console.error('Erro ao excluir estabelecimento:', error);
+      showMessage("Erro ao excluir estabelecimento", "error");
+    }
+  }
+
+  // Carregar estabelecimentos quando a aba for ativada
+  useEffect(() => {
+    if (activeTab === 'rota-caipirinha') {
+      loadEstablishments();
+    }
+  }, [activeTab]);
 
   async function handleSaveDbEvent() {
     if (!editingDbEvent) return;
@@ -1040,6 +1154,17 @@ export default function AdminPage() {
               }`}
             >
               Configurações
+            </Button>
+            <Button
+              onClick={() => setActiveTab('rota-caipirinha')}
+              variant={activeTab === 'rota-caipirinha' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'rota-caipirinha' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              Rota da Caipirinha
             </Button>
           </div>
         </div>
@@ -2589,6 +2714,212 @@ export default function AdminPage() {
                     </div>
                   )}
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* Rota da Caipirinha Tab */}
+      {activeTab === 'rota-caipirinha' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Lista de Estabelecimentos */}
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center justify-between">
+                  <span>Estabelecimentos</span>
+                  <Button
+                    onClick={handleAddNewEstablishment}
+                    className="bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Estabelecimento
+                  </Button>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {loadingEstablishments ? (
+                  <div className="flex items-center justify-center py-8">
+                    <div className="text-gray-400">Carregando estabelecimentos...</div>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    {establishments.map((establishment) => (
+                      <div key={establishment.id} className="bg-gray-700/50 p-4 rounded-lg border border-gray-600">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center">
+                              <Wine className="h-5 w-5 text-white" />
+                            </div>
+                            <div>
+                              <h4 className="font-semibold text-white">{establishment.name}</h4>
+                              <p className="text-sm text-gray-400">{establishment.address}</p>
+                              <div className="flex items-center space-x-2 mt-1">
+                                <Badge variant="outline" className="text-xs">
+                                  {establishment.type}
+                                </Badge>
+                                <Badge variant="outline" className="text-xs">
+                                  {establishment.priceRange}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Button
+                              onClick={() => setEditingEstablishment(establishment)}
+                              variant="outline"
+                              size="sm"
+                              className="border-blue-500 text-blue-300 hover:bg-blue-900/50"
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              onClick={() => handleDeleteEstablishment(establishment.id)}
+                              variant="outline"
+                              size="sm"
+                              className="border-red-500 text-red-300 hover:bg-red-900/50"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Formulário de Estabelecimento */}
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-white">
+                  {editingEstablishment ? (isAddingNewEstablishment ? 'Adicionar Estabelecimento' : 'Editar Estabelecimento') : 'Formulário'}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {editingEstablishment ? (
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium text-gray-200">Nome</Label>
+                        <Input
+                          value={editingEstablishment.name}
+                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, name: e.target.value } : null)}
+                          className="border-gray-600 bg-gray-700 text-white"
+                          placeholder="Nome do estabelecimento"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-200">Tipo</Label>
+                        <Select
+                          value={editingEstablishment.type}
+                          onValueChange={(value) => setEditingEstablishment(prev => prev ? { ...prev, type: value } : null)}
+                        >
+                          <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-700 border-gray-600">
+                            <SelectItem value="bar" className="text-white">Bar</SelectItem>
+                            <SelectItem value="boate" className="text-white">Boate</SelectItem>
+                            <SelectItem value="restaurante" className="text-white">Restaurante</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-gray-200">Endereço</Label>
+                      <Input
+                        value={editingEstablishment.address}
+                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, address: e.target.value } : null)}
+                        className="border-gray-600 bg-gray-700 text-white"
+                        placeholder="Endereço completo"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Label className="text-sm font-medium text-gray-200">Telefone</Label>
+                        <Input
+                          value={editingEstablishment.phone}
+                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, phone: e.target.value } : null)}
+                          className="border-gray-600 bg-gray-700 text-white"
+                          placeholder="(85) 99999-9999"
+                        />
+                      </div>
+                      <div>
+                        <Label className="text-sm font-medium text-gray-200">Faixa de Preço</Label>
+                        <Select
+                          value={editingEstablishment.priceRange}
+                          onValueChange={(value) => setEditingEstablishment(prev => prev ? { ...prev, priceRange: value } : null)}
+                        >
+                          <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="bg-gray-700 border-gray-600">
+                            <SelectItem value="€" className="text-white">€ - Econômico</SelectItem>
+                            <SelectItem value="€€" className="text-white">€€ - Médio</SelectItem>
+                            <SelectItem value="€€€" className="text-white">€€€ - Alto</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-gray-200">Descrição</Label>
+                      <textarea
+                        value={editingEstablishment.description}
+                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, description: e.target.value } : null)}
+                        className="w-full h-24 border border-gray-600 bg-gray-700 text-white rounded-md px-3 py-2"
+                        placeholder="Descrição do estabelecimento"
+                      />
+                    </div>
+
+                    <div className="flex items-center space-x-3">
+                      <Switch
+                        checked={editingEstablishment.isActive}
+                        onCheckedChange={(checked) => setEditingEstablishment(prev => prev ? { ...prev, isActive: checked } : null)}
+                      />
+                      <Label className="text-sm font-medium text-gray-200">
+                        Estabelecimento Ativo
+                      </Label>
+                    </div>
+
+                    <div className="flex space-x-3">
+                      <Button
+                        onClick={handleSaveEstablishment}
+                        className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                      >
+                        <Save className="h-4 w-4 mr-2" />
+                        {isAddingNewEstablishment ? 'Adicionar' : 'Salvar'}
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          setEditingEstablishment(null);
+                          setIsAddingNewEstablishment(false);
+                        }}
+                        variant="outline"
+                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                      >
+                        Cancelar
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center h-64">
+                    <div className="text-center">
+                      <Wine className="h-16 w-16 text-gray-500 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-400 mb-2">
+                        Selecione um estabelecimento para editar
+                      </h3>
+                      <p className="text-gray-500">
+                        Ou clique em "Novo Estabelecimento" para adicionar um novo item
+                      </p>
+                    </div>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
