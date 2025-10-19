@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Menu, User, MapPin, Headphones, Settings, ExternalLink } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -23,6 +24,7 @@ export function UserMenu({
   onPodcastClick 
 }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
+  const router = useRouter()
 
   const handleProfileClick = () => {
     onProfileClick?.()
@@ -30,7 +32,7 @@ export function UserMenu({
   }
 
   const handleCaipirinhaRouteClick = () => {
-    onCaipirinhaRouteClick?.()
+    router.push('/rota-caipirinha')
     setIsOpen(false)
   }
 

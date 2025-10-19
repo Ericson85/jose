@@ -847,10 +847,6 @@ export default function TenderesPage() {
             <div className="flex items-center">
               <UserMenu 
                 onProfileClick={() => setShowWelcomeModal(true)}
-                onCaipirinhaRouteClick={() => {
-                  // Implementar navegação para rota da caipirinha
-                  window.open('https://maps.google.com', '_blank')
-                }}
                 onPodcastClick={() => {
                   // Implementar navegação para podcast
                   window.open('https://spotify.com', '_blank')
