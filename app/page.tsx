@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
+import { UserMenu } from "@/components/ui/user-menu"
 
 export interface Drink {
   id: string
@@ -842,18 +843,19 @@ export default function TenderesPage() {
               <h1 className="text-lg lg:text-3xl font-bold text-white">Tenderes</h1>
             </div>
             
-            {/* Botão Perfil - Mobile: compacto, Desktop: espaçado */}
+            {/* Menu do Usuário - Mobile: compacto, Desktop: espaçado */}
             <div className="flex items-center">
-              {/* Mobile: botão pequeno, Desktop: botão grande */}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowWelcomeModal(true)}
-                className="border-purple-500 text-purple-300 hover:bg-purple-900/50 text-xs lg:text-base px-2 py-1 lg:px-6 lg:py-3"
-              >
-                <User className="h-3 w-3 lg:h-5 lg:w-5 mr-1 lg:mr-3" />
-                <span className="hidden sm:inline">Perfil</span>
-              </Button>
+              <UserMenu 
+                onProfileClick={() => setShowWelcomeModal(true)}
+                onCaipirinhaRouteClick={() => {
+                  // Implementar navegação para rota da caipirinha
+                  window.open('https://maps.google.com', '_blank')
+                }}
+                onPodcastClick={() => {
+                  // Implementar navegação para podcast
+                  window.open('https://spotify.com', '_blank')
+                }}
+              />
             </div>
           </div>
         </div>
