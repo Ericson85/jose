@@ -26,113 +26,53 @@ const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
 interface Establishment {
   id: string
   name: string
-  address: string
-  phone: string
-  hours: string
-  rating: number
-  lat: number
-  lng: number
-  description: string
-  specialties: string[]
-  priceRange: "€" | "€€" | "€€€"
   type: "bar" | "boate" | "restaurante"
   category: string
+  address: string
+  phone: string
+  description: string
+  lat: number
+  lng: number
+  rating: number
+  hours: {
+    monday: string
+    tuesday: string
+    wednesday: string
+    thursday: string
+    friday: string
+    saturday: string
+    sunday: string
+  }
+  specialties: string[]
+  priceRange: "€" | "€€" | "€€€"
+  menu: Array<{
+    id: string
+    name: string
+    price: number
+    description: string
+    category: string
+  }>
+  images: string[]
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
 }
 
 export default function RotaCaipirinha() {
   const [isClient, setIsClient] = useState(false)
-  const [establishments, setEstablishments] = useState<Establishment[]>([
-    {
-      id: "1",
-      name: "Bar da Caipirinha",
-      address: "Rua das Flores, 123",
-      phone: "(11) 99999-9999",
-      hours: "18:00 - 02:00",
-      rating: 4.8,
-      lat: -23.5505,
-      lng: -46.6333,
-      description: "Especialista em caipirinhas tradicionais e criativas",
-      specialties: ["Caipirinha Tradicional", "Caipirinha de Frutas", "Cachaça Premium"],
-      priceRange: "€€",
-      type: "bar",
-      category: "Bar Tradicional"
-    },
-    {
-      id: "2",
-      name: "Cantinho Brasileiro",
-      address: "Av. Paulista, 456",
-      phone: "(11) 88888-8888",
-      hours: "17:00 - 01:00",
-      rating: 4.5,
-      lat: -23.5615,
-      lng: -46.6565,
-      description: "Ambiente aconchegante com música ao vivo",
-      specialties: ["Caipirinha de Limão", "Batidas", "Drinks Brasileiros"],
-      priceRange: "€€€",
-      type: "bar",
-      category: "Bar com Música"
-    },
-    {
-      id: "3",
-      name: "Samba & Cachaça",
-      address: "Rua Augusta, 789",
-      phone: "(11) 77777-7777",
-      hours: "19:00 - 03:00",
-      rating: 4.7,
-      lat: -23.5489,
-      lng: -46.6388,
-      description: "Noite de samba com as melhores caipirinhas",
-      specialties: ["Caipirinha Artesanal", "Cachaça de Alambique", "Petiscos"],
-      priceRange: "€€",
-      type: "bar",
-      category: "Bar de Samba"
-    },
-    {
-      id: "4",
-      name: "Club Night",
-      address: "Av. Faria Lima, 1000",
-      phone: "(11) 66666-6666",
-      hours: "23:00 - 06:00",
-      rating: 4.6,
-      lat: -23.5655,
-      lng: -46.6945,
-      description: "Boate moderna com os melhores DJs e drinks premium",
-      specialties: ["Drinks Premium", "Eletrônica", "VIP Area"],
-      priceRange: "€€€",
-      type: "boate",
-      category: "Boate Eletrônica"
-    },
-    {
-      id: "5",
-      name: "Restaurante Mineiro",
-      address: "Rua dos Pampas, 234",
-      phone: "(11) 55555-5555",
-      hours: "11:00 - 23:00",
-      rating: 4.9,
-      lat: -23.5425,
-      lng: -46.6285,
-      description: "Comida mineira autêntica com caipirinhas artesanais",
-      specialties: ["Feijão Tropeiro", "Caipirinha de Cachaça", "Comida Caseira"],
-      priceRange: "€€",
-      type: "restaurante",
-      category: "Restaurante Regional"
-    },
-    {
-      id: "6",
-      name: "Sushi & Caipirinha",
-      address: "Rua Liberdade, 456",
-      phone: "(11) 44444-4444",
-      hours: "18:00 - 01:00",
-      rating: 4.4,
-      lat: -23.5585,
-      lng: -46.6325,
-      description: "Fusão japonesa-brasileira com drinks criativos",
-      specialties: ["Sushi Premium", "Caipirinha de Saquê", "Fusion Drinks"],
-      priceRange: "€€€",
-      type: "restaurante",
-      category: "Restaurante Fusion"
+  const [establishments, setEstablishments] = useState<Establishment[]>([])
+
+  const loadEstablishments = async () => {
+    try {
+      const response = await fetch('/api/establishments?active=true')
+      const data = await response.json()
+      if (data.success) {
+        setEstablishments(data.data)
+      }
+    } catch (error) {
+      console.error('Erro ao carregar estabelecimentos:', error)
     }
-  ])
+  }
 
   const [selectedEstablishment, setSelectedEstablishment] = useState<Establishment | null>(null)
   const [selectedType, setSelectedType] = useState<"todos" | "bar" | "boate" | "restaurante">("todos")
@@ -140,6 +80,10 @@ export default function RotaCaipirinha() {
 
   useEffect(() => {
     setIsClient(true)
+    loadEstablishments()
+  }, [])
+
+  useEffect(() => {
     console.log("Inicializando mapa com estabelecimentos:", establishments)
   }, [establishments])
 
@@ -297,7 +241,7 @@ export default function RotaCaipirinha() {
                           </div>
                           <div className="flex items-center text-xs text-gray-400">
                             <Clock className="h-3 w-3 mr-1" />
-                            {establishment.hours}
+                            {establishment.hours.monday}
                           </div>
                         </div>
                       </div>
@@ -360,7 +304,7 @@ export default function RotaCaipirinha() {
                       </div>
                       <div className="flex items-center text-gray-300">
                         <Clock className="h-4 w-4 mr-2 text-blue-400" />
-                        <span>{selectedEstablishment.hours}</span>
+                        <span>Seg-Sex: {selectedEstablishment.hours.monday}</span>
                       </div>
                     </div>
                   </div>
