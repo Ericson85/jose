@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Menu, User, MapPin, Headphones, Settings, ExternalLink } from "lucide-react"
+import { Menu, User, MapPin, Headphones, Settings, ExternalLink, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -16,12 +16,14 @@ interface UserMenuProps {
   onProfileClick?: () => void
   onCaipirinhaRouteClick?: () => void
   onPodcastClick?: () => void
+  onChatClick?: () => void
 }
 
 export function UserMenu({ 
   onProfileClick, 
   onCaipirinhaRouteClick, 
-  onPodcastClick 
+  onPodcastClick,
+  onChatClick
 }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const router = useRouter()
@@ -38,6 +40,11 @@ export function UserMenu({
 
   const handlePodcastClick = () => {
     onPodcastClick?.()
+    setIsOpen(false)
+  }
+
+  const handleChatClick = () => {
+    onChatClick?.()
     setIsOpen(false)
   }
 
@@ -84,6 +91,16 @@ export function UserMenu({
             <span>Podcast</span>
           </div>
           <ExternalLink className="h-3 w-3 text-gray-400" />
+        </DropdownMenuItem>
+        
+        <DropdownMenuItem 
+          onClick={handleChatClick}
+          className="flex items-center justify-between cursor-pointer hover:bg-gray-700/50 focus:bg-gray-700/50"
+        >
+          <div className="flex items-center space-x-3">
+            <MessageCircle className="h-4 w-4 text-green-400" />
+            <span>Chat</span>
+          </div>
         </DropdownMenuItem>
         
         <DropdownMenuSeparator className="bg-gray-600" />

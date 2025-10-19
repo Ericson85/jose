@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
+import ChatWindow from "@/components/chat/chat-window"
 
 // Importação dinâmica para evitar problemas de SSR
 const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
@@ -135,6 +136,7 @@ export default function RotaCaipirinha() {
 
   const [selectedEstablishment, setSelectedEstablishment] = useState<Establishment | null>(null)
   const [selectedType, setSelectedType] = useState<"todos" | "bar" | "boate" | "restaurante">("todos")
+  const [showChat, setShowChat] = useState(false)
 
   useEffect(() => {
     setIsClient(true)
@@ -382,6 +384,13 @@ export default function RotaCaipirinha() {
                         Ver no Mapa
                       </Button>
                       <Button
+                        onClick={() => setShowChat(true)}
+                        className="bg-purple-600 hover:bg-purple-700 flex-1"
+                      >
+                        <MessageCircle className="h-4 w-4 mr-2" />
+                        Chat
+                      </Button>
+                      <Button
                         onClick={() => callBar(selectedBar.phone)}
                         variant="outline"
                         className="border-blue-500 text-blue-300 hover:bg-blue-900/50"
@@ -396,6 +405,19 @@ export default function RotaCaipirinha() {
           </div>
         </div>
       </div>
+
+      {/* Chat Window */}
+      <ChatWindow
+        isOpen={showChat}
+        onClose={() => setShowChat(false)}
+        establishmentId={selectedBar?.id}
+        establishmentName={selectedBar?.name}
+        currentUser={{
+          id: "user1",
+          username: "Usuário",
+          avatar: "/placeholder-user.jpg"
+        }}
+      />
     </div>
   )
 }
