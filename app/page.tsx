@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { UserMenu } from "@/components/ui/user-menu"
-import FeedWindow from "@/components/feed/feed-window"
+import InstagramFeed from "@/components/instagram/instagram-feed"
 
 export interface Drink {
   id: string
@@ -1952,8 +1952,8 @@ export default function TenderesPage() {
         </div>
       </footer>
 
-      {/* Feed Window */}
-      <FeedWindow
+      {/* Instagram Feed */}
+      <InstagramFeed
         isOpen={showFeed}
         onClose={() => setShowFeed(false)}
         currentUser={{

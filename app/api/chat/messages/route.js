@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 
-// Simulação de banco de dados em memória para mensagens/feed
+// Simulação de banco de dados em memória para feed estilo Instagram
 let messages = [
   {
     id: "1",
@@ -27,7 +27,9 @@ let messages = [
       }
     ],
     shares: 2,
-    category: "geral"
+    category: "geral",
+    savedBy: ["user3"],
+    views: 45
   },
   {
     id: "2",
@@ -45,7 +47,9 @@ let messages = [
     likedBy: ["user1", "user3", "user4"],
     replies: [],
     shares: 1,
-    category: "foto"
+    category: "foto",
+    savedBy: ["user1", "user4"],
+    views: 128
   },
   {
     id: "3",
@@ -76,7 +80,9 @@ let messages = [
       }
     ],
     shares: 3,
-    category: "localizacao"
+    category: "localizacao",
+    savedBy: ["user2"],
+    views: 67
   },
   {
     id: "4",
@@ -103,7 +109,9 @@ let messages = [
       }
     ],
     shares: 5,
-    category: "depoimento"
+    category: "depoimento",
+    savedBy: ["user1", "user3"],
+    views: 234
   }
 ]
 
@@ -188,6 +196,8 @@ export async function POST(request) {
       likedBy: [],
       replies: [],
       shares: 0,
+      savedBy: [],
+      views: 0,
       category: type === 'image' ? 'foto' : type === 'location' ? 'localizacao' : 'geral'
     }
     
@@ -246,6 +256,18 @@ export async function PUT(request) {
       messages[messageIndex].replies.push(newReply)
     } else if (action === 'share') {
       messages[messageIndex].shares += 1
+    } else if (action === 'save') {
+      const isSaved = messages[messageIndex].savedBy.includes(userId)
+      
+      if (isSaved) {
+        // Remover dos salvos
+        messages[messageIndex].savedBy = messages[messageIndex].savedBy.filter(id => id !== userId)
+      } else {
+        // Adicionar aos salvos
+        messages[messageIndex].savedBy.push(userId)
+      }
+    } else if (action === 'view') {
+      messages[messageIndex].views += 1
     }
     
     return NextResponse.json({

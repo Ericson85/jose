@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
-import FeedWindow from "@/components/feed/feed-window"
+import InstagramFeed from "@/components/instagram/instagram-feed"
 
 // Importação dinâmica para evitar problemas de SSR
 const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
@@ -406,8 +406,8 @@ export default function RotaCaipirinha() {
         </div>
       </div>
 
-      {/* Feed Window */}
-      <FeedWindow
+      {/* Instagram Feed */}
+      <InstagramFeed
         isOpen={showFeed}
         onClose={() => setShowFeed(false)}
         establishmentId={selectedEstablishment?.id}
