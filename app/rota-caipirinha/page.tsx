@@ -279,7 +279,7 @@ export default function RotaCaipirinha() {
                               {establishment.priceRange}
                             </Badge>
                             <Badge className="bg-blue-900/50 text-blue-200 text-xs">
-                              {establishment.category}
+                              Cardápio
                             </Badge>
                             <Badge 
                               className={`text-xs ${
