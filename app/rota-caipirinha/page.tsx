@@ -319,7 +319,7 @@ export default function RotaCaipirinha() {
               {isClient ? (
                 <CustomMap 
                   bars={establishments}
-                  selectedBar={selectedEstablishment}
+                  selectedEstablishment={selectedEstablishment}
                   onBarSelect={setSelectedEstablishment}
                   center={{ lat: -23.5505, lng: -46.6333 }}
                   zoom={13}
@@ -346,21 +346,21 @@ export default function RotaCaipirinha() {
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <h3 className="text-lg font-semibold text-white mb-2">{selectedBar.name}</h3>
-                    <p className="text-gray-300 mb-4">{selectedBar.description}</p>
+                    <h3 className="text-lg font-semibold text-white mb-2">{selectedEstablishment.name}</h3>
+                    <p className="text-gray-300 mb-4">{selectedEstablishment.description}</p>
                     
                     <div className="space-y-3">
                       <div className="flex items-center text-gray-300">
                         <MapPin className="h-4 w-4 mr-2 text-purple-400" />
-                        <span>{selectedBar.address}</span>
+                        <span>{selectedEstablishment.address}</span>
                       </div>
                       <div className="flex items-center text-gray-300">
                         <Phone className="h-4 w-4 mr-2 text-green-400" />
-                        <span>{selectedBar.phone}</span>
+                        <span>{selectedEstablishment.phone}</span>
                       </div>
                       <div className="flex items-center text-gray-300">
                         <Clock className="h-4 w-4 mr-2 text-blue-400" />
-                        <span>{selectedBar.hours}</span>
+                        <span>{selectedEstablishment.hours}</span>
                       </div>
                     </div>
                   </div>
@@ -368,7 +368,7 @@ export default function RotaCaipirinha() {
                   <div>
                     <h4 className="text-md font-semibold text-white mb-3">Especialidades</h4>
                     <div className="space-y-2 mb-4">
-                      {selectedBar.specialties.map((specialty, index) => (
+                      {selectedEstablishment.specialties.map((specialty, index) => (
                         <Badge key={index} className="bg-purple-900/50 text-purple-200 mr-2 mb-2">
                           {specialty}
                         </Badge>
@@ -377,7 +377,7 @@ export default function RotaCaipirinha() {
                     
                     <div className="flex space-x-3">
                       <Button
-                        onClick={() => openInGoogleMaps(selectedBar)}
+                        onClick={() => openInGoogleMaps(selectedEstablishment)}
                         className="bg-green-600 hover:bg-green-700 flex-1"
                       >
                         <Navigation className="h-4 w-4 mr-2" />
@@ -391,7 +391,7 @@ export default function RotaCaipirinha() {
                         Chat
                       </Button>
                       <Button
-                        onClick={() => callBar(selectedBar.phone)}
+                        onClick={() => callEstablishment(selectedEstablishment.phone)}
                         variant="outline"
                         className="border-blue-500 text-blue-300 hover:bg-blue-900/50"
                       >
@@ -410,8 +410,8 @@ export default function RotaCaipirinha() {
       <ChatWindow
         isOpen={showChat}
         onClose={() => setShowChat(false)}
-        establishmentId={selectedBar?.id}
-        establishmentName={selectedBar?.name}
+        establishmentId={selectedEstablishment?.id}
+        establishmentName={selectedEstablishment?.name}
         currentUser={{
           id: "user1",
           username: "Usuário",
