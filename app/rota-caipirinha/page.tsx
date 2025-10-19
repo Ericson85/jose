@@ -64,10 +64,13 @@ export default function RotaCaipirinha() {
 
   const loadEstablishments = async () => {
     try {
+      console.log('Carregando estabelecimentos...')
       const response = await fetch('/api/establishments?active=true')
       const data = await response.json()
+      console.log('Dados recebidos:', data)
       if (data.success) {
         setEstablishments(data.data)
+        console.log('Estabelecimentos carregados:', data.data.length)
       }
     } catch (error) {
       console.error('Erro ao carregar estabelecimentos:', error)
@@ -86,6 +89,10 @@ export default function RotaCaipirinha() {
   useEffect(() => {
     console.log("Inicializando mapa com estabelecimentos:", establishments)
   }, [establishments])
+
+  useEffect(() => {
+    console.log("Estabelecimento selecionado:", selectedEstablishment)
+  }, [selectedEstablishment])
 
   // Filtrar estabelecimentos por tipo
   const filteredEstablishments = selectedType === "todos" 
@@ -243,7 +250,10 @@ export default function RotaCaipirinha() {
                     className={`cursor-pointer transition-all duration-300 bg-gray-700/50 border-gray-600 hover:border-purple-500/50 ${
                       selectedEstablishment?.id === establishment.id ? 'border-purple-500 bg-purple-900/20' : ''
                     }`}
-                    onClick={() => setSelectedEstablishment(establishment)}
+                    onClick={() => {
+                      console.log('Clicando no estabelecimento:', establishment.name)
+                      setSelectedEstablishment(establishment)
+                    }}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
