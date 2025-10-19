@@ -33,7 +33,17 @@ export default function CustomMap({
   const [markers, setMarkers] = useState<google.maps.Marker[]>([])
 
   useEffect(() => {
-    if (!mapRef.current || typeof window === 'undefined' || !window.google) return
+    if (!mapRef.current || typeof window === 'undefined') {
+      console.log('Mapa: window não disponível')
+      return
+    }
+
+    if (!window.google) {
+      console.log('Mapa: Google Maps API não carregada')
+      return
+    }
+
+    console.log('Mapa: Inicializando mapa com centro:', center)
 
     const mapInstance = new window.google.maps.Map(mapRef.current, {
       center,
@@ -58,15 +68,24 @@ export default function CustomMap({
     })
 
     setMap(mapInstance)
+    console.log('Mapa: Mapa inicializado com sucesso')
   }, [center, zoom])
 
   useEffect(() => {
-    if (!map || !bars.length || typeof window === 'undefined') return
+    console.log('Mapa: useEffect para marcadores - map:', !!map, 'bars:', bars.length, 'window:', typeof window !== 'undefined')
+    
+    if (!map || !bars.length || typeof window === 'undefined') {
+      console.log('Mapa: Condições não atendidas para criar marcadores')
+      return
+    }
+
+    console.log('Mapa: Criando marcadores para:', bars.length, 'bares')
 
     // Limpar marcadores existentes
     markers.forEach(marker => marker.setMap(null))
 
     const newMarkers: google.maps.Marker[] = bars.map(bar => {
+      console.log('Mapa: Criando marcador para:', bar.name, 'em', bar.lat, bar.lng)
       const marker = new window.google.maps.Marker({
         position: { lat: bar.lat, lng: bar.lng },
         map,
@@ -113,6 +132,7 @@ export default function CustomMap({
 
     // Se há um bar selecionado, centralizar o mapa nele
     if (selectedBar) {
+      console.log('Mapa: Centralizando no bar selecionado:', selectedBar.name)
       map.setCenter({ lat: selectedBar.lat, lng: selectedBar.lng })
       map.setZoom(16)
     }

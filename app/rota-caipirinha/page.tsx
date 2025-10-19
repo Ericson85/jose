@@ -315,9 +315,9 @@ export default function RotaCaipirinha() {
               {isClient ? (
                 <CustomMap 
                   bars={establishments}
-                  selectedEstablishment={selectedEstablishment}
+                  selectedBar={selectedEstablishment}
                   onBarSelect={setSelectedEstablishment}
-                  center={{ lat: -23.5505, lng: -46.6333 }}
+                  center={{ lat: -3.7319, lng: -38.5267 }}
                   zoom={13}
                 />
               ) : (
