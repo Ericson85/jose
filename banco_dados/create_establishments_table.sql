@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS establishments (
 INSERT INTO establishments (
     name, type, category, address, phone, description, lat, lng, rating,
     hours_monday, hours_tuesday, hours_wednesday, hours_thursday, hours_friday, hours_saturday, hours_sunday,
-    specialties, price_range, menu_link, is_active
+    specialties, price_range, menu_link, google_place_id, is_active
 ) VALUES (
     'Bar do João',
     'bar',
@@ -52,5 +52,6 @@ INSERT INTO establishments (
     JSON_ARRAY('Caipirinha', 'Petiscos', 'Música ao vivo'),
     '€€',
     'https://exemplo.com/cardapio-bar-do-joao',
+    'ChIJExamplePlaceId123456789',
     TRUE
 );

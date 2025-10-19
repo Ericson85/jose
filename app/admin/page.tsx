@@ -3027,9 +3027,36 @@ export default function AdminPage() {
                             }
                             
                             try {
-                              // Aqui você pode integrar com Google Places API
-                              showMessage("Funcionalidade em desenvolvimento - será integrada com Google Places API", "info")
+                              showMessage("Sincronizando com Google Maps...", "info")
+                              
+                              const response = await fetch('/api/google-places', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ placeId: editingEstablishment.googlePlaceId })
+                              })
+                              
+                              const data = await response.json()
+                              
+                              if (data.success) {
+                                // Atualizar os dados do estabelecimento com as informações do Google
+                                const googleData = data.data
+                                
+                                setEditingEstablishment(prev => prev ? {
+                                  ...prev,
+                                  name: googleData.name || prev.name,
+                                  address: googleData.address || prev.address,
+                                  phone: googleData.phone || prev.phone,
+                                  rating: googleData.rating || prev.rating,
+                                  hours: googleData.hours || prev.hours,
+                                  menuLink: googleData.website || prev.menuLink
+                                } : null)
+                                
+                                showMessage("Dados sincronizados com sucesso do Google Maps!", "success")
+                              } else {
+                                showMessage(`Erro: ${data.error}`, "error")
+                              }
                             } catch (error) {
+                              console.error('Erro ao sincronizar:', error)
                               showMessage("Erro ao sincronizar com Google Maps", "error")
                             }
                           }}
