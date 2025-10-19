@@ -24,15 +24,7 @@ let establishments = [
     },
     specialties: ["Caipirinha", "Petiscos", "Música ao vivo"],
     priceRange: "€€",
-    menu: [
-      {
-        id: "1",
-        name: "Caipirinha Tradicional",
-        price: 12.00,
-        description: "Limão, açúcar e cachaça",
-        category: "Bebidas"
-      }
-    ],
+    menuLink: "https://exemplo.com/cardapio-bar-do-joao",
     images: ["/placeholder.jpg"],
     isActive: true,
     createdAt: new Date().toISOString(),

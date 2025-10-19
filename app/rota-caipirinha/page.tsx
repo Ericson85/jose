@@ -45,13 +45,7 @@ interface Establishment {
   }
   specialties: string[]
   priceRange: "€" | "€€" | "€€€"
-  menu: Array<{
-    id: string
-    name: string
-    price: number
-    description: string
-    category: string
-  }>
+  menuLink?: string
   images: string[]
   isActive: boolean
   createdAt: string
@@ -412,31 +406,19 @@ export default function RotaCaipirinha() {
                     </div>
 
                     {/* Cardápio */}
-                    {selectedEstablishment.menu && selectedEstablishment.menu.length > 0 && (
+                    {selectedEstablishment.menuLink && (
                       <div className="mb-4">
                         <h4 className="text-md font-semibold text-white mb-3 flex items-center">
                           <Utensils className="h-4 w-4 mr-2 text-orange-400" />
                           Cardápio
                         </h4>
-                        <div className="space-y-2 max-h-48 overflow-y-auto">
-                          {selectedEstablishment.menu.map((item, index) => (
-                            <div key={index} className="bg-gray-700/50 p-3 rounded-lg border border-gray-600">
-                              <div className="flex justify-between items-start">
-                                <div className="flex-1">
-                                  <h5 className="font-medium text-white text-sm">{item.name}</h5>
-                                  {item.description && (
-                                    <p className="text-xs text-gray-400 mt-1">{item.description}</p>
-                                  )}
-                                </div>
-                                <div className="text-right ml-3">
-                                  <span className="font-semibold text-green-400 text-sm">
-                                    R$ {item.price.toFixed(2)}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
+                        <Button
+                          onClick={() => window.open(selectedEstablishment.menuLink, '_blank')}
+                          className="bg-orange-600 hover:bg-orange-700 text-white"
+                        >
+                          <Utensils className="h-4 w-4 mr-2" />
+                          Ver Cardápio Completo
+                        </Button>
                       </div>
                     )}
                     

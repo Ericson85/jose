@@ -248,7 +248,7 @@ export default function AdminPage() {
       },
       specialties: [],
       priceRange: "€",
-      menu: [],
+      menuLink: "",
       images: [],
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -2920,30 +2920,6 @@ export default function AdminPage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <Label className="text-sm font-medium text-gray-200">Latitude</Label>
-                        <Input
-                          type="number"
-                          step="any"
-                          value={editingEstablishment.lat}
-                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, lat: parseFloat(e.target.value) || 0 } : null)}
-                          className="border-gray-600 bg-gray-700 text-white"
-                          placeholder="-3.7319"
-                        />
-                      </div>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-200">Longitude</Label>
-                        <Input
-                          type="number"
-                          step="any"
-                          value={editingEstablishment.lng}
-                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, lng: parseFloat(e.target.value) || 0 } : null)}
-                          className="border-gray-600 bg-gray-700 text-white"
-                          placeholder="-38.5267"
-                        />
-                      </div>
-                    </div>
 
                     <div>
                       <Label className="text-sm font-medium text-gray-200 mb-3 block">Horários de Funcionamento</Label>
@@ -3036,86 +3012,16 @@ export default function AdminPage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium text-gray-200 mb-3 block">Cardápio</Label>
-                      <div className="space-y-3">
-                        {editingEstablishment.menu.map((item, index) => (
-                          <div key={index} className="bg-gray-700/50 p-3 rounded-lg border border-gray-600">
-                            <div className="grid grid-cols-2 gap-3">
-                              <div>
-                                <Label className="text-xs text-gray-400">Nome do Item</Label>
-                                <Input
-                                  value={item.name}
-                                  onChange={(e) => {
-                                    const newMenu = [...editingEstablishment.menu];
-                                    newMenu[index] = { ...item, name: e.target.value };
-                                    setEditingEstablishment(prev => prev ? { ...prev, menu: newMenu } : null);
-                                  }}
-                                  className="border-gray-600 bg-gray-700 text-white text-sm"
-                                  placeholder="Nome do item"
-                                />
-                              </div>
-                              <div>
-                                <Label className="text-xs text-gray-400">Preço (R$)</Label>
-                                <Input
-                                  type="number"
-                                  step="0.01"
-                                  value={item.price}
-                                  onChange={(e) => {
-                                    const newMenu = [...editingEstablishment.menu];
-                                    newMenu[index] = { ...item, price: parseFloat(e.target.value) || 0 };
-                                    setEditingEstablishment(prev => prev ? { ...prev, menu: newMenu } : null);
-                                  }}
-                                  className="border-gray-600 bg-gray-700 text-white text-sm"
-                                  placeholder="0.00"
-                                />
-                              </div>
-                            </div>
-                            <div className="mt-2">
-                              <Label className="text-xs text-gray-400">Descrição</Label>
-                              <Input
-                                value={item.description}
-                                onChange={(e) => {
-                                  const newMenu = [...editingEstablishment.menu];
-                                  newMenu[index] = { ...item, description: e.target.value };
-                                  setEditingEstablishment(prev => prev ? { ...prev, menu: newMenu } : null);
-                                }}
-                                className="border-gray-600 bg-gray-700 text-white text-sm"
-                                placeholder="Descrição do item"
-                              />
-                            </div>
-                            <div className="flex justify-end mt-2">
-                              <Button
-                                onClick={() => {
-                                  const newMenu = editingEstablishment.menu.filter((_, i) => i !== index);
-                                  setEditingEstablishment(prev => prev ? { ...prev, menu: newMenu } : null);
-                                }}
-                                variant="outline"
-                                size="sm"
-                                className="border-red-500 text-red-300 hover:bg-red-900/50"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
-                        <Button
-                          onClick={() => {
-                            const newMenu = [...editingEstablishment.menu, {
-                              id: Date.now().toString(),
-                              name: "",
-                              price: 0,
-                              description: "",
-                              category: "Bebidas"
-                            }];
-                            setEditingEstablishment(prev => prev ? { ...prev, menu: newMenu } : null);
-                          }}
-                          variant="outline"
-                          className="border-green-500 text-green-300 hover:bg-green-900/50"
-                        >
-                          <Plus className="h-4 w-4 mr-2" />
-                          Adicionar Item ao Cardápio
-                        </Button>
-                      </div>
+                      <Label className="text-sm font-medium text-gray-200">Link do Cardápio</Label>
+                      <Input
+                        value={editingEstablishment.menuLink || ""}
+                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, menuLink: e.target.value } : null)}
+                        className="border-gray-600 bg-gray-700 text-white"
+                        placeholder="https://exemplo.com/cardapio"
+                      />
+                      <p className="text-xs text-gray-400 mt-1">
+                        Link para o cardápio online do estabelecimento
+                      </p>
                     </div>
 
                     <div className="flex items-center space-x-3">
