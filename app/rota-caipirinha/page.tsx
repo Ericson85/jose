@@ -110,6 +110,39 @@ export default function RotaCaipirinha() {
     }
   }
 
+  // Função para verificar se o estabelecimento está aberto
+  function isEstablishmentOpen(hours: any) {
+    const now = new Date();
+    const currentDay = now.getDay(); // 0 = domingo, 1 = segunda, etc.
+    let currentTime = now.getHours() * 60 + now.getMinutes(); // minutos desde meia-noite
+    
+    const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    const currentDayName = dayNames[currentDay];
+    const todayHours = hours[currentDayName];
+    
+    if (!todayHours || todayHours.toLowerCase().includes('fechado')) {
+      return false;
+    }
+    
+    // Parse do horário (ex: "18:00 - 02:00")
+    const timeMatch = todayHours.match(/(\d{1,2}):(\d{2})\s*-\s*(\d{1,2}):(\d{2})/);
+    if (!timeMatch) return false;
+    
+    const [, openHour, openMin, closeHour, closeMin] = timeMatch;
+    const openTime = parseInt(openHour) * 60 + parseInt(openMin);
+    let closeTime = parseInt(closeHour) * 60 + parseInt(closeMin);
+    
+    // Se o horário de fechamento é menor que o de abertura, significa que fecha no dia seguinte
+    if (closeTime < openTime) {
+      closeTime += 24 * 60; // adiciona 24 horas
+      if (currentTime < openTime) {
+        currentTime += 24 * 60; // adiciona 24 horas se ainda não passou da meia-noite
+      }
+    }
+    
+    return currentTime >= openTime && currentTime <= closeTime;
+  }
+
   const openInGoogleMaps = (establishment: Establishment) => {
     if (typeof window !== 'undefined') {
       const url = `https://www.google.com/maps?q=${establishment.lat},${establishment.lng}`
@@ -238,6 +271,15 @@ export default function RotaCaipirinha() {
                             <Badge className="bg-blue-900/50 text-blue-200 text-xs">
                               {establishment.category}
                             </Badge>
+                            <Badge 
+                              className={`text-xs ${
+                                isEstablishmentOpen(establishment.hours) 
+                                  ? 'bg-green-900/50 text-green-200 border border-green-600/50' 
+                                  : 'bg-red-900/50 text-red-200 border border-red-600/50'
+                              }`}
+                            >
+                              {isEstablishmentOpen(establishment.hours) ? '🟢 Aberto' : '🔴 Fechado'}
+                            </Badge>
                           </div>
                           <div className="flex items-center text-xs text-gray-400">
                             <Clock className="h-3 w-3 mr-1" />
@@ -304,7 +346,47 @@ export default function RotaCaipirinha() {
                       </div>
                       <div className="flex items-center text-gray-300">
                         <Clock className="h-4 w-4 mr-2 text-blue-400" />
-                        <span>Seg-Sex: {selectedEstablishment.hours.monday}</span>
+                        <span>
+                          {isEstablishmentOpen(selectedEstablishment.hours) ? '🟢 Aberto agora' : '🔴 Fechado'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {/* Horários Detalhados */}
+                    <div className="mt-6">
+                      <h4 className="text-md font-semibold text-white mb-3 flex items-center">
+                        <Clock className="h-4 w-4 mr-2 text-blue-400" />
+                        Horários de Funcionamento
+                      </h4>
+                      <div className="grid grid-cols-1 gap-2">
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Segunda-feira:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.monday}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Terça-feira:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.tuesday}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Quarta-feira:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.wednesday}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Quinta-feira:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.thursday}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Sexta-feira:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.friday}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Sábado:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.saturday}</span>
+                        </div>
+                        <div className="flex justify-between text-sm">
+                          <span className="text-gray-400">Domingo:</span>
+                          <span className="text-gray-300">{selectedEstablishment.hours.sunday}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -318,6 +400,35 @@ export default function RotaCaipirinha() {
                         </Badge>
                       ))}
                     </div>
+
+                    {/* Cardápio */}
+                    {selectedEstablishment.menu && selectedEstablishment.menu.length > 0 && (
+                      <div className="mb-4">
+                        <h4 className="text-md font-semibold text-white mb-3 flex items-center">
+                          <Utensils className="h-4 w-4 mr-2 text-orange-400" />
+                          Cardápio
+                        </h4>
+                        <div className="space-y-2 max-h-48 overflow-y-auto">
+                          {selectedEstablishment.menu.map((item, index) => (
+                            <div key={index} className="bg-gray-700/50 p-3 rounded-lg border border-gray-600">
+                              <div className="flex justify-between items-start">
+                                <div className="flex-1">
+                                  <h5 className="font-medium text-white text-sm">{item.name}</h5>
+                                  {item.description && (
+                                    <p className="text-xs text-gray-400 mt-1">{item.description}</p>
+                                  )}
+                                </div>
+                                <div className="text-right ml-3">
+                                  <span className="font-semibold text-green-400 text-sm">
+                                    R$ {item.price.toFixed(2)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                     
                     <div className="flex space-x-3">
                       <Button
