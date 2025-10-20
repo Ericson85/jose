@@ -273,7 +273,15 @@ export default function RotaCaipirinha() {
                             <Badge className="bg-purple-900/50 text-purple-200 text-xs">
                               {establishment.priceRange}
                             </Badge>
-                            <Badge className="bg-blue-900/50 text-blue-200 text-xs">
+                            <Badge 
+                              className="bg-blue-900/50 text-blue-200 text-xs cursor-pointer hover:bg-blue-800/50 transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                if (establishment.menuLink) {
+                                  window.open(establishment.menuLink, '_blank')
+                                }
+                              }}
+                            >
                               Cardápio
                             </Badge>
                             <Badge 
