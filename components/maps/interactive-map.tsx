@@ -31,172 +31,38 @@ export default function InteractiveMap({
   onEstablishmentSelect,
   center = { lat: -3.7319, lng: -38.5267 }
 }: InteractiveMapProps) {
-  const mapRef = useRef<HTMLDivElement>(null)
-  const [map, setMap] = useState<google.maps.Map | null>(null)
-  const [markers, setMarkers] = useState<google.maps.Marker[]>([])
-  const [infoWindows, setInfoWindows] = useState<google.maps.InfoWindow[]>([])
-
-  useEffect(() => {
-    if (!mapRef.current || typeof window === 'undefined') return
-
-    // Carregar Google Maps API dinamicamente
-    const loadGoogleMaps = () => {
-      if (window.google && window.google.maps) {
-        initializeMap()
-      } else {
-        const script = document.createElement('script')
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo'}&libraries=places`
-        script.async = true
-        script.defer = true
-        script.onload = initializeMap
-        document.head.appendChild(script)
-      }
-    }
-
-    const initializeMap = () => {
-      if (!mapRef.current) return
-
-      const mapInstance = new window.google.maps.Map(mapRef.current, {
-        center: selectedEstablishment ? { lat: selectedEstablishment.lat, lng: selectedEstablishment.lng } : center,
-        zoom: selectedEstablishment ? 16 : 13,
-        mapTypeControl: false,
-        streetViewControl: false,
-        fullscreenControl: false,
-        zoomControl: true,
-        gestureHandling: "greedy",
-        styles: [
-          {
-            featureType: "poi",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
-          },
-          {
-            featureType: "transit",
-            elementType: "labels",
-            stylers: [{ visibility: "off" }]
-          }
-        ]
-      })
-
-      setMap(mapInstance)
-      createMarkers(mapInstance)
-    }
-
-    loadGoogleMaps()
-
-    return () => {
-      // Limpar marcadores e info windows
-      markers.forEach(marker => marker.setMap(null))
-      infoWindows.forEach(infoWindow => infoWindow.close())
-    }
-  }, [])
-
-  useEffect(() => {
-    if (map && selectedEstablishment) {
-      // Centralizar mapa no estabelecimento selecionado
-      map.setCenter({ lat: selectedEstablishment.lat, lng: selectedEstablishment.lng })
-      map.setZoom(16)
-    }
-  }, [map, selectedEstablishment])
-
-  const createMarkers = (mapInstance: google.maps.Map) => {
-    const newMarkers: google.maps.Marker[] = []
-    const newInfoWindows: google.maps.InfoWindow[] = []
-
-    establishments.forEach((establishment) => {
-      if (establishment.lat && establishment.lng) {
-        // Criar marcador personalizado
-        const marker = new window.google.maps.Marker({
-          position: { lat: establishment.lat, lng: establishment.lng },
-          map: mapInstance,
-          title: establishment.name,
-          icon: {
-            url: `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(`
-              <svg width="40" height="40" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="20" r="18" fill="${selectedEstablishment?.id === establishment.id ? '#ef4444' : '#3b82f6'}" stroke="white" stroke-width="2"/>
-                <text x="20" y="26" text-anchor="middle" fill="white" font-family="Arial" font-size="16" font-weight="bold">🍹</text>
-              </svg>
-            `)}`,
-            scaledSize: new window.google.maps.Size(40, 40),
-            anchor: new window.google.maps.Point(20, 20)
-          }
-        })
-
-        // Criar info window
-        const infoWindow = new window.google.maps.InfoWindow({
-          content: createInfoWindowContent(establishment)
-        })
-
-        // Adicionar listener para clique no marcador
-        marker.addListener('click', () => {
-          // Fechar todas as info windows
-          newInfoWindows.forEach(iw => iw.close())
-          
-          // Abrir info window do marcador clicado
-          infoWindow.open(mapInstance, marker)
-          
-          // Chamar callback se fornecido
-          onEstablishmentSelect?.(establishment)
-        })
-
-        newMarkers.push(marker)
-        newInfoWindows.push(infoWindow)
-      }
-    })
-
-    setMarkers(newMarkers)
-    setInfoWindows(newInfoWindows)
-  }
-
-  const createInfoWindowContent = (establishment: Establishment) => {
-    return `
-      <div style="padding: 16px; max-width: 300px; font-family: Arial, sans-serif;">
-        <div style="display: flex; align-items: center; margin-bottom: 12px;">
-          <div style="width: 32px; height: 32px; background: #3b82f6; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 12px;">
-            <span style="color: white; font-size: 16px;">🍹</span>
-          </div>
-          <div>
-            <h3 style="margin: 0; font-size: 16px; font-weight: bold; color: #1f2937;">${establishment.name}</h3>
-            <div style="display: flex; align-items: center; margin-top: 4px;">
-              <span style="color: #fbbf24; font-size: 14px;">⭐</span>
-              <span style="margin-left: 4px; font-size: 14px; color: #6b7280;">${establishment.rating}/5</span>
-            </div>
-          </div>
-        </div>
-        
-        <p style="margin: 0 0 12px 0; font-size: 14px; color: #6b7280; line-height: 1.4;">${establishment.address}</p>
-        
-        ${establishment.description ? `<p style="margin: 0 0 12px 0; font-size: 14px; color: #374151; line-height: 1.4;">${establishment.description}</p>` : ''}
-        
-        <div style="display: flex; gap: 8px; margin-top: 12px;">
-          ${establishment.menuLink ? `
-            <button onclick="window.open('${establishment.menuLink}', '_blank')" 
-                    style="background: #f97316; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-              🍽️ Cardápio
-            </button>
-          ` : ''}
-          
-          <button onclick="window.open('https://www.google.com/maps?q=${establishment.lat},${establishment.lng}', '_blank')" 
-                  style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; display: flex; align-items: center; gap: 4px;">
-            🧭 Navegar
-          </button>
-        </div>
-      </div>
-    `
-  }
-
+  
   const openInGoogleMaps = (establishment: Establishment) => {
     const url = establishment.googleMapsUrl || `https://www.google.com/maps?q=${establishment.lat},${establishment.lng}`
     window.open(url, '_blank')
   }
 
+  const generateMapUrl = () => {
+    if (selectedEstablishment && selectedEstablishment.lat && selectedEstablishment.lng) {
+      // Mapa focado no estabelecimento selecionado
+      return `https://maps.googleapis.com/maps/api/staticmap?center=${selectedEstablishment.lat},${selectedEstablishment.lng}&zoom=16&size=800x400&maptype=roadmap&markers=color:red%7C${selectedEstablishment.lat},${selectedEstablishment.lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo'}`
+    } else {
+      // Mapa com todos os estabelecimentos
+      const validEstablishments = establishments.filter(est => est.lat && est.lng)
+      const markers = validEstablishments.map(est => `${est.lat},${est.lng}`).join('|')
+      return `https://maps.googleapis.com/maps/api/staticmap?center=${center.lat},${center.lng}&zoom=13&size=800x400&maptype=roadmap&markers=color:blue%7C${markers}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo'}`
+    }
+  }
+
   return (
     <div className="w-full h-96 bg-gray-100 rounded-lg border-2 border-gray-300 relative overflow-hidden">
-      <div 
-        ref={mapRef} 
-        className="w-full h-full rounded-lg"
-        style={{ minHeight: '384px' }}
-      />
+      {/* Mapa estático */}
+      <div className="absolute inset-0">
+        <img
+          src={generateMapUrl()}
+          alt="Mapa dos estabelecimentos"
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback se não conseguir carregar o mapa
+            e.currentTarget.style.display = 'none'
+          }}
+        />
+      </div>
       
       {/* Overlay com informações quando nenhum estabelecimento está selecionado */}
       {!selectedEstablishment && (
@@ -262,6 +128,37 @@ export default function InteractiveMap({
           </div>
         </div>
       )}
+      
+      {/* Lista de estabelecimentos no mapa */}
+      <div className="absolute top-4 left-4">
+        <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-lg p-3 shadow-lg max-w-xs">
+          <h4 className="font-semibold text-gray-800 mb-2 text-sm">Estabelecimentos</h4>
+          <div className="space-y-1 max-h-32 overflow-y-auto">
+            {establishments.map((establishment) => (
+              <div
+                key={establishment.id}
+                className={`p-2 rounded cursor-pointer transition-colors text-xs ${
+                  selectedEstablishment?.id === establishment.id 
+                    ? 'bg-red-100 border border-red-300' 
+                    : 'hover:bg-gray-100'
+                }`}
+                onClick={() => onEstablishmentSelect?.(establishment)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex-1">
+                    <p className="font-medium text-gray-800">{establishment.name}</p>
+                    <p className="text-gray-600 truncate">{establishment.address}</p>
+                  </div>
+                  <div className="flex items-center ml-2">
+                    <Star className="h-3 w-3 text-yellow-500 mr-1" />
+                    <span className="text-xs text-gray-600">{establishment.rating}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
