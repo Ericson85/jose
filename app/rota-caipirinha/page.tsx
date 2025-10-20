@@ -1,27 +1,12 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import dynamic from "next/dynamic"
 import { MapPin, Navigation, Phone, Clock, Star, Wine, ArrowLeft, Filter, Utensils, Music, Coffee } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import InstagramFeed from "@/components/instagram/instagram-feed"
-
-// Importação dinâmica para evitar problemas de SSR
-const InteractiveMap = dynamic(() => import("@/components/maps/interactive-map"), {
-  ssr: false,
-  loading: () => (
-    <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">
-      <div className="text-center">
-        <MapPin className="h-16 w-16 text-purple-400 mx-auto mb-4" />
-        <h3 className="text-lg font-semibold text-white mb-2">Carregando Mapa...</h3>
-        <p className="text-gray-400">Aguarde enquanto carregamos o Google Maps</p>
-      </div>
-    </div>
-  )
-})
 
 interface Establishment {
   id: string
@@ -307,31 +292,8 @@ export default function RotaCaipirinha() {
             </div>
           </div>
 
-          {/* Mapa e Detalhes */}
+          {/* Detalhes */}
           <div className="lg:col-span-2 space-y-6">
-            {/* Mapa Interativo */}
-            <div className="bg-gray-800/50 backdrop-blur-sm rounded-lg p-6">
-              <h2 className="text-xl font-semibold text-white mb-4 flex items-center">
-                <Navigation className="h-5 w-5 mr-2 text-green-400" />
-                Mapa Interativo
-              </h2>
-              {isClient ? (
-                <InteractiveMap 
-                  establishments={establishments}
-                  selectedEstablishment={selectedEstablishment}
-                  onEstablishmentSelect={setSelectedEstablishment}
-                  center={{ lat: -3.7319, lng: -38.5267 }}
-                />
-              ) : (
-                <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">
-                  <div className="text-center">
-                    <MapPin className="h-16 w-16 text-purple-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-white mb-2">Carregando Mapa...</h3>
-                    <p className="text-gray-400">Aguarde enquanto carregamos o Google Maps</p>
-                  </div>
-                </div>
-              )}
-            </div>
 
             {/* Detalhes do Estabelecimento Selecionado */}
             {selectedEstablishment && (
