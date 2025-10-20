@@ -3012,28 +3012,12 @@ export default function AdminPage() {
 
                     <div>
                       <Label className="text-sm font-medium text-gray-200">Link do Google Maps</Label>
-                      <div className="flex space-x-2">
-                        <Input
-                          value={editingEstablishment.googleMapsUrl || ""}
-                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, googleMapsUrl: e.target.value } : null)}
-                          className="border-gray-600 bg-gray-700 text-white flex-1"
-                          placeholder="https://maps.google.com/..."
-                        />
-                        <Button
-                          onClick={() => {
-                            if (editingEstablishment?.googleMapsUrl) {
-                              window.open(editingEstablishment.googleMapsUrl, '_blank')
-                            } else {
-                              showMessage("Digite o link do Google Maps primeiro", "error")
-                            }
-                          }}
-                          variant="outline"
-                          className="border-blue-500 text-blue-300 hover:bg-blue-900/50"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Abrir
-                        </Button>
-                      </div>
+                      <Input
+                        value={editingEstablishment.googleMapsUrl || ""}
+                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, googleMapsUrl: e.target.value } : null)}
+                        className="border-gray-600 bg-gray-700 text-white"
+                        placeholder="https://maps.google.com/..."
+                      />
                       <p className="text-xs text-gray-400 mt-1">
                         Cole aqui o link do Google Maps do estabelecimento para facilitar a navegação
                       </p>
