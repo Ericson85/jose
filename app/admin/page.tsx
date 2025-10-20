@@ -11,7 +11,6 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import LocationPicker from "@/components/maps/location-picker";
 
 export interface Drink {
   id: string
@@ -3041,24 +3040,39 @@ export default function AdminPage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium text-gray-200">Localização no Mapa</Label>
-                      <div className="mt-2">
-                        <LocationPicker
-                          onLocationSelect={(lat, lng) => {
-                            setEditingEstablishment(prev => prev ? { 
+                      <Label className="text-sm font-medium text-gray-200">Coordenadas do Estabelecimento</Label>
+                      <div className="grid grid-cols-2 gap-4 mt-2">
+                        <div>
+                          <Label className="text-xs text-gray-400">Latitude</Label>
+                          <Input
+                            type="number"
+                            step="any"
+                            value={editingEstablishment.lat || ""}
+                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
                               ...prev, 
-                              lat, 
-                              lng 
-                            } : null)
-                          }}
-                          initialLocation={editingEstablishment?.lat && editingEstablishment?.lng ? {
-                            lat: editingEstablishment.lat,
-                            lng: editingEstablishment.lng
-                          } : undefined}
-                        />
+                              lat: parseFloat(e.target.value) || 0 
+                            } : null)}
+                            className="border-gray-600 bg-gray-700 text-white"
+                            placeholder="-3.731900"
+                          />
+                        </div>
+                        <div>
+                          <Label className="text-xs text-gray-400">Longitude</Label>
+                          <Input
+                            type="number"
+                            step="any"
+                            value={editingEstablishment.lng || ""}
+                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
+                              ...prev, 
+                              lng: parseFloat(e.target.value) || 0 
+                            } : null)}
+                            className="border-gray-600 bg-gray-700 text-white"
+                            placeholder="-38.526700"
+                          />
+                        </div>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
-                        Selecione a localização exata do estabelecimento no mapa
+                        Digite as coordenadas exatas do estabelecimento (você pode obter no Google Maps)
                       </p>
                     </div>
 
