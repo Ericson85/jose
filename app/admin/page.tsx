@@ -11,6 +11,7 @@ import { Switch } from "@/components/ui/switch"
 import { Badge } from "@/components/ui/badge"
 import { toast } from "@/components/ui/use-toast"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import LocationPicker from "@/components/maps/location-picker";
 
 export interface Drink {
   id: string
@@ -3036,6 +3037,28 @@ export default function AdminPage() {
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
                         Cole aqui o link do Google Maps do estabelecimento para facilitar a navegação
+                      </p>
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-medium text-gray-200">Localização no Mapa</Label>
+                      <div className="mt-2">
+                        <LocationPicker
+                          onLocationSelect={(lat, lng) => {
+                            setEditingEstablishment(prev => prev ? { 
+                              ...prev, 
+                              lat, 
+                              lng 
+                            } : null)
+                          }}
+                          initialLocation={editingEstablishment?.lat && editingEstablishment?.lng ? {
+                            lat: editingEstablishment.lat,
+                            lng: editingEstablishment.lng
+                          } : undefined}
+                        />
+                      </div>
+                      <p className="text-xs text-gray-400 mt-1">
+                        Selecione a localização exata do estabelecimento no mapa
                       </p>
                     </div>
 
