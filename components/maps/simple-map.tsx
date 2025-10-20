@@ -45,7 +45,7 @@ export default function SimpleMap({
     <div className="w-full h-96 bg-gray-100 rounded-lg border-2 border-gray-300 flex items-center justify-center relative overflow-hidden">
       {/* Mapa estático usando imagem do Google Maps Static API */}
       <div className="absolute inset-0">
-        {showSelectedLocation && selectedBar ? (
+        {showSelectedLocation && selectedBar && selectedBar.lat && selectedBar.lng ? (
           // Mostrar localização específica do estabelecimento selecionado
           <img
             src={`https://maps.googleapis.com/maps/api/staticmap?center=${selectedBar.lat},${selectedBar.lng}&zoom=16&size=800x400&maptype=roadmap&markers=color:red%7C${selectedBar.lat},${selectedBar.lng}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo'}`}
@@ -58,7 +58,7 @@ export default function SimpleMap({
         ) : (
           // Mostrar todos os estabelecimentos
           <img
-            src={`https://maps.googleapis.com/maps/api/staticmap?center=${center.lat},${center.lng}&zoom=13&size=800x400&maptype=roadmap&markers=color:red%7C${bars.map(bar => `${bar.lat},${bar.lng}`).join('|')}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo'}`}
+            src={`https://maps.googleapis.com/maps/api/staticmap?center=${center.lat},${center.lng}&zoom=13&size=800x400&maptype=roadmap&markers=color:red%7C${bars.filter(bar => bar.lat && bar.lng).map(bar => `${bar.lat},${bar.lng}`).join('|')}&key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || 'demo'}`}
             alt="Mapa dos estabelecimentos"
             className="w-full h-full object-cover"
             onError={(e) => {
@@ -72,7 +72,7 @@ export default function SimpleMap({
       <div className="absolute inset-0 bg-black bg-opacity-20 flex items-center justify-center">
         <div className="bg-white bg-opacity-90 backdrop-blur-sm rounded-lg p-6 max-w-md mx-4">
           <div className="text-center">
-            {showSelectedLocation && selectedBar ? (
+            {showSelectedLocation && selectedBar && selectedBar.lat && selectedBar.lng ? (
               // Mostrar informações do estabelecimento selecionado
               <>
                 <MapPin className="h-12 w-12 text-red-500 mx-auto mb-4" />
@@ -100,6 +100,9 @@ export default function SimpleMap({
                     Ver Detalhes
                   </Button>
                 </div>
+                <p className="text-xs text-gray-500 mt-2">
+                  Coordenadas: {selectedBar.lat.toFixed(6)}, {selectedBar.lng.toFixed(6)}
+                </p>
               </>
             ) : (
               // Mostrar lista de todos os estabelecimentos
