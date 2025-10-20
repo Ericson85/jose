@@ -10,14 +10,14 @@ import Link from "next/link"
 import InstagramFeed from "@/components/instagram/instagram-feed"
 
 // Importação dinâmica para evitar problemas de SSR
-const CustomMap = dynamic(() => import("@/components/maps/custom-map"), {
+const SimpleMap = dynamic(() => import("@/components/maps/simple-map"), {
   ssr: false,
   loading: () => (
     <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">
       <div className="text-center">
         <MapPin className="h-16 w-16 text-purple-400 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-white mb-2">Carregando Mapa...</h3>
-        <p className="text-gray-400">Aguarde enquanto carregamos o Google Maps</p>
+        <p className="text-gray-400">Aguarde enquanto carregamos o mapa</p>
       </div>
     </div>
   )
@@ -308,12 +308,11 @@ export default function RotaCaipirinha() {
                 Mapa Interativo
               </h2>
               {isClient ? (
-                <CustomMap 
+                <SimpleMap 
                   bars={establishments}
                   selectedBar={selectedEstablishment}
                   onBarSelect={setSelectedEstablishment}
                   center={{ lat: -3.7319, lng: -38.5267 }}
-                  zoom={13}
                 />
               ) : (
                 <div className="bg-gray-700/50 rounded-lg h-96 flex items-center justify-center border-2 border-dashed border-gray-600">

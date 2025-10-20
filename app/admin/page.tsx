@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star, CheckCircle, RefreshCw } from "lucide-react"
+import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star, CheckCircle, ExternalLink, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -249,7 +249,7 @@ export default function AdminPage() {
       specialties: [],
       priceRange: "€",
       menuLink: "",
-      googlePlaceId: "",
+      googleMapsUrl: "",
       images: [],
       isActive: true,
       createdAt: new Date().toISOString(),
@@ -3011,64 +3011,31 @@ export default function AdminPage() {
                     </div>
 
                     <div>
-                      <Label className="text-sm font-medium text-gray-200">Sincronizar com Google Maps</Label>
+                      <Label className="text-sm font-medium text-gray-200">Link do Google Maps</Label>
                       <div className="flex space-x-2">
                         <Input
-                          value={editingEstablishment.googlePlaceId || ""}
-                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, googlePlaceId: e.target.value } : null)}
+                          value={editingEstablishment.googleMapsUrl || ""}
+                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, googleMapsUrl: e.target.value } : null)}
                           className="border-gray-600 bg-gray-700 text-white flex-1"
-                          placeholder="ID do lugar no Google Maps (opcional)"
+                          placeholder="https://maps.google.com/..."
                         />
                         <Button
-                          onClick={async () => {
-                            if (!editingEstablishment?.googlePlaceId) {
-                              showMessage("Digite o ID do lugar no Google Maps primeiro", "error")
-                              return
-                            }
-                            
-                            try {
-                              showMessage("Sincronizando com Google Maps...", "info")
-                              
-                              const response = await fetch('/api/google-places', {
-                                method: 'POST',
-                                headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ placeId: editingEstablishment.googlePlaceId })
-                              })
-                              
-                              const data = await response.json()
-                              
-                              if (data.success) {
-                                // Atualizar os dados do estabelecimento com as informações do Google
-                                const googleData = data.data
-                                
-                                setEditingEstablishment(prev => prev ? {
-                                  ...prev,
-                                  name: googleData.name || prev.name,
-                                  address: googleData.address || prev.address,
-                                  phone: googleData.phone || prev.phone,
-                                  rating: googleData.rating || prev.rating,
-                                  hours: googleData.hours || prev.hours,
-                                  menuLink: googleData.website || prev.menuLink
-                                } : null)
-                                
-                                showMessage("Dados sincronizados com sucesso do Google Maps!", "success")
-                              } else {
-                                showMessage(`Erro: ${data.error}`, "error")
-                              }
-                            } catch (error) {
-                              console.error('Erro ao sincronizar:', error)
-                              showMessage("Erro ao sincronizar com Google Maps", "error")
+                          onClick={() => {
+                            if (editingEstablishment?.googleMapsUrl) {
+                              window.open(editingEstablishment.googleMapsUrl, '_blank')
+                            } else {
+                              showMessage("Digite o link do Google Maps primeiro", "error")
                             }
                           }}
                           variant="outline"
                           className="border-blue-500 text-blue-300 hover:bg-blue-900/50"
                         >
-                          <RefreshCw className="h-4 w-4 mr-2" />
-                          Sincronizar
+                          <ExternalLink className="h-4 w-4 mr-2" />
+                          Abrir
                         </Button>
                       </div>
                       <p className="text-xs text-gray-400 mt-1">
-                        Para obter o ID: 1) Abra o Google Maps 2) Procure pelo estabelecimento 3) Clique em "Compartilhar" 4) Copie o ID do lugar
+                        Cole aqui o link do Google Maps do estabelecimento para facilitar a navegação
                       </p>
                     </div>
 
