@@ -83,6 +83,10 @@ export default function SimpleProfile({ establishment, isOpen, onClose }: Simple
     if (establishment.googleMapsUrl) {
       // Usar o link do Google Maps se disponível
       window.open(establishment.googleMapsUrl, '_blank')
+    } else if (establishment.googlePlaceId) {
+      // Usar Place ID se disponível
+      const url = `https://www.google.com/maps/place/?q=place_id:${establishment.googlePlaceId}`
+      window.open(url, '_blank')
     } else {
       // Fallback para coordenadas
       const url = `https://www.google.com/maps?q=${establishment.lat},${establishment.lng}`
