@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import InstagramFeed from "@/components/instagram/instagram-feed"
+import SimpleProfile from "@/components/simple-profile"
 
 interface Establishment {
   id: string
@@ -32,6 +33,7 @@ interface Establishment {
   priceRange: "€" | "€€" | "€€€"
   menuLink?: string
   googlePlaceId?: string
+  googleMapsUrl?: string
   images: string[]
   isActive: boolean
   createdAt: string
@@ -58,6 +60,7 @@ export default function RotaCaipirinha() {
   }
 
   const [selectedEstablishment, setSelectedEstablishment] = useState<Establishment | null>(null)
+  const [showSimpleProfile, setShowSimpleProfile] = useState(false)
   const [selectedType, setSelectedType] = useState<"todos" | "bar" | "boate" | "restaurante">("todos")
   const [showFeed, setShowFeed] = useState(false)
 
@@ -227,12 +230,13 @@ export default function RotaCaipirinha() {
                 {filteredEstablishments.map((establishment) => (
                   <Card 
                     key={establishment.id} 
-                    className={`cursor-pointer transition-all duration-300 bg-gray-700/50 border-gray-600 hover:border-purple-500/50 ${
+                    className={`cursor-pointer transition-all duration-300 bg-gray-700/50 border-gray-600 hover:border-purple-500/50 hover:bg-gray-700/70 hover:shadow-lg hover:shadow-purple-500/20 ${
                       selectedEstablishment?.id === establishment.id ? 'border-purple-500 bg-purple-900/20' : ''
                     }`}
                     onClick={() => {
                       console.log('Clicando no estabelecimento:', establishment.name)
                       setSelectedEstablishment(establishment)
+                      setShowSimpleProfile(true)
                     }}
                   >
                     <CardContent className="p-4">
@@ -259,17 +263,6 @@ export default function RotaCaipirinha() {
                               {establishment.priceRange}
                             </Badge>
                             <Badge 
-                              className="bg-blue-900/50 text-blue-200 text-xs cursor-pointer hover:bg-blue-800/50 transition-colors"
-                              onClick={(e) => {
-                                e.stopPropagation()
-                                if (establishment.menuLink) {
-                                  window.open(establishment.menuLink, '_blank')
-                                }
-                              }}
-                            >
-                              Cardápio
-                            </Badge>
-                            <Badge 
                               className={`text-xs ${
                                 isEstablishmentOpen(establishment.hours) 
                                   ? 'bg-green-900/50 text-green-200 border border-green-600/50' 
@@ -279,9 +272,12 @@ export default function RotaCaipirinha() {
                               {isEstablishmentOpen(establishment.hours) ? '🟢 Aberto' : '🔴 Fechado'}
                             </Badge>
                           </div>
-                          <div className="flex items-center text-xs text-gray-400">
-                            <Clock className="h-3 w-3 mr-1" />
-                            {establishment.hours.monday}
+                          <div className="flex items-center justify-between text-xs text-gray-400">
+                            <div className="flex items-center">
+                              <Clock className="h-3 w-3 mr-1" />
+                              {establishment.hours.monday}
+                            </div>
+                            <span className="text-purple-400 opacity-70">Clique para ver detalhes</span>
                           </div>
                         </div>
                       </div>
@@ -422,6 +418,15 @@ export default function RotaCaipirinha() {
           </div>
         </div>
       </div>
+
+      {/* Simple Profile */}
+      {selectedEstablishment && (
+        <SimpleProfile
+          establishment={selectedEstablishment}
+          isOpen={showSimpleProfile}
+          onClose={() => setShowSimpleProfile(false)}
+        />
+      )}
 
       {/* Instagram Feed */}
       <InstagramFeed

@@ -29,6 +29,7 @@ export async function GET(request) {
         price_range as priceRange,
         menu_link as menuLink,
         google_place_id as googlePlaceId,
+        google_maps_url as googleMapsUrl,
         images,
         is_active as isActive,
         created_at as createdAt,
@@ -72,6 +73,7 @@ export async function GET(request) {
       priceRange: row.priceRange,
       menuLink: row.menuLink,
       googlePlaceId: row.googlePlaceId,
+      googleMapsUrl: row.googleMapsUrl,
       images: row.images ? JSON.parse(row.images) : [],
       isActive: Boolean(row.isActive),
       createdAt: row.createdAt,
@@ -99,7 +101,7 @@ export async function POST(request) {
       INSERT INTO establishments (
         name, type, category, address, phone, description, lat, lng, rating,
         hours_monday, hours_tuesday, hours_wednesday, hours_thursday, hours_friday, hours_saturday, hours_sunday,
-        specialties, price_range, menu_link, google_place_id, images, is_active
+        specialties, price_range, menu_link, google_place_id, google_maps_url, images, is_active
       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
     
@@ -124,6 +126,7 @@ export async function POST(request) {
       body.priceRange || '€',
       body.menuLink || '',
       body.googlePlaceId || '',
+      body.googleMapsUrl || '',
       JSON.stringify(body.images || []),
       body.isActive !== false
     ]
@@ -167,6 +170,7 @@ export async function POST(request) {
       priceRange: newEstablishment.price_range,
       menuLink: newEstablishment.menu_link,
       googlePlaceId: newEstablishment.google_place_id,
+      googleMapsUrl: newEstablishment.google_maps_url,
       images: newEstablishment.images ? JSON.parse(newEstablishment.images) : [],
       isActive: Boolean(newEstablishment.is_active),
       createdAt: newEstablishment.created_at,
