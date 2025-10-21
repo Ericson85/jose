@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import InstagramFeed from "@/components/instagram/instagram-feed"
-import SimpleProfile from "@/components/simple-profile"
 
 interface Establishment {
   id: string
@@ -60,7 +59,6 @@ export default function RotaCaipirinha() {
   }
 
   const [selectedEstablishment, setSelectedEstablishment] = useState<Establishment | null>(null)
-  const [showSimpleProfile, setShowSimpleProfile] = useState(false)
   const [selectedType, setSelectedType] = useState<"todos" | "bar" | "boate" | "restaurante">("todos")
   const [showFeed, setShowFeed] = useState(false)
 
@@ -135,8 +133,15 @@ export default function RotaCaipirinha() {
 
   const openInGoogleMaps = (establishment: Establishment) => {
     if (typeof window !== 'undefined') {
-      const url = `https://www.google.com/maps?q=${establishment.lat},${establishment.lng}`
-      window.open(url, '_blank')
+      if (establishment.googlePlaceId) {
+        // Usar Place ID se disponível
+        const url = `https://www.google.com/maps/place/?q=place_id:${establishment.googlePlaceId}`
+        window.open(url, '_blank')
+      } else {
+        // Fallback para coordenadas
+        const url = `https://www.google.com/maps?q=${establishment.lat},${establishment.lng}`
+        window.open(url, '_blank')
+      }
     }
   }
 
@@ -233,11 +238,10 @@ export default function RotaCaipirinha() {
                     className={`cursor-pointer transition-all duration-300 bg-gray-700/50 border-gray-600 hover:border-purple-500/50 hover:bg-gray-700/70 hover:shadow-lg hover:shadow-purple-500/20 ${
                       selectedEstablishment?.id === establishment.id ? 'border-purple-500 bg-purple-900/20' : ''
                     }`}
-                    onClick={() => {
-                      console.log('Clicando no estabelecimento:', establishment.name)
-                      setSelectedEstablishment(establishment)
-                      setShowSimpleProfile(true)
-                    }}
+                     onClick={() => {
+                       console.log('Clicando no estabelecimento:', establishment.name)
+                       setSelectedEstablishment(establishment)
+                     }}
                   >
                     <CardContent className="p-4">
                       <div className="flex items-start justify-between">
@@ -418,15 +422,6 @@ export default function RotaCaipirinha() {
           </div>
         </div>
       </div>
-
-      {/* Simple Profile */}
-      {selectedEstablishment && (
-        <SimpleProfile
-          establishment={selectedEstablishment}
-          isOpen={showSimpleProfile}
-          onClose={() => setShowSimpleProfile(false)}
-        />
-      )}
 
       {/* Instagram Feed */}
       <InstagramFeed
