@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { MapPin, Navigation, Phone, Clock, Star, Wine, ArrowLeft, Filter, Utensils, Music, Coffee } from "lucide-react"
+import { MapPin, Navigation, Phone, Clock, Star, Wine, ArrowLeft, Filter, Utensils, Music, Coffee, MessageCircle } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
