@@ -54,7 +54,7 @@ export default function AdminPage() {
   const [editingDbEvent, setEditingDbEvent] = useState<any>(null)
   const [allDrinks, setAllDrinks] = useState<Drink[]>([])
   const [allPlans, setAllPlans] = useState<any[]>([])
-  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config' | 'rota-caipirinha'>('dashboard')
+  const [activeTab, setActiveTab] = useState<'drinks' | 'events' | 'dashboard' | 'plans' | 'drinkeira' | 'config' | 'rota-caipirinha' | 'cmv'>('dashboard')
   
   // Login states
   const [password, setPassword] = useState("")
@@ -92,6 +92,25 @@ export default function AdminPage() {
   const [loadingEstablishments, setLoadingEstablishments] = useState(false)
   const [editingEstablishment, setEditingEstablishment] = useState<any>(null)
   const [isAddingNewEstablishment, setIsAddingNewEstablishment] = useState(false)
+
+  // Estados para CMV (Custo de Mercadoria Vendida)
+  const [cmvData, setCmvData] = useState<any[]>([])
+  const [loadingCmv, setLoadingCmv] = useState(false)
+  const [editingCmv, setEditingCmv] = useState<any>(null)
+  const [isAddingNewCmv, setIsAddingNewCmv] = useState(false)
+  const [cmvForm, setCmvForm] = useState({
+    drink_name: '',
+    drink_id: '',
+    destilado_nome: '',
+    destilado_preco_ml: 0,
+    destilado_quantidade_ml: 0,
+    frutas: [],
+    outros_ingredientes: [],
+    custo_total: 0,
+    margem_lucro_percentual: 0,
+    preco_venda_sugerido: 0,
+    observacoes: ''
+  })
 
   // Estados para Configurações de Eventos
   const [eventConfig, setEventConfig] = useState({
@@ -316,6 +335,106 @@ export default function AdminPage() {
       loadEstablishments();
     }
   }, [activeTab]);
+
+  // Carregar dados CMV quando a aba for ativada
+  useEffect(() => {
+    if (activeTab === 'cmv') {
+      loadCmvData();
+    }
+  }, [activeTab]);
+
+  // Função para carregar dados CMV
+  const loadCmvData = async () => {
+    setLoadingCmv(true);
+    try {
+      const response = await fetch('/api/cmv');
+      const data = await response.json();
+      
+      if (data.success) {
+        setCmvData(data.data);
+      } else {
+        showMessage("Erro ao carregar dados CMV", "error");
+      }
+    } catch (error) {
+      console.error('Erro ao carregar CMV:', error);
+      showMessage("Erro ao carregar dados CMV", "error");
+    } finally {
+      setLoadingCmv(false);
+    }
+  };
+
+  // Função para salvar CMV
+  const saveCmv = async () => {
+    try {
+      const response = await fetch('/api/cmv', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          drinkName: cmvForm.drink_name,
+          drinkId: cmvForm.drink_id,
+          destiladoNome: cmvForm.destilado_nome,
+          destiladoPrecoMl: cmvForm.destilado_preco_ml,
+          destiladoQuantidadeMl: cmvForm.destilado_quantidade_ml,
+          frutas: cmvForm.frutas,
+          outrosIngredientes: cmvForm.outros_ingredientes,
+          custoTotal: cmvForm.custo_total,
+          margemLucroPercentual: cmvForm.margem_lucro_percentual,
+          precoVendaSugerido: cmvForm.preco_venda_sugerido,
+          observacoes: cmvForm.observacoes
+        })
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        showMessage("CMV salvo com sucesso!", "success");
+        loadCmvData();
+        setCmvForm({
+          drink_name: '',
+          drink_id: '',
+          destilado_nome: '',
+          destilado_preco_ml: 0,
+          destilado_quantidade_ml: 0,
+          frutas: [],
+          outros_ingredientes: [],
+          custo_total: 0,
+          margem_lucro_percentual: 0,
+          preco_venda_sugerido: 0,
+          observacoes: ''
+        });
+        setIsAddingNewCmv(false);
+        setEditingCmv(null);
+      } else {
+        showMessage("Erro ao salvar CMV", "error");
+      }
+    } catch (error) {
+      console.error('Erro ao salvar CMV:', error);
+      showMessage("Erro ao salvar CMV", "error");
+    }
+  };
+
+  // Função para excluir CMV
+  const deleteCmv = async (id) => {
+    try {
+      const response = await fetch(`/api/cmv/${id}`, {
+        method: 'DELETE'
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        showMessage("CMV excluído com sucesso!", "success");
+        loadCmvData();
+      } else {
+        showMessage("Erro ao excluir CMV", "error");
+      }
+    } catch (error) {
+      console.error('Erro ao excluir CMV:', error);
+      showMessage("Erro ao excluir CMV", "error");
+    }
+  };
 
   // Função para verificar se o estabelecimento está aberto
   function isEstablishmentOpen(hours: any) {
@@ -1199,6 +1318,17 @@ export default function AdminPage() {
               }`}
             >
               Rota da Caipirinha
+            </Button>
+            <Button
+              onClick={() => setActiveTab('cmv')}
+              variant={activeTab === 'cmv' ? 'default' : 'ghost'}
+              className={`${
+                activeTab === 'cmv' 
+                  ? 'bg-purple-600 text-white' 
+                  : 'text-gray-300 hover:text-white hover:bg-gray-700'
+              }`}
+            >
+              CMV
             </Button>
           </div>
         </div>
@@ -3067,6 +3197,233 @@ export default function AdminPage() {
                     </div>
                   </div>
                 )}
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {/* CMV Tab */}
+      {activeTab === 'cmv' && (
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Lista de Cálculos CMV */}
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Calculator className="h-5 w-5 text-purple-400" />
+                  Cálculos CMV
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Gerencie os custos de mercadoria vendida dos drinks
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <Button 
+                    onClick={() => setIsAddingNewCmv(true)}
+                    className="w-full bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Novo Cálculo CMV
+                  </Button>
+                  
+                  <div className="space-y-2">
+                    {cmvData.map((cmv) => (
+                      <div key={cmv.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600 hover:border-purple-500/50 transition-colors">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <h4 className="font-semibold text-white">{cmv.drink_name}</h4>
+                            <p className="text-sm text-gray-400">
+                              Custo: R$ {cmv.custo_total.toFixed(2)} | 
+                              Margem: {cmv.margem_lucro_percentual}% | 
+                              Preço Sugerido: R$ {cmv.preco_venda_sugerido.toFixed(2)}
+                            </p>
+                          </div>
+                          <div className="flex space-x-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setEditingCmv(cmv)}
+                              className="text-blue-400 border-blue-400 hover:bg-blue-400/10"
+                            >
+                              <Edit className="h-3 w-3" />
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => deleteCmv(cmv.id)}
+                              className="text-red-400 border-red-400 hover:bg-red-400/10"
+                            >
+                              <Trash2 className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Formulário CMV */}
+            <Card className="bg-gray-800/80 backdrop-blur-md border-0">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center gap-2">
+                  <Wine className="h-5 w-5 text-purple-400" />
+                  {editingCmv ? 'Editar CMV' : 'Novo Cálculo CMV'}
+                </CardTitle>
+                <CardDescription className="text-gray-400">
+                  Calcule o custo e margem de lucro dos drinks
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {/* Seleção do Drink */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-200">Drink</Label>
+                  <Select 
+                    value={cmvForm.drink_id} 
+                    onValueChange={(value) => {
+                      const drink = allDrinks.find(d => d.id === value);
+                      setCmvForm(prev => ({
+                        ...prev,
+                        drink_id: value,
+                        drink_name: drink?.name || ''
+                      }));
+                    }}
+                  >
+                    <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
+                      <SelectValue placeholder="Selecione um drink" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {allDrinks.map((drink) => (
+                        <SelectItem key={drink.id} value={drink.id}>
+                          {drink.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Destilado */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-200">Nome do Destilado</Label>
+                    <Input
+                      value={cmvForm.destilado_nome}
+                      onChange={(e) => setCmvForm(prev => ({ ...prev, destilado_nome: e.target.value }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="Ex: Vodka, Cachaça"
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-medium text-gray-200">Preço por ML (R$)</Label>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      value={cmvForm.destilado_preco_ml}
+                      onChange={(e) => setCmvForm(prev => ({ ...prev, destilado_preco_ml: parseFloat(e.target.value) || 0 }))}
+                      className="border-gray-600 bg-gray-700 text-white"
+                      placeholder="0.00"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Label className="text-sm font-medium text-gray-200">Quantidade em ML</Label>
+                  <Input
+                    type="number"
+                    step="1"
+                    value={cmvForm.destilado_quantidade_ml}
+                    onChange={(e) => setCmvForm(prev => ({ ...prev, destilado_quantidade_ml: parseInt(e.target.value) || 0 }))}
+                    className="border-gray-600 bg-gray-700 text-white"
+                    placeholder="50"
+                  />
+                </div>
+
+                {/* Margem de Lucro */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-200">Margem de Lucro (%)</Label>
+                  <Input
+                    type="number"
+                    step="1"
+                    value={cmvForm.margem_lucro_percentual}
+                    onChange={(e) => {
+                      const margem = parseInt(e.target.value) || 0;
+                      const custoTotal = (cmvForm.destilado_preco_ml * cmvForm.destilado_quantidade_ml);
+                      const precoSugerido = custoTotal * (1 + margem / 100);
+                      setCmvForm(prev => ({ 
+                        ...prev, 
+                        margem_lucro_percentual: margem,
+                        custo_total: custoTotal,
+                        preco_venda_sugerido: precoSugerido
+                      }));
+                    }}
+                    className="border-gray-600 bg-gray-700 text-white"
+                    placeholder="100"
+                  />
+                </div>
+
+                {/* Observações */}
+                <div>
+                  <Label className="text-sm font-medium text-gray-200">Observações</Label>
+                  <Input
+                    value={cmvForm.observacoes}
+                    onChange={(e) => setCmvForm(prev => ({ ...prev, observacoes: e.target.value }))}
+                    className="border-gray-600 bg-gray-700 text-white"
+                    placeholder="Notas sobre o cálculo"
+                  />
+                </div>
+
+                {/* Resultados */}
+                <div className="p-4 bg-purple-900/20 rounded-lg border border-purple-700/30">
+                  <h4 className="text-purple-300 font-semibold mb-2">Resultados do Cálculo:</h4>
+                  <div className="space-y-1 text-sm">
+                    <p className="text-gray-300">
+                      <span className="text-purple-400">Custo Total:</span> R$ {cmvForm.custo_total.toFixed(2)}
+                    </p>
+                    <p className="text-gray-300">
+                      <span className="text-purple-400">Margem:</span> {cmvForm.margem_lucro_percentual}%
+                    </p>
+                    <p className="text-yellow-300 font-semibold">
+                      <span className="text-purple-400">Preço Sugerido:</span> R$ {cmvForm.preco_venda_sugerido.toFixed(2)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Botões */}
+                <div className="flex space-x-2">
+                  <Button
+                    onClick={saveCmv}
+                    className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                  >
+                    <Save className="h-4 w-4 mr-2" />
+                    Salvar CMV
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setEditingCmv(null);
+                      setIsAddingNewCmv(false);
+                      setCmvForm({
+                        drink_name: '',
+                        drink_id: '',
+                        destilado_nome: '',
+                        destilado_preco_ml: 0,
+                        destilado_quantidade_ml: 0,
+                        frutas: [],
+                        outros_ingredientes: [],
+                        custo_total: 0,
+                        margem_lucro_percentual: 0,
+                        preco_venda_sugerido: 0,
+                        observacoes: ''
+                      });
+                    }}
+                    className="text-gray-400 border-gray-600 hover:bg-gray-700"
+                  >
+                    Cancelar
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </div>
