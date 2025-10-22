@@ -351,7 +351,16 @@ export default function AdminPage() {
       const data = await response.json();
       
       if (data.success) {
-        setCmvData(data.data);
+        // Converter os dados para garantir que os números sejam números
+        const formattedData = data.data.map(item => ({
+          ...item,
+          custoTotal: Number(item.custoTotal || 0),
+          margemLucroPercentual: Number(item.margemLucroPercentual || 0),
+          precoVendaSugerido: Number(item.precoVendaSugerido || 0),
+          destiladoPrecoMl: Number(item.destiladoPrecoMl || 0),
+          destiladoQuantidadeMl: Number(item.destiladoQuantidadeMl || 0)
+        }));
+        setCmvData(formattedData);
       } else {
         showMessage("Erro ao carregar dados CMV", "error");
       }
@@ -3251,9 +3260,9 @@ export default function AdminPage() {
                             <div>
                               <h4 className="font-semibold text-white">{cmv.drinkName}</h4>
                               <p className="text-sm text-gray-400">
-                                Custo: R$ {cmv.custoTotal.toFixed(2)} | 
-                                Margem: {cmv.margemLucroPercentual}% | 
-                                Preço Sugerido: R$ {cmv.precoVendaSugerido.toFixed(2)}
+                                Custo: R$ {Number(cmv.custoTotal || 0).toFixed(2)} | 
+                                Margem: {Number(cmv.margemLucroPercentual || 0)}% | 
+                                Preço Sugerido: R$ {Number(cmv.precoVendaSugerido || 0).toFixed(2)}
                               </p>
                             </div>
                             <div className="flex space-x-2">
@@ -3397,13 +3406,13 @@ export default function AdminPage() {
                   <h4 className="text-purple-300 font-semibold mb-2">Resultados do Cálculo:</h4>
                   <div className="space-y-1 text-sm">
                     <p className="text-gray-300">
-                      <span className="text-purple-400">Custo Total:</span> R$ {cmvForm.custo_total.toFixed(2)}
+                      <span className="text-purple-400">Custo Total:</span> R$ {Number(cmvForm.custo_total || 0).toFixed(2)}
                     </p>
                     <p className="text-gray-300">
-                      <span className="text-purple-400">Margem:</span> {cmvForm.margem_lucro_percentual}%
+                      <span className="text-purple-400">Margem:</span> {Number(cmvForm.margem_lucro_percentual || 0)}%
                     </p>
                     <p className="text-yellow-300 font-semibold">
-                      <span className="text-purple-400">Preço Sugerido:</span> R$ {cmvForm.preco_venda_sugerido.toFixed(2)}
+                      <span className="text-purple-400">Preço Sugerido:</span> R$ {Number(cmvForm.preco_venda_sugerido || 0).toFixed(2)}
                     </p>
                   </div>
                 </div>
