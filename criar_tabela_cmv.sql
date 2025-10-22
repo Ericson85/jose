@@ -5,11 +5,7 @@ CREATE TABLE IF NOT EXISTS cmv_calculations (
     id INT AUTO_INCREMENT PRIMARY KEY,
     drink_name VARCHAR(255) NOT NULL,
     drink_id VARCHAR(50) NOT NULL,
-    destilado_nome VARCHAR(255) NOT NULL,
-    destilado_preco_ml DECIMAL(10, 4) NOT NULL DEFAULT 0,
-    destilado_quantidade_ml INT NOT NULL DEFAULT 0,
-    frutas JSON DEFAULT '[]',
-    outros_ingredientes JSON DEFAULT '[]',
+    ingredientes JSON DEFAULT '[]',
     custo_total DECIMAL(10, 2) NOT NULL DEFAULT 0,
     margem_lucro_percentual DECIMAL(5, 2) NOT NULL DEFAULT 0,
     preco_venda_sugerido DECIMAL(10, 2) NOT NULL DEFAULT 0,
@@ -22,9 +18,7 @@ CREATE TABLE IF NOT EXISTS cmv_calculations (
 INSERT INTO cmv_calculations (
     drink_name,
     drink_id,
-    destilado_nome,
-    destilado_preco_ml,
-    destilado_quantidade_ml,
+    ingredientes,
     custo_total,
     margem_lucro_percentual,
     preco_venda_sugerido,
@@ -32,12 +26,35 @@ INSERT INTO cmv_calculations (
 ) VALUES (
     'Caipirinha',
     '1',
-    'Cachaça',
-    0.15,
-    50,
-    7.50,
+    '[
+        {
+            "nome": "Cachaça",
+            "tipo": "destilado",
+            "quantidade": 50,
+            "unidade": "ml",
+            "preco": 0.15,
+            "custo_total": 7.50
+        },
+        {
+            "nome": "Limão",
+            "tipo": "fruta",
+            "quantidade": 1,
+            "unidade": "unidades",
+            "preco": 0.50,
+            "custo_total": 0.50
+        },
+        {
+            "nome": "Açúcar",
+            "tipo": "outro",
+            "quantidade": 10,
+            "unidade": "gramas",
+            "preco": 0.02,
+            "custo_total": 0.20
+        }
+    ]',
+    8.20,
     100,
-    15.00,
+    16.40,
     'Cálculo base para caipirinha tradicional'
 );
 

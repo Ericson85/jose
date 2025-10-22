@@ -56,11 +56,7 @@ export async function POST(request) {
     const {
       drinkName,
       drinkId,
-      destiladoNome,
-      destiladoPrecoMl,
-      destiladoQuantidadeMl,
-      frutas = [],
-      outrosIngredientes = [],
+      ingredientes = [],
       custoTotal,
       margemLucroPercentual,
       precoVendaSugerido,
@@ -71,24 +67,16 @@ export async function POST(request) {
       INSERT INTO cmv_calculations (
         drink_name,
         drink_id,
-        destilado_nome,
-        destilado_preco_ml,
-        destilado_quantidade_ml,
-        frutas,
-        outros_ingredientes,
+        ingredientes,
         custo_total,
         margem_lucro_percentual,
         preco_venda_sugerido,
         observacoes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      ) VALUES (?, ?, ?, ?, ?, ?, ?)
     `, [
       drinkName,
       drinkId,
-      destiladoNome,
-      destiladoPrecoMl,
-      destiladoQuantidadeMl,
-      JSON.stringify(frutas),
-      JSON.stringify(outrosIngredientes),
+      JSON.stringify(ingredientes),
       custoTotal,
       margemLucroPercentual,
       precoVendaSugerido,

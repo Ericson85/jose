@@ -101,11 +101,7 @@ export default function AdminPage() {
   const [cmvForm, setCmvForm] = useState({
     drink_name: '',
     drink_id: '',
-    destilado_nome: '',
-    destilado_preco_ml: 0,
-    destilado_quantidade_ml: 0,
-    frutas: [],
-    outros_ingredientes: [],
+    ingredientes: [], // Array de ingredientes (destilados, frutas, etc.)
     custo_total: 0,
     margem_lucro_percentual: 0,
     preco_venda_sugerido: 0,
@@ -383,11 +379,7 @@ export default function AdminPage() {
         body: JSON.stringify({
           drinkName: cmvForm.drink_name,
           drinkId: cmvForm.drink_id,
-          destiladoNome: cmvForm.destilado_nome,
-          destiladoPrecoMl: cmvForm.destilado_preco_ml,
-          destiladoQuantidadeMl: cmvForm.destilado_quantidade_ml,
-          frutas: cmvForm.frutas,
-          outrosIngredientes: cmvForm.outros_ingredientes,
+          ingredientes: cmvForm.ingredientes,
           custoTotal: cmvForm.custo_total,
           margemLucroPercentual: cmvForm.margem_lucro_percentual,
           precoVendaSugerido: cmvForm.preco_venda_sugerido,
@@ -424,25 +416,70 @@ export default function AdminPage() {
     }
   };
 
-  // Função para excluir CMV
-  const deleteCmv = async (id) => {
-    try {
-      const response = await fetch(`/api/cmv/${id}`, {
-        method: 'DELETE'
-      });
+  // Função para adicionar ingrediente
+  const addIngrediente = () => {
+    setCmvForm(prev => ({
+      ...prev,
+      ingredientes: [...prev.ingredientes, {
+        id: Date.now(),
+        nome: '',
+        tipo: 'destilado', // destilado, fruta, outro
+        quantidade: 0,
+        unidade: 'ml', // ml, litros, unidades
+        preco: 0,
+        custo_total: 0
+      }]
+    }));
+  };
 
-      const data = await response.json();
-      
-      if (data.success) {
-        showMessage("CMV excluído com sucesso!", "success");
-        loadCmvData();
-      } else {
-        showMessage("Erro ao excluir CMV", "error");
-      }
-    } catch (error) {
-      console.error('Erro ao excluir CMV:', error);
-      showMessage("Erro ao excluir CMV", "error");
-    }
+  // Função para remover ingrediente
+  const removeIngrediente = (id) => {
+    setCmvForm(prev => ({
+      ...prev,
+      ingredientes: prev.ingredientes.filter(ing => ing.id !== id)
+    }));
+    calcularCustoTotal();
+  };
+
+  // Função para atualizar ingrediente
+  const updateIngrediente = (id, field, value) => {
+    setCmvForm(prev => ({
+      ...prev,
+      ingredientes: prev.ingredientes.map(ing => {
+        if (ing.id === id) {
+          const updated = { ...ing, [field]: value };
+          
+          // Calcular custo total do ingrediente
+          if (field === 'quantidade' || field === 'preco' || field === 'unidade') {
+            let quantidade = updated.quantidade;
+            let preco = updated.preco;
+            
+            // Converter para ML se necessário
+            if (updated.unidade === 'litros') {
+              quantidade = quantidade * 1000; // Converter litros para ML
+            }
+            
+            updated.custo_total = quantidade * preco;
+          }
+          
+          return updated;
+        }
+        return ing;
+      })
+    }));
+    calcularCustoTotal();
+  };
+
+  // Função para calcular custo total
+  const calcularCustoTotal = () => {
+    const custoTotal = cmvForm.ingredientes.reduce((total, ing) => total + (ing.custo_total || 0), 0);
+    const precoSugerido = custoTotal * (1 + cmvForm.margem_lucro_percentual / 100);
+    
+    setCmvForm(prev => ({
+      ...prev,
+      custo_total: custoTotal,
+      preco_venda_sugerido: precoSugerido
+    }));
   };
 
   // Função para verificar se o estabelecimento está aberto
@@ -3304,67 +3341,138 @@ export default function AdminPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Seleção do Drink */}
+                {/* Nome do Drink */}
                 <div>
-                  <Label className="text-sm font-medium text-gray-200">Drink</Label>
-                  <Select 
-                    value={cmvForm.drink_id} 
-                    onValueChange={(value) => {
-                      const drink = allDrinks.find(d => d.id === value);
-                      setCmvForm(prev => ({
-                        ...prev,
-                        drink_id: value,
-                        drink_name: drink?.name || ''
-                      }));
-                    }}
-                  >
-                    <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
-                      <SelectValue placeholder="Selecione um drink" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {allDrinks.map((drink) => (
-                        <SelectItem key={drink.id} value={drink.id}>
-                          {drink.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* Destilado */}
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label className="text-sm font-medium text-gray-200">Nome do Destilado</Label>
-                    <Input
-                      value={cmvForm.destilado_nome}
-                      onChange={(e) => setCmvForm(prev => ({ ...prev, destilado_nome: e.target.value }))}
-                      className="border-gray-600 bg-gray-700 text-white"
-                      placeholder="Ex: Vodka, Cachaça"
-                    />
-                  </div>
-                  <div>
-                    <Label className="text-sm font-medium text-gray-200">Preço por ML (R$)</Label>
-                    <Input
-                      type="number"
-                      step="0.01"
-                      value={cmvForm.destilado_preco_ml}
-                      onChange={(e) => setCmvForm(prev => ({ ...prev, destilado_preco_ml: parseFloat(e.target.value) || 0 }))}
-                      className="border-gray-600 bg-gray-700 text-white"
-                      placeholder="0.00"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <Label className="text-sm font-medium text-gray-200">Quantidade em ML</Label>
+                  <Label className="text-sm font-medium text-gray-200">Nome do Drink</Label>
                   <Input
-                    type="number"
-                    step="1"
-                    value={cmvForm.destilado_quantidade_ml}
-                    onChange={(e) => setCmvForm(prev => ({ ...prev, destilado_quantidade_ml: parseInt(e.target.value) || 0 }))}
+                    value={cmvForm.drink_name}
+                    onChange={(e) => setCmvForm(prev => ({ ...prev, drink_name: e.target.value }))}
                     className="border-gray-600 bg-gray-700 text-white"
-                    placeholder="50"
+                    placeholder="Ex: Caipirinha, Mojito, Margarita"
                   />
+                </div>
+
+                {/* Ingredientes */}
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <Label className="text-sm font-medium text-gray-200">Ingredientes</Label>
+                    <Button
+                      onClick={addIngrediente}
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white"
+                    >
+                      <Plus className="h-3 w-3 mr-1" />
+                      Adicionar
+                    </Button>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    {cmvForm.ingredientes.map((ingrediente) => (
+                      <div key={ingrediente.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {/* Nome do Ingrediente */}
+                          <div>
+                            <Label className="text-xs text-gray-300">Nome</Label>
+                            <Input
+                              value={ingrediente.nome}
+                              onChange={(e) => updateIngrediente(ingrediente.id, 'nome', e.target.value)}
+                              className="border-gray-600 bg-gray-700 text-white text-sm"
+                              placeholder="Ex: Vodka, Limão, Açúcar"
+                            />
+                          </div>
+                          
+                          {/* Tipo */}
+                          <div>
+                            <Label className="text-xs text-gray-300">Tipo</Label>
+                            <Select 
+                              value={ingrediente.tipo} 
+                              onValueChange={(value) => updateIngrediente(ingrediente.id, 'tipo', value)}
+                            >
+                              <SelectTrigger className="border-gray-600 bg-gray-700 text-white text-sm">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="destilado">Destilado</SelectItem>
+                                <SelectItem value="fruta">Fruta</SelectItem>
+                                <SelectItem value="outro">Outro</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          {/* Quantidade */}
+                          <div>
+                            <Label className="text-xs text-gray-300">Quantidade</Label>
+                            <Input
+                              type="number"
+                              step="0.1"
+                              value={ingrediente.quantidade}
+                              onChange={(e) => updateIngrediente(ingrediente.id, 'quantidade', parseFloat(e.target.value) || 0)}
+                              className="border-gray-600 bg-gray-700 text-white text-sm"
+                              placeholder="0"
+                            />
+                          </div>
+                          
+                          {/* Unidade */}
+                          <div>
+                            <Label className="text-xs text-gray-300">Unidade</Label>
+                            <Select 
+                              value={ingrediente.unidade} 
+                              onValueChange={(value) => updateIngrediente(ingrediente.id, 'unidade', value)}
+                            >
+                              <SelectTrigger className="border-gray-600 bg-gray-700 text-white text-sm">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="ml">ML</SelectItem>
+                                <SelectItem value="litros">Litros</SelectItem>
+                                <SelectItem value="unidades">Unidades</SelectItem>
+                                <SelectItem value="gramas">Gramas</SelectItem>
+                              </SelectContent>
+                            </Select>
+                          </div>
+                          
+                          {/* Preço */}
+                          <div>
+                            <Label className="text-xs text-gray-300">Preço por {ingrediente.unidade} (R$)</Label>
+                            <Input
+                              type="number"
+                              step="0.01"
+                              value={ingrediente.preco}
+                              onChange={(e) => updateIngrediente(ingrediente.id, 'preco', parseFloat(e.target.value) || 0)}
+                              className="border-gray-600 bg-gray-700 text-white text-sm"
+                              placeholder="0.00"
+                            />
+                          </div>
+                          
+                          {/* Custo Total */}
+                          <div className="flex items-end">
+                            <div className="flex-1">
+                              <Label className="text-xs text-gray-300">Custo Total</Label>
+                              <div className="p-2 bg-gray-800 rounded text-sm text-green-400 font-semibold">
+                                R$ {Number(ingrediente.custo_total || 0).toFixed(2)}
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => removeIngrediente(ingrediente.id)}
+                              size="sm"
+                              variant="outline"
+                              className="ml-2 text-red-400 border-red-400 hover:bg-red-400/10"
+                            >
+                              <X className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    {cmvForm.ingredientes.length === 0 && (
+                      <div className="text-center py-8 text-gray-500">
+                        <Wine className="h-8 w-8 mx-auto mb-2" />
+                        <p className="text-sm">Nenhum ingrediente adicionado</p>
+                        <p className="text-xs">Clique em "Adicionar" para começar</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Margem de Lucro */}
@@ -3376,14 +3484,11 @@ export default function AdminPage() {
                     value={cmvForm.margem_lucro_percentual}
                     onChange={(e) => {
                       const margem = parseInt(e.target.value) || 0;
-                      const custoTotal = (cmvForm.destilado_preco_ml * cmvForm.destilado_quantidade_ml);
-                      const precoSugerido = custoTotal * (1 + margem / 100);
                       setCmvForm(prev => ({ 
                         ...prev, 
-                        margem_lucro_percentual: margem,
-                        custo_total: custoTotal,
-                        preco_venda_sugerido: precoSugerido
+                        margem_lucro_percentual: margem
                       }));
+                      calcularCustoTotal();
                     }}
                     className="border-gray-600 bg-gray-700 text-white"
                     placeholder="100"
@@ -3434,11 +3539,7 @@ export default function AdminPage() {
                       setCmvForm({
                         drink_name: '',
                         drink_id: '',
-                        destilado_nome: '',
-                        destilado_preco_ml: 0,
-                        destilado_quantidade_ml: 0,
-                        frutas: [],
-                        outros_ingredientes: [],
+                        ingredientes: [],
                         custo_total: 0,
                         margem_lucro_percentual: 0,
                         preco_venda_sugerido: 0,
