@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star, CheckCircle, ExternalLink, RefreshCw } from "lucide-react"
+import { Wine, Plus, Edit, Trash2, Upload, X, Save, Image as ImageIcon, Lock, Eye, EyeOff, AlertCircle, LogOut, Star, CheckCircle, ExternalLink, RefreshCw, Calculator } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -3206,6 +3206,10 @@ export default function AdminPage() {
       {/* CMV Tab */}
       {activeTab === 'cmv' && (
         <div className="space-y-6">
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-white mb-2">Sistema CMV</h2>
+            <p className="text-gray-400">Custo de Mercadoria Vendida - Gestão de Custos de Drinks</p>
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Lista de Cálculos CMV */}
             <Card className="bg-gray-800/80 backdrop-blur-md border-0">
@@ -3229,38 +3233,51 @@ export default function AdminPage() {
                   </Button>
                   
                   <div className="space-y-2">
-                    {cmvData.map((cmv) => (
-                      <div key={cmv.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600 hover:border-purple-500/50 transition-colors">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <h4 className="font-semibold text-white">{cmv.drink_name}</h4>
-                            <p className="text-sm text-gray-400">
-                              Custo: R$ {cmv.custo_total.toFixed(2)} | 
-                              Margem: {cmv.margem_lucro_percentual}% | 
-                              Preço Sugerido: R$ {cmv.preco_venda_sugerido.toFixed(2)}
-                            </p>
-                          </div>
-                          <div className="flex space-x-2">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => setEditingCmv(cmv)}
-                              className="text-blue-400 border-blue-400 hover:bg-blue-400/10"
-                            >
-                              <Edit className="h-3 w-3" />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => deleteCmv(cmv.id)}
-                              className="text-red-400 border-red-400 hover:bg-red-400/10"
-                            >
-                              <Trash2 className="h-3 w-3" />
-                            </Button>
+                    {loadingCmv ? (
+                      <div className="text-center py-8">
+                        <RefreshCw className="h-8 w-8 text-purple-400 animate-spin mx-auto mb-2" />
+                        <p className="text-gray-400">Carregando dados CMV...</p>
+                      </div>
+                    ) : cmvData.length === 0 ? (
+                      <div className="text-center py-8">
+                        <Calculator className="h-12 w-12 text-gray-500 mx-auto mb-4" />
+                        <p className="text-gray-400 mb-2">Nenhum cálculo CMV encontrado</p>
+                        <p className="text-sm text-gray-500">Clique em "Novo Cálculo CMV" para começar</p>
+                      </div>
+                    ) : (
+                      cmvData.map((cmv) => (
+                        <div key={cmv.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600 hover:border-purple-500/50 transition-colors">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h4 className="font-semibold text-white">{cmv.drinkName}</h4>
+                              <p className="text-sm text-gray-400">
+                                Custo: R$ {cmv.custoTotal.toFixed(2)} | 
+                                Margem: {cmv.margemLucroPercentual}% | 
+                                Preço Sugerido: R$ {cmv.precoVendaSugerido.toFixed(2)}
+                              </p>
+                            </div>
+                            <div className="flex space-x-2">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => setEditingCmv(cmv)}
+                                className="text-blue-400 border-blue-400 hover:bg-blue-400/10"
+                              >
+                                <Edit className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => deleteCmv(cmv.id)}
+                                className="text-red-400 border-red-400 hover:bg-red-400/10"
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      ))
+                    )}
                   </div>
                 </div>
               </CardContent>
