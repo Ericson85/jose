@@ -741,30 +741,6 @@ export default function AdminPanel({ isOpen, onClose, onDrinksUpdate, currentDri
                         />
                       </div>
 
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label className="text-sm font-medium text-gray-200">Latitude</Label>
-                          <Input
-                            type="number"
-                            step="any"
-                            value={editingEstablishment.lat}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, lat: parseFloat(e.target.value) || 0 } : null)}
-                            className="border-gray-600 bg-gray-700 text-white"
-                            placeholder="-3.7319"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-gray-200">Longitude</Label>
-                          <Input
-                            type="number"
-                            step="any"
-                            value={editingEstablishment.lng}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, lng: parseFloat(e.target.value) || 0 } : null)}
-                            className="border-gray-600 bg-gray-700 text-white"
-                            placeholder="-38.5267"
-                          />
-                        </div>
-                      </div>
 
                       <div>
                         <Label className="text-sm font-medium text-gray-200 mb-3 block">Horários de Funcionamento</Label>

@@ -11,6 +11,7 @@ interface Bar {
   lat: number
   lng: number
   rating: number
+  googleMapsUrl?: string
 }
 
 interface CustomMapProps {
@@ -143,8 +144,14 @@ export default function CustomMap({
   }, [map, bars, selectedBar, onBarSelect])
 
   const openInGoogleMaps = (bar: Bar) => {
-    const url = `https://www.google.com/maps?q=${bar.lat},${bar.lng}`
-    window.open(url, '_blank')
+    // Se o estabelecimento tem um link do Google Maps, usar ele
+    if (bar.googleMapsUrl) {
+      window.open(bar.googleMapsUrl, '_blank')
+    } else {
+      // Fallback para coordenadas se não tiver link
+      const url = `https://www.google.com/maps?q=${bar.lat},${bar.lng}`
+      window.open(url, '_blank')
+    }
   }
 
   if (typeof window === 'undefined' || !window.google) {

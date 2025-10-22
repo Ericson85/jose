@@ -99,8 +99,8 @@ export async function POST(request) {
       INSERT INTO establishments (
         name, type, category, address, phone, description, lat, lng, rating,
         hours_monday, hours_tuesday, hours_wednesday, hours_thursday, hours_friday, hours_saturday, hours_sunday,
-        specialties, price_range, menu_link, google_place_id, images, is_active
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        specialties, price_range, menu_link, google_place_id, google_maps_url, images, is_active
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `
     
     const params = [
@@ -124,6 +124,7 @@ export async function POST(request) {
       body.priceRange || '€',
       body.menuLink || '',
       body.googlePlaceId || '',
+      body.googleMapsUrl || '',
       JSON.stringify(body.images || []),
       body.isActive !== false
     ]

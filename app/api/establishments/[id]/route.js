@@ -1,63 +1,69 @@
 import { NextResponse } from 'next/server'
+import mysql from 'mysql2/promise'
 
-// Array temporário para armazenar estabelecimentos (em produção, usar banco de dados)
-let establishments = [
-  {
-    id: "1",
-    name: "Bar do João",
-    type: "bar",
-    category: "Tradicional",
-    address: "Rua das Flores, 123 - Centro",
-    phone: "(85) 99999-9999",
-    description: "Bar tradicional com ambiente descontraído e petiscos deliciosos",
-    lat: -3.7319,
-    lng: -38.5267,
-    rating: 4.5,
-    hours: {
-      monday: "18:00 - 02:00",
-      tuesday: "18:00 - 02:00",
-      wednesday: "18:00 - 02:00",
-      thursday: "18:00 - 02:00",
-      friday: "18:00 - 03:00",
-      saturday: "18:00 - 03:00",
-      sunday: "Fechado"
-    },
-    specialties: ["Caipirinha", "Petiscos", "Música ao vivo"],
-    priceRange: "€€",
-    menu: [
-      {
-        id: "1",
-        name: "Caipirinha Tradicional",
-        price: 12.00,
-        description: "Limão, açúcar e cachaça",
-        category: "Bebidas"
-      }
-    ],
-    images: ["/placeholder.jpg"],
-    isActive: true,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString()
-  }
-]
+const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASS,
+  database: process.env.DB_NAME
+})
 
 export async function GET(request, { params }) {
   try {
     const { id } = params
     
-    const establishment = establishments.find(est => est.id === id)
+    const [rows] = await db.execute(
+      'SELECT * FROM establishments WHERE id = ?',
+      [id]
+    )
     
-    if (!establishment) {
+    if (rows.length === 0) {
       return NextResponse.json({
         success: false,
         error: 'Estabelecimento não encontrado'
       }, { status: 404 })
     }
     
+    const establishment = rows[0]
+    
+    // Converter para o formato esperado
+    const formattedEstablishment = {
+      id: establishment.id.toString(),
+      name: establishment.name,
+      type: establishment.type,
+      category: establishment.category,
+      address: establishment.address,
+      phone: establishment.phone,
+      description: establishment.description,
+      lat: establishment.lat,
+      lng: establishment.lng,
+      rating: establishment.rating,
+      hours: {
+        monday: establishment.hours_monday,
+        tuesday: establishment.hours_tuesday,
+        wednesday: establishment.hours_wednesday,
+        thursday: establishment.hours_thursday,
+        friday: establishment.hours_friday,
+        saturday: establishment.hours_saturday,
+        sunday: establishment.hours_sunday
+      },
+      specialties: establishment.specialties ? JSON.parse(establishment.specialties) : [],
+      priceRange: establishment.price_range,
+      menuLink: establishment.menu_link,
+      googlePlaceId: establishment.google_place_id,
+      googleMapsUrl: establishment.google_maps_url,
+      images: establishment.images ? JSON.parse(establishment.images) : [],
+      isActive: establishment.is_active,
+      createdAt: establishment.created_at,
+      updatedAt: establishment.updated_at
+    }
+    
     return NextResponse.json({
       success: true,
-      data: establishment
+      data: formattedEstablishment
     })
   } catch (error) {
+    console.error('Erro ao buscar estabelecimento:', error)
     return NextResponse.json({
       success: false,
       error: 'Erro ao buscar estabelecimento'
@@ -70,28 +76,98 @@ export async function PUT(request, { params }) {
     const { id } = params
     const body = await request.json()
     
-    const establishmentIndex = establishments.findIndex(est => est.id === id)
+    const query = `
+      UPDATE establishments SET 
+        name = ?, type = ?, category = ?, address = ?, phone = ?, description = ?, 
+        lat = ?, lng = ?, rating = ?, hours_monday = ?, hours_tuesday = ?, 
+        hours_wednesday = ?, hours_thursday = ?, hours_friday = ?, hours_saturday = ?, 
+        hours_sunday = ?, specialties = ?, price_range = ?, menu_link = ?, 
+        google_place_id = ?, google_maps_url = ?, images = ?, is_active = ?
+      WHERE id = ?
+    `
     
-    if (establishmentIndex === -1) {
+    const params_array = [
+      body.name,
+      body.type,
+      body.category,
+      body.address,
+      body.phone,
+      body.description,
+      body.lat || -3.7319,
+      body.lng || -38.5267,
+      body.rating || 0,
+      body.hours?.monday || 'Fechado',
+      body.hours?.tuesday || 'Fechado',
+      body.hours?.wednesday || 'Fechado',
+      body.hours?.thursday || 'Fechado',
+      body.hours?.friday || 'Fechado',
+      body.hours?.saturday || 'Fechado',
+      body.hours?.sunday || 'Fechado',
+      JSON.stringify(body.specialties || []),
+      body.priceRange || '€',
+      body.menuLink || '',
+      body.googlePlaceId || '',
+      body.googleMapsUrl || '',
+      JSON.stringify(body.images || []),
+      body.isActive !== false,
+      id
+    ]
+    
+    await db.execute(query, params_array)
+    
+    // Buscar o estabelecimento atualizado
+    const [rows] = await db.execute(
+      'SELECT * FROM establishments WHERE id = ?',
+      [id]
+    )
+    
+    if (rows.length === 0) {
       return NextResponse.json({
         success: false,
-        error: 'Estabelecimento não encontrado'
+        error: 'Estabelecimento não encontrado após atualização'
       }, { status: 404 })
     }
     
-    const updatedEstablishment = {
-      ...establishments[establishmentIndex],
-      ...body,
-      updatedAt: new Date().toISOString()
-    }
+    const establishment = rows[0]
     
-    establishments[establishmentIndex] = updatedEstablishment
+    // Converter para o formato esperado
+    const formattedEstablishment = {
+      id: establishment.id.toString(),
+      name: establishment.name,
+      type: establishment.type,
+      category: establishment.category,
+      address: establishment.address,
+      phone: establishment.phone,
+      description: establishment.description,
+      lat: establishment.lat,
+      lng: establishment.lng,
+      rating: establishment.rating,
+      hours: {
+        monday: establishment.hours_monday,
+        tuesday: establishment.hours_tuesday,
+        wednesday: establishment.hours_wednesday,
+        thursday: establishment.hours_thursday,
+        friday: establishment.hours_friday,
+        saturday: establishment.hours_saturday,
+        sunday: establishment.hours_sunday
+      },
+      specialties: establishment.specialties ? JSON.parse(establishment.specialties) : [],
+      priceRange: establishment.price_range,
+      menuLink: establishment.menu_link,
+      googlePlaceId: establishment.google_place_id,
+      googleMapsUrl: establishment.google_maps_url,
+      images: establishment.images ? JSON.parse(establishment.images) : [],
+      isActive: establishment.is_active,
+      createdAt: establishment.created_at,
+      updatedAt: establishment.updated_at
+    }
     
     return NextResponse.json({
       success: true,
-      data: updatedEstablishment
+      data: formattedEstablishment
     })
   } catch (error) {
+    console.error('Erro ao atualizar estabelecimento:', error)
     return NextResponse.json({
       success: false,
       error: 'Erro ao atualizar estabelecimento'
@@ -103,22 +179,17 @@ export async function DELETE(request, { params }) {
   try {
     const { id } = params
     
-    const establishmentIndex = establishments.findIndex(est => est.id === id)
-    
-    if (establishmentIndex === -1) {
-      return NextResponse.json({
-        success: false,
-        error: 'Estabelecimento não encontrado'
-      }, { status: 404 })
-    }
-    
-    establishments.splice(establishmentIndex, 1)
+    await db.execute(
+      'DELETE FROM establishments WHERE id = ?',
+      [id]
+    )
     
     return NextResponse.json({
       success: true,
       message: 'Estabelecimento excluído com sucesso'
     })
   } catch (error) {
+    console.error('Erro ao excluir estabelecimento:', error)
     return NextResponse.json({
       success: false,
       error: 'Erro ao excluir estabelecimento'

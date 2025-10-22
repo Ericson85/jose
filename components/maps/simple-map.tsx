@@ -31,8 +31,20 @@ export default function SimpleMap({
   showSelectedLocation = true
 }: SimpleMapProps) {
   
+  const openInGoogleMaps = (bar: Bar) => {
+    // Se o estabelecimento tem um link do Google Maps, usar ele
+    if (bar.googleMapsUrl) {
+      window.open(bar.googleMapsUrl, '_blank')
+    } else {
+      // Fallback para coordenadas se não tiver link
+      const url = `https://www.google.com/maps?q=${bar.lat},${bar.lng}`
+      window.open(url, '_blank')
+    }
+  }
+  
   return (
-    <div className="w-full h-96 bg-gray-100 rounded-lg border-2 border-gray-300 flex items-center justify-center relative overflow-hidden">
+    <div className="w-full h-96 bg-gray-100 rounded-lg border-2 border-gray-300 flex items-center justify-center relative overflow-hidden cursor-pointer"
+         onClick={() => selectedBar && openInGoogleMaps(selectedBar)}>
       {/* Mapa estático usando imagem do Google Maps Static API */}
       <div className="absolute inset-0">
         {showSelectedLocation && selectedBar && selectedBar.lat && selectedBar.lng ? (
@@ -73,6 +85,9 @@ export default function SimpleMap({
                 <span className="text-yellow-500">⭐</span>
                 <span className="text-sm text-gray-600 ml-1">{selectedBar.rating}/5</span>
               </div>
+              <p className="text-xs text-gray-500 mt-2">
+                Clique no mapa para abrir no Google Maps
+              </p>
             </div>
           </div>
         ) : (
@@ -84,7 +99,7 @@ export default function SimpleMap({
                 {bars.length} Estabelecimento{bars.length !== 1 ? 's' : ''}
               </h3>
               <p className="text-sm text-gray-600">
-                Clique nos cards para ver localização
+                Clique nos cards para ver localização ou clique no mapa para abrir no Google Maps
               </p>
             </div>
           </div>

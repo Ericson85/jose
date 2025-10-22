@@ -1811,7 +1811,7 @@ export default function AdminPage() {
                                       // Tentar diferentes formas de busca
                                       let drink = allDrinks.find(d => d.id.toString() === drinkId);
                                       if (!drink) {
-                                        drink = allDrinks.find(d => d.id === parseInt(drinkId));
+                                        drink = allDrinks.find(d => d.id === parseInt(drinkId) || d.id.toString() === drinkId);
                                       }
                                       if (!drink) {
                                         drink = allDrinks.find(d => d.id === drinkId);
@@ -2850,7 +2850,7 @@ export default function AdminPage() {
                         <Label className="text-sm font-medium text-gray-200">Nome</Label>
                         <Input
                           value={editingEstablishment.name}
-                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, name: e.target.value } : null)}
+                          onChange={(e) => setEditingEstablishment((prev: any) => prev ? { ...prev, name: e.target.value } : null)}
                           className="border-gray-600 bg-gray-700 text-white"
                           placeholder="Nome do estabelecimento"
                         />
@@ -2859,7 +2859,7 @@ export default function AdminPage() {
                         <Label className="text-sm font-medium text-gray-200">Tipo</Label>
                         <Select
                           value={editingEstablishment.type}
-                          onValueChange={(value) => setEditingEstablishment(prev => prev ? { ...prev, type: value } : null)}
+                          onValueChange={(value) => setEditingEstablishment((prev: any) => prev ? { ...prev, type: value } : null)}
                         >
                           <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                             <SelectValue />
@@ -2877,7 +2877,7 @@ export default function AdminPage() {
                       <Label className="text-sm font-medium text-gray-200">Endereço</Label>
                       <Input
                         value={editingEstablishment.address}
-                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, address: e.target.value } : null)}
+                        onChange={(e) => setEditingEstablishment((prev: any) => prev ? { ...prev, address: e.target.value } : null)}
                         className="border-gray-600 bg-gray-700 text-white"
                         placeholder="Endereço completo"
                       />
@@ -2888,7 +2888,7 @@ export default function AdminPage() {
                         <Label className="text-sm font-medium text-gray-200">Telefone</Label>
                         <Input
                           value={editingEstablishment.phone}
-                          onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, phone: e.target.value } : null)}
+                          onChange={(e) => setEditingEstablishment((prev: any) => prev ? { ...prev, phone: e.target.value } : null)}
                           className="border-gray-600 bg-gray-700 text-white"
                           placeholder="(85) 99999-9999"
                         />
@@ -2897,7 +2897,7 @@ export default function AdminPage() {
                         <Label className="text-sm font-medium text-gray-200">Faixa de Preço</Label>
                         <Select
                           value={editingEstablishment.priceRange}
-                          onValueChange={(value) => setEditingEstablishment(prev => prev ? { ...prev, priceRange: value } : null)}
+                          onValueChange={(value) => setEditingEstablishment((prev: any) => prev ? { ...prev, priceRange: value } : null)}
                         >
                           <SelectTrigger className="border-gray-600 bg-gray-700 text-white">
                             <SelectValue />
@@ -2915,7 +2915,7 @@ export default function AdminPage() {
                       <Label className="text-sm font-medium text-gray-200">Descrição</Label>
                       <textarea
                         value={editingEstablishment.description}
-                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, description: e.target.value } : null)}
+                        onChange={(e) => setEditingEstablishment((prev: any) => prev ? { ...prev, description: e.target.value } : null)}
                         className="w-full h-24 border border-gray-600 bg-gray-700 text-white rounded-md px-3 py-2"
                         placeholder="Descrição do estabelecimento"
                       />
@@ -2942,7 +2942,7 @@ export default function AdminPage() {
                                 <div className="flex items-center space-x-2">
                                   <Switch
                                     checked={isOpen}
-                                    onCheckedChange={(checked) => setEditingEstablishment(prev => prev ? {
+                                    onCheckedChange={(checked) => setEditingEstablishment((prev: any) => prev ? {
                                       ...prev,
                                       hours: {
                                         ...prev.hours,
@@ -2965,7 +2965,7 @@ export default function AdminPage() {
                                       onChange={(e) => {
                                         const currentHours = editingEstablishment.hours[key]?.split(' - ') || ['18:00', '02:00']
                                         const newHours = `${e.target.value} - ${currentHours[1]}`
-                                        setEditingEstablishment(prev => prev ? {
+                                        setEditingEstablishment((prev: any) => prev ? {
                                           ...prev,
                                           hours: { ...prev.hours, [key]: newHours }
                                         } : null)
@@ -2981,7 +2981,7 @@ export default function AdminPage() {
                                       onChange={(e) => {
                                         const currentHours = editingEstablishment.hours[key]?.split(' - ') || ['18:00', '02:00']
                                         const newHours = `${currentHours[0]} - ${e.target.value}`
-                                        setEditingEstablishment(prev => prev ? {
+                                        setEditingEstablishment((prev: any) => prev ? {
                                           ...prev,
                                           hours: { ...prev.hours, [key]: newHours }
                                         } : null)
@@ -3001,7 +3001,7 @@ export default function AdminPage() {
                       <Label className="text-sm font-medium text-gray-200">Link do Cardápio</Label>
                       <Input
                         value={editingEstablishment.menuLink || ""}
-                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, menuLink: e.target.value } : null)}
+                        onChange={(e) => setEditingEstablishment((prev: any) => prev ? { ...prev, menuLink: e.target.value } : null)}
                         className="border-gray-600 bg-gray-700 text-white"
                         placeholder="https://exemplo.com/cardapio"
                       />
@@ -3014,7 +3014,7 @@ export default function AdminPage() {
                       <Label className="text-sm font-medium text-gray-200">Link do Google Maps</Label>
                       <Input
                         value={editingEstablishment.googleMapsUrl || ""}
-                        onChange={(e) => setEditingEstablishment(prev => prev ? { ...prev, googleMapsUrl: e.target.value } : null)}
+                        onChange={(e) => setEditingEstablishment((prev: any) => prev ? { ...prev, googleMapsUrl: e.target.value } : null)}
                         className="border-gray-600 bg-gray-700 text-white"
                         placeholder="https://maps.google.com/..."
                       />
@@ -3023,47 +3023,11 @@ export default function AdminPage() {
                       </p>
                     </div>
 
-                    <div>
-                      <Label className="text-sm font-medium text-gray-200">Coordenadas do Estabelecimento</Label>
-                      <div className="grid grid-cols-2 gap-4 mt-2">
-                        <div>
-                          <Label className="text-xs text-gray-400">Latitude</Label>
-                          <Input
-                            type="number"
-                            step="any"
-                            value={editingEstablishment.lat || ""}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              lat: parseFloat(e.target.value) || 0 
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white"
-                            placeholder="-3.731900"
-                          />
-                        </div>
-                        <div>
-                          <Label className="text-xs text-gray-400">Longitude</Label>
-                          <Input
-                            type="number"
-                            step="any"
-                            value={editingEstablishment.lng || ""}
-                            onChange={(e) => setEditingEstablishment(prev => prev ? { 
-                              ...prev, 
-                              lng: parseFloat(e.target.value) || 0 
-                            } : null)}
-                            className="border-gray-600 bg-gray-700 text-white"
-                            placeholder="-38.526700"
-                          />
-                        </div>
-                      </div>
-                      <p className="text-xs text-gray-400 mt-1">
-                        Digite as coordenadas exatas do estabelecimento (você pode obter no Google Maps)
-                      </p>
-                    </div>
 
                     <div className="flex items-center space-x-3">
                       <Switch
                         checked={editingEstablishment.isActive}
-                        onCheckedChange={(checked) => setEditingEstablishment(prev => prev ? { ...prev, isActive: checked } : null)}
+                        onCheckedChange={(checked) => setEditingEstablishment((prev: any) => prev ? { ...prev, isActive: checked } : null)}
                       />
                       <Label className="text-sm font-medium text-gray-200">
                         Estabelecimento Ativo
