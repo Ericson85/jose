@@ -29,22 +29,26 @@ export function UserMenu({
   const router = useRouter()
 
   const handleProfileClick = () => {
-    onProfileClick?.()
+    // Temporariamente desativado - mostrar "Em breve"
+    alert('Em breve! 👤')
     setIsOpen(false)
   }
 
   const handleCaipirinhaRouteClick = () => {
-    router.push('/rota-caipirinha')
+    // Temporariamente desativado - mostrar "Em breve"
+    alert('Em breve! 🗺️')
     setIsOpen(false)
   }
 
   const handlePodcastClick = () => {
-    onPodcastClick?.()
+    // Temporariamente desativado - mostrar "Em breve"
+    alert('Em breve! 🎧')
     setIsOpen(false)
   }
 
   const handleChatClick = () => {
-    onChatClick?.()
+    // Temporariamente desativado - mostrar "Em breve"
+    alert('Em breve! 🚀')
     setIsOpen(false)
   }
 
