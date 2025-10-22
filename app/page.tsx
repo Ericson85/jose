@@ -1303,7 +1303,7 @@ export default function TenderesPage() {
                                   
                                   {/* Nome do drink sobre a imagem */}
                                   <div className="absolute top-1 left-1 right-1">
-                                    <h3 className="text-xs lg:text-sm font-bold text-white text-center leading-tight drop-shadow-lg bg-black/30 px-1 lg:px-2 py-0.5 lg:py-1 rounded-lg">
+                                    <h3 className="text-xs lg:text-sm font-bold text-yellow-300 text-center leading-tight drop-shadow-lg bg-black/50 px-1 lg:px-2 py-0.5 lg:py-1 rounded-lg border border-yellow-400/30">
                                       {drink.name}
                                     </h3>
                                   </div>

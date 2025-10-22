@@ -382,7 +382,7 @@ export default function AdminPanel({ isOpen, onClose, onDrinksUpdate, currentDri
                           <Wine className="h-6 w-6 text-purple-300" />
                         </div>
                         <div>
-                          <h4 className="font-semibold text-white">{drink.name}</h4>
+                          <h4 className="font-semibold text-yellow-300">{drink.name}</h4>
                           <div className="flex items-center space-x-2 mt-1">
                             <Badge className="bg-purple-900/50 text-purple-200 border-purple-700/50 text-xs">
                               {drink.category}

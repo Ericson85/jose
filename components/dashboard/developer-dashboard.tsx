@@ -169,7 +169,7 @@ export function DeveloperDashboard({ drinks, onUpdateDrinks, onClose }: Develope
                       <div className="flex items-center justify-between">
                         <div className="flex items-center space-x-4">
                           <div>
-                            <h4 className="font-semibold">{drink.name}</h4>
+                            <h4 className="font-semibold text-yellow-600">{drink.name}</h4>
                             <p className="text-sm text-gray-600">
                               R$ {drink.price.toFixed(2)} • {drink.category} •{" "}
                               {drink.priceType === "per_person" ? "Por pessoa" : "Por unidade"}
