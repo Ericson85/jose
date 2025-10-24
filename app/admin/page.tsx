@@ -445,7 +445,7 @@ export default function AdminPage() {
   const removeIngrediente = (id) => {
     setCmvForm(prev => ({
       ...prev,
-      ingredientes: prev.ingredientes.filter(ing => ing.id !== id)
+      ingredientes: (prev.ingredientes || []).filter(ing => ing.id !== id)
     }));
     calcularCustoTotal();
   };
@@ -454,7 +454,7 @@ export default function AdminPage() {
   const updateIngrediente = (id, field, value) => {
     setCmvForm(prev => ({
       ...prev,
-      ingredientes: prev.ingredientes.map(ing => {
+      ingredientes: (prev.ingredientes || []).map(ing => {
         if (ing.id === id) {
           const updated = { ...ing, [field]: value };
           
@@ -1411,7 +1411,7 @@ export default function AdminPage() {
                     <div>
                       <p className="text-gray-400 text-sm">Eventos Ativos</p>
                       <p className="text-3xl font-bold text-white">
-                        {events.filter(e => e.status === 'active').length}
+                        {(events || []).filter(e => e.status === 'active').length}
                       </p>
                     </div>
                     <div className="h-8 w-8 bg-green-500 rounded-full flex items-center justify-center">
@@ -1426,7 +1426,7 @@ export default function AdminPage() {
                     <div>
                       <p className="text-gray-400 text-sm">Drinks Populares</p>
                       <p className="text-3xl font-bold text-white">
-                        {drinks.filter(d => d.popular).length}
+                        {(drinks || []).filter(d => d.popular).length}
                       </p>
                     </div>
                     <Star className="h-8 w-8 text-yellow-400" />
@@ -1439,7 +1439,7 @@ export default function AdminPage() {
                     <div>
                       <p className="text-gray-400 text-sm">Drinks Premium</p>
                       <p className="text-3xl font-bold text-white">
-                        {drinks.filter(d => d.premium).length}
+                        {(drinks || []).filter(d => d.premium).length}
                       </p>
                     </div>
                     <div className="h-8 w-8 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
@@ -1465,14 +1465,14 @@ export default function AdminPage() {
                       O sistema já carregou automaticamente todos os drinks do menu principal, incluindo:
                     </p>
                     <ul className="text-gray-300 space-y-1 text-sm">
-                      <li>• {drinks.filter(d => d.category === "Coquetéis").length} Coquetéis</li>
-                      <li>• {drinks.filter(d => d.category === "Cervejas").length} Cervejas</li>
-                      <li>• {drinks.filter(d => d.category === "Vinhos").length} Vinhos</li>
-                      <li>• {drinks.filter(d => d.category === "Não Alcoólicos").length} Não Alcoólicos</li>
-                      <li>• {drinks.filter(d => d.category === "Open Bar").length} Open Bar</li>
-                      <li>• {drinks.filter(d => d.category === "Caipirinha").length} Caipirinhas</li>
-                      <li>• {drinks.filter(d => d.category === "Caipiroska").length} Caipiroskas</li>
-                      <li>• {drinks.filter(d => d.category === "Clássico").length} Clássicos</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Coquetéis").length} Coquetéis</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Cervejas").length} Cervejas</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Vinhos").length} Vinhos</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Não Alcoólicos").length} Não Alcoólicos</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Open Bar").length} Open Bar</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Caipirinha").length} Caipirinhas</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Caipiroska").length} Caipiroskas</li>
+                      <li>• {(drinks || []).filter(d => d.category === "Clássico").length} Clássicos</li>
                     </ul>
                   </div>
                   <div className="space-y-4">
@@ -3376,7 +3376,7 @@ export default function AdminPage() {
                   </div>
                   
                   <div className="space-y-3">
-                    {cmvForm.ingredientes.map((ingrediente) => (
+                    {(cmvForm.ingredientes || []).map((ingrediente) => (
                       <div key={ingrediente.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {/* Nome do Ingrediente */}
