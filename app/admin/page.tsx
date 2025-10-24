@@ -97,6 +97,7 @@ export default function AdminPage() {
   const [cmvData, setCmvData] = useState<any[]>([])
   const [loadingCmv, setLoadingCmv] = useState(false)
   const [editingCmv, setEditingCmv] = useState<any>(null)
+  const [viewingCmv, setViewingCmv] = useState<any>(null) // Novo estado para visualizar ficha técnica
   const [isAddingNewCmv, setIsAddingNewCmv] = useState(false)
   const [cmvForm, setCmvForm] = useState({
     drink_name: '',
@@ -3280,7 +3281,11 @@ export default function AdminPage() {
               <CardContent>
                 <div className="space-y-4">
                   <Button 
-                    onClick={() => setIsAddingNewCmv(true)}
+                    onClick={() => {
+                      setIsAddingNewCmv(true);
+                      setViewingCmv(null);
+                      setEditingCmv(null);
+                    }}
                     className="w-full bg-purple-600 hover:bg-purple-700 text-white"
                   >
                     <Plus className="h-4 w-4 mr-2" />
@@ -3301,9 +3306,17 @@ export default function AdminPage() {
                       </div>
                     ) : (
                       (cmvData || []).map((cmv) => (
-                        <div key={cmv.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600 hover:border-purple-500/50 transition-colors">
+                        <div 
+                          key={cmv.id} 
+                          className={`p-3 rounded-lg border transition-colors cursor-pointer ${
+                            viewingCmv?.id === cmv.id 
+                              ? 'bg-purple-700/50 border-purple-500' 
+                              : 'bg-gray-700/50 border-gray-600 hover:border-purple-500/50'
+                          }`}
+                          onClick={() => setViewingCmv(cmv)}
+                        >
                           <div className="flex items-center justify-between">
-                            <div>
+                            <div className="flex-1">
                               <h4 className="font-semibold text-white">{cmv.drinkName}</h4>
                               <p className="text-sm text-gray-400">
                                 Custo: R$ {Number(cmv.custoTotal || 0).toFixed(2)} | 
@@ -3311,7 +3324,7 @@ export default function AdminPage() {
                                 Preço Sugerido: R$ {Number(cmv.precoVendaSugerido || 0).toFixed(2)}
                               </p>
                             </div>
-                            <div className="flex space-x-2">
+                            <div className="flex space-x-2" onClick={(e) => e.stopPropagation()}>
                               <Button
                                 variant="outline"
                                 size="sm"
@@ -3338,28 +3351,120 @@ export default function AdminPage() {
               </CardContent>
             </Card>
 
-            {/* Formulário CMV */}
+            {/* Formulário CMV ou Ficha Técnica */}
             <Card className="bg-gray-800/80 backdrop-blur-md border-0">
               <CardHeader>
                 <CardTitle className="text-white flex items-center gap-2">
                   <Wine className="h-5 w-5 text-purple-400" />
-                  {editingCmv ? 'Editar CMV' : 'Novo Cálculo CMV'}
+                  {viewingCmv ? `Ficha Técnica - ${viewingCmv.drinkName}` : editingCmv ? 'Editar CMV' : 'Novo Cálculo CMV'}
                 </CardTitle>
                 <CardDescription className="text-gray-400">
-                  Calcule o custo e margem de lucro dos drinks
+                  {viewingCmv ? 'Ingredientes e proporções do drink' : 'Calcule o custo e margem de lucro dos drinks'}
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Nome do Drink */}
-                <div>
-                  <Label className="text-sm font-medium text-gray-200">Nome do Drink</Label>
-                  <Input
-                    value={cmvForm.drink_name}
-                    onChange={(e) => setCmvForm(prev => ({ ...prev, drink_name: e.target.value }))}
-                    className="border-gray-600 bg-gray-700 text-white"
-                    placeholder="Ex: Caipirinha, Mojito, Margarita"
-                  />
-                </div>
+                {viewingCmv ? (
+                  // Ficha Técnica - Visualização dos ingredientes
+                  <div className="space-y-6">
+                    {/* Informações Gerais */}
+                    <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-600">
+                      <h3 className="text-lg font-semibold text-white mb-3">📊 Informações Gerais</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="text-center">
+                          <p className="text-sm text-gray-400">Custo Total</p>
+                          <p className="text-xl font-bold text-green-400">R$ {Number(viewingCmv.custoTotal || 0).toFixed(2)}</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm text-gray-400">Margem de Lucro</p>
+                          <p className="text-xl font-bold text-blue-400">{Number(viewingCmv.margemLucroPercentual || 0)}%</p>
+                        </div>
+                        <div className="text-center">
+                          <p className="text-sm text-gray-400">Preço Sugerido</p>
+                          <p className="text-xl font-bold text-purple-400">R$ {Number(viewingCmv.precoVendaSugerido || 0).toFixed(2)}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Ingredientes */}
+                    <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-600">
+                      <h3 className="text-lg font-semibold text-white mb-3">🥃 Ingredientes</h3>
+                      {viewingCmv.ingredientes && viewingCmv.ingredientes.length > 0 ? (
+                        <div className="space-y-3">
+                          {viewingCmv.ingredientes.map((ingrediente, index) => (
+                            <div key={index} className="bg-gray-600/50 p-3 rounded-lg border border-gray-500">
+                              <div className="flex items-center justify-between">
+                                <div className="flex-1">
+                                  <h4 className="font-semibold text-white">{ingrediente.nome}</h4>
+                                  <div className="flex items-center gap-4 mt-1">
+                                    <span className="text-sm text-gray-300">
+                                      <span className="font-medium">{ingrediente.quantidade}</span> {ingrediente.unidade}
+                                    </span>
+                                    <span className="text-sm text-gray-300">
+                                      R$ {Number(ingrediente.preco || 0).toFixed(2)} por {ingrediente.unidade}
+                                    </span>
+                                    <span className="text-sm text-gray-300">
+                                      Tipo: <span className="capitalize text-purple-300">{ingrediente.tipo}</span>
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-right">
+                                  <p className="text-lg font-bold text-green-400">
+                                    R$ {Number(ingrediente.custo_total || 0).toFixed(2)}
+                                  </p>
+                                  <p className="text-xs text-gray-400">Custo Total</p>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <Wine className="h-12 w-12 text-gray-500 mx-auto mb-2" />
+                          <p className="text-gray-400">Nenhum ingrediente cadastrado</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Observações */}
+                    {viewingCmv.observacoes && (
+                      <div className="bg-gray-700/30 p-4 rounded-lg border border-gray-600">
+                        <h3 className="text-lg font-semibold text-white mb-3">📝 Observações</h3>
+                        <p className="text-gray-300">{viewingCmv.observacoes}</p>
+                      </div>
+                    )}
+
+                    {/* Botões de Ação */}
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={() => setEditingCmv(viewingCmv)}
+                        className="bg-blue-600 hover:bg-blue-700 text-white flex-1"
+                      >
+                        <Edit className="h-4 w-4 mr-2" />
+                        Editar CMV
+                      </Button>
+                      <Button
+                        onClick={() => setViewingCmv(null)}
+                        variant="outline"
+                        className="border-gray-600 text-gray-300 hover:bg-gray-700"
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Fechar
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  // Formulário de Edição/Criação
+                  <>
+                    {/* Nome do Drink */}
+                    <div>
+                      <Label className="text-sm font-medium text-gray-200">Nome do Drink</Label>
+                      <Input
+                        value={cmvForm.drink_name}
+                        onChange={(e) => setCmvForm(prev => ({ ...prev, drink_name: e.target.value }))}
+                        className="border-gray-600 bg-gray-700 text-white"
+                        placeholder="Ex: Caipirinha, Mojito, Margarita"
+                      />
+                    </div>
 
                 {/* Ingredientes */}
                 <div>
@@ -3545,6 +3650,7 @@ export default function AdminPage() {
                     onClick={() => {
                       setEditingCmv(null);
                       setIsAddingNewCmv(false);
+                      setViewingCmv(null);
                       setCmvForm({
                         drink_name: '',
                         drink_id: '',
@@ -3560,6 +3666,8 @@ export default function AdminPage() {
                     Cancelar
                   </Button>
                 </div>
+                  </>
+                )}
               </CardContent>
             </Card>
           </div>
