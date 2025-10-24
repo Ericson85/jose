@@ -346,7 +346,9 @@ export default function AdminPage() {
       const response = await fetch('/api/cmv');
       const data = await response.json();
       
-      if (data.success) {
+      console.log('Resposta da API CMV:', data); // Debug log
+      
+      if (data.success && data.data && Array.isArray(data.data)) {
         // Converter os dados para garantir que os números sejam números
         const formattedData = data.data.map(item => ({
           ...item,
@@ -356,13 +358,20 @@ export default function AdminPage() {
           destiladoPrecoMl: Number(item.destiladoPrecoMl || 0),
           destiladoQuantidadeMl: Number(item.destiladoQuantidadeMl || 0)
         }));
+        console.log('Dados formatados:', formattedData); // Debug log
         setCmvData(formattedData);
       } else {
-        showMessage("Erro ao carregar dados CMV", "error");
+        // Se não há dados ou data.data não é um array, definir como array vazio
+        console.log('Definindo cmvData como array vazio. data:', data); // Debug log
+        setCmvData([]);
+        if (!data.success) {
+          showMessage("Erro ao carregar dados CMV", "error");
+        }
       }
     } catch (error) {
       console.error('Erro ao carregar CMV:', error);
       showMessage("Erro ao carregar dados CMV", "error");
+      setCmvData([]); // Definir como array vazio em caso de erro
     } finally {
       setLoadingCmv(false);
     }
@@ -3291,7 +3300,7 @@ export default function AdminPage() {
                         <p className="text-sm text-gray-500">Clique em "Novo Cálculo CMV" para começar</p>
                       </div>
                     ) : (
-                      cmvData.map((cmv) => (
+                      (cmvData || []).map((cmv) => (
                         <div key={cmv.id} className="p-3 bg-gray-700/50 rounded-lg border border-gray-600 hover:border-purple-500/50 transition-colors">
                           <div className="flex items-center justify-between">
                             <div>
