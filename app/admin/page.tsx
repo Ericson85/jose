@@ -3313,7 +3313,12 @@ export default function AdminPage() {
                               ? 'bg-purple-700/50 border-purple-500' 
                               : 'bg-gray-700/50 border-gray-600 hover:border-purple-500/50'
                           }`}
-                          onClick={() => setViewingCmv(cmv)}
+                          onClick={() => {
+                            console.log('Clicou no drink:', cmv);
+                            console.log('Ingredientes do drink:', cmv.ingredientes);
+                            setViewingCmv(cmv);
+                            console.log('Estado viewingCmv atualizado para:', cmv);
+                          }}
                         >
                           <div className="flex items-center justify-between">
                             <div className="flex-1">
@@ -3363,6 +3368,7 @@ export default function AdminPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
+                {console.log('viewingCmv atual:', viewingCmv)}
                 {viewingCmv ? (
                   // Ficha Técnica - Visualização dos ingredientes
                   <div className="space-y-6">
