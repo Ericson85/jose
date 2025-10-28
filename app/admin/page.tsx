@@ -3523,10 +3523,17 @@ export default function AdminPage() {
                           <div>
                             <Label className="text-xs text-gray-300">Quantidade</Label>
                             <Input
-                              type="number"
-                              step="0.1"
+                              type="text"
+                              inputMode="decimal"
                               value={ingrediente.quantidade}
-                              onChange={(e) => updateIngrediente(ingrediente.id, 'quantidade', parseFloat(e.target.value) || 0)}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Permitir números, ponto e vírgula
+                                if (value === '' || /^[\d.,]*$/.test(value)) {
+                                  const numValue = value.replace(',', '.');
+                                  updateIngrediente(ingrediente.id, 'quantidade', numValue === '' ? 0 : parseFloat(numValue) || 0);
+                                }
+                              }}
                               className="border-gray-600 bg-gray-700 text-white text-sm"
                               placeholder="0"
                             />
@@ -3555,10 +3562,17 @@ export default function AdminPage() {
                           <div>
                             <Label className="text-xs text-gray-300">Preço por {ingrediente.unidade} (R$)</Label>
                             <Input
-                              type="number"
-                              step="0.01"
+                              type="text"
+                              inputMode="decimal"
                               value={ingrediente.preco}
-                              onChange={(e) => updateIngrediente(ingrediente.id, 'preco', parseFloat(e.target.value) || 0)}
+                              onChange={(e) => {
+                                const value = e.target.value;
+                                // Permitir números, ponto e vírgula
+                                if (value === '' || /^[\d.,]*$/.test(value)) {
+                                  const numValue = value.replace(',', '.');
+                                  updateIngrediente(ingrediente.id, 'preco', numValue === '' ? 0 : parseFloat(numValue) || 0);
+                                }
+                              }}
                               className="border-gray-600 bg-gray-700 text-white text-sm"
                               placeholder="0.00"
                             />
@@ -3599,16 +3613,20 @@ export default function AdminPage() {
                 <div>
                   <Label className="text-sm font-medium text-gray-200">Margem de Lucro (%)</Label>
                   <Input
-                    type="number"
-                    step="1"
+                    type="text"
+                    inputMode="numeric"
                     value={cmvForm.margem_lucro_percentual}
                     onChange={(e) => {
-                      const margem = parseInt(e.target.value) || 0;
-                      setCmvForm(prev => ({ 
-                        ...prev, 
-                        margem_lucro_percentual: margem
-                      }));
-                      calcularCustoTotal();
+                      const value = e.target.value;
+                      // Permitir apenas números
+                      if (value === '' || /^\d*$/.test(value)) {
+                        const margem = parseInt(value) || 0;
+                        setCmvForm(prev => ({ 
+                          ...prev, 
+                          margem_lucro_percentual: margem
+                        }));
+                        calcularCustoTotal();
+                      }
                     }}
                     className="border-gray-600 bg-gray-700 text-white"
                     placeholder="100"
